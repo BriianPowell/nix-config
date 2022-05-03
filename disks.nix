@@ -1,16 +1,13 @@
 { config, pkgs, ... }:
 
 {
-  boot.initrd.luks.devices."crypt-root".device = "/dev/disk/by-id/dm-name-crypt-root";
-
   fileSystems."/" = {
     # device = pkgs.lib.mkOverride 0 "/dev/disk/by-id/dm-name-vg-root";
     options = [ "defaults" "noatime" "nodiratime" "discard" ];
   };
 
   fileSystems."/home" = {
-    device = "/dev/disk/by-id/dm-name-vg-home";
-    fsType = "btrfs";
+    # device = "/dev/disk/by-id/dm-name-vg-home";
     options = [ "defaults" "noatime" "nodiratime" "discard=async" ];
   };
 
@@ -20,8 +17,8 @@
   };
 
   swapDevices = [{
-    device = "/dev/disk/by-id/dm-name-vg-swap";
+    device = "/dev/disk/by-partuuid/d3901638-60fd-45f1-9a8e-c88a71da0892";
     options = [ "defaults" "discard" ];
-    # randomEncryption.enable = true;
+    randomEncryption.enable = true;
   }];
 }
