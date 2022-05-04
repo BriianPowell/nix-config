@@ -28,9 +28,5 @@
       fsType = "btrfs";
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/b24bbea8-a205-4fd8-94c3-05a6a70b6f81"; }
-    ];
-
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
