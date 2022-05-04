@@ -17,7 +17,7 @@
   };
 
   swapDevices = [{
-    device = "/dev/disk/by-partuuid/d3901638-60fd-45f1-9a8e-c88a71da0892";
+    device = "/dev/disk/by-partuuid/cad7be81-9d07-4d20-aa14-8b41ea4357c0";
     options = [ "defaults" "discard" ];
     randomEncryption.enable = true;
   }];
