@@ -28,6 +28,14 @@
   security.sudo.wheelNeedsPassword = false;
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+
+    permitRootLogin = "no";
+
+    # disable password authentication
+    passwordAuthentication = false;
+    challengeResponseAuthentication = false;
+  };
   services.eternal-terminal.enable = true;
 }
