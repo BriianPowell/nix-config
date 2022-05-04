@@ -53,7 +53,7 @@
     1. sudo cp crypt-root-key.bin /mnt/etc/secrets/initrd/
     1. `sudo chmod 000 /mnt/etc/secrets/initrd/*.bin`
     1. sudo ssh-keygen -t ed25519 -N "" -f /mnt/etc/secrets/initrd/ssh_host_ed25519_key
-1. mkpasswd | sudo tee /mnt/etc/passwd-dudeofawesome
+1. mkpasswd -m sha-512 | sudo tee /mnt/etc/passwd-dudeofawesome
 1. sudo nixos-generate-config --root /mnt
 1. remove the `swapDevices` section from `hardware-configuration.nix`
    The file's header says not to modify it manually, so YMMV.
@@ -61,6 +61,7 @@
 1. `sudo mv ~/mynix/* /mnt/etc/nixos/; sudo nixos-install; sudo nixos-enter`
     1. nixos-install --root /; exit
        See [failed to create directory via template](https://gist.github.com/ladinu/bfebdd90a5afd45dec811296016b2a3f?permalink_comment_id=4011408#gistcomment-4011408)
+       TODO: look in to `--no-root-passwd`
 1. reboot
 
 ## Recovering from a bad time
