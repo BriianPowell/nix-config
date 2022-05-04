@@ -18,6 +18,9 @@
     };
   };
 
+  # Don't require password for sudo.
+  security.sudo.wheelNeedsPassword = false;
+
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 }
