@@ -7,6 +7,8 @@
 {
   # Define user accounts.
   users = {
+    mutableUsers = false;
+
     users = {
       dudeofawesome = {
         description = "Louis Orleans";
