@@ -16,8 +16,11 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+
+    ./nix.nix
+    ./auth.nix
     ./disks.nix
-    ./bootloader.nix
+    ./boot.nix
   ];
 
   networking.hostName = "doa-server"; # Define your hostname.
@@ -48,13 +51,6 @@
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.dudeofawesome = {
-    isNormalUser = true;
-    shell = pkgs.fish;
-    extraGroups = [ "wheel" "docker" ]; # Enable ‘sudo’ for the user.
-  };
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -80,11 +76,6 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
 
   hardware.opengl.enable = true;
 
