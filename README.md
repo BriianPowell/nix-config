@@ -23,7 +23,7 @@
     quit
     ```
 
-1. Create a key
+1. Create a LUKS key
    TODO: is this the best way to generate a key? I don't think so.
    dd if=/dev/random of=./crypt-root-key.bin bs=1024 count=4
 1. Setup LUKS
@@ -54,15 +54,17 @@
     1. `sudo chmod 000 /mnt/etc/secrets/initrd/*.bin`
     1. sudo ssh-keygen -t ed25519 -N "" -f /mnt/etc/secrets/initrd/ssh_host_ed25519_key
 1. sudo nixos-generate-config --root /mnt
-   This will probably fail due to the BTRFS home dir. You can unmount the dir and run this command again, but you'll have to add this
-    ```nix
-    fileSystems."/home" =
-        {
-        device = "/dev/disk/by-uuid/9cf80a5a-a5f3-49b4-9517-3388098b2fd7";
-        fsType = "btrfs";
-        };
-    ```
+1. remove the `swapDevices` section from `hardware-configuration.nix`
+   The file's header says not to modify it manually, so YMMV.
+   https://github.com/NixOS/nixpkgs/issues/86353
 1. `sudo mv ~/mynix/* /mnt/etc/nixos/; sudo nixos-install; sudo nixos-enter`
     1. nixos-install --root /; exit
+       See [failed to create directory via template](https://gist.github.com/ladinu/bfebdd90a5afd45dec811296016b2a3f?permalink_comment_id=4011408#gistcomment-4011408)
+1. reboot
 
-TODO: [failed to create directory via templat](https://gist.github.com/ladinu/bfebdd90a5afd45dec811296016b2a3f?permalink_comment_id=4011408#gistcomment-4011408)
+## Recovering from a bad time
+
+1. Boot into recovery environment.
+1. sudo cryptsetup luksOpen /dev/disk/by-id/ata-Samsung_SSD_870_EVO_500GB_S62ANJ0NC40669A-part2 crypt-root
+1. sudo vgscan
+1. Continue from [Setup Boot Drive](#setup-boot-drive)'s "Mount file systems" step.
