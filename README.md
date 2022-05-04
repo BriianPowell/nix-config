@@ -53,6 +53,7 @@
     1. sudo cp crypt-root-key.bin /mnt/etc/secrets/initrd/
     1. `sudo chmod 000 /mnt/etc/secrets/initrd/*.bin`
     1. sudo ssh-keygen -t ed25519 -N "" -f /mnt/etc/secrets/initrd/ssh_host_ed25519_key
+1. mkpasswd | sudo tee /mnt/etc/passwd-dudeofawesome
 1. sudo nixos-generate-config --root /mnt
 1. remove the `swapDevices` section from `hardware-configuration.nix`
    The file's header says not to modify it manually, so YMMV.
