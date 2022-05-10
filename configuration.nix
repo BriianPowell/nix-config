@@ -3,7 +3,9 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
+let
+  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+in
 {
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -14,7 +16,8 @@
   system.stateVersion = "21.11"; # Did you read the comment?
 
   imports = [
-    <home-manager/nixos>
+    # <home-manager/nixos>
+    (import "${home-manager}/nixos")
 
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
