@@ -57,6 +57,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     crun
+    deno
     eternal-terminal
     fish
     git
@@ -64,6 +65,7 @@
     lynx
     most
     ncdu
+    ruby
     tmux
     vim
     wget
