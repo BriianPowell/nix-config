@@ -7,6 +7,16 @@
       userEmail = "louis@orleans.io";
     };
 
+    programs.fish.plugins = [
+      {
+        name = "fisher";
+        src = pkgs.fetchFromGitHub {
+          owner = "jorgebucaran";
+          repo = "fisher";
+        };
+      }
+    ];
+
     # home.file = {
     #   ".config/xorg".source = ./config/xorg;
     #   ".config/zsh".source = ./config/zsh;
