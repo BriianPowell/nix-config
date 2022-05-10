@@ -5,6 +5,10 @@
 { config, pkgs, ... }:
 
 {
+  imports = [
+    ./users/dudeofawesome.nix
+  ];
+
   # Define user accounts.
   users = {
     mutableUsers = false;

@@ -14,6 +14,8 @@
   system.stateVersion = "21.11"; # Did you read the comment?
 
   imports = [
+    <home-manager/nixos>
+
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
 
