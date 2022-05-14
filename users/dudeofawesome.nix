@@ -7,6 +7,7 @@
       userEmail = "louis@orleans.io";
     };
 
+    programs.fish.enable = true;
     programs.fish.plugins = [
       {
         name = "fisher";
