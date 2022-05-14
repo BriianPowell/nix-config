@@ -68,6 +68,8 @@ in
     lynx
     most
     ncdu
+    nixpkgs-fmt
+    nodejs-16_x
     ruby
     tmux
     vim
