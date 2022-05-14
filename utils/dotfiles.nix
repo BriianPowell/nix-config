@@ -5,10 +5,11 @@ let
     repo = "dotfiles";
     rev = "50d09968fd3cabf05ebee433ceab0cba98519cd5";
     # sha256 = "???";
+    leaveDotGit = true;
   };
 in
 stdenv.mkDerivation {
-  name = "install-dotfiles";
+  name = "dotfiles";
   src = repo;
   # buildPhase = ''
   #   mkdir $out
@@ -16,6 +17,7 @@ stdenv.mkDerivation {
   # '';
   installPhase = ''
     link
+    fisher update
   '';
   system = builtins.currentSystem;
 }

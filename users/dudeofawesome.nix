@@ -20,6 +20,10 @@
       }
     ];
 
+    imports = [
+      ../../utils/dotfiles.nix
+    ];
+
     # home.file = {
     #   ".config/xorg".source = ./config/xorg;
     #   ".config/zsh".source = ./config/zsh;
