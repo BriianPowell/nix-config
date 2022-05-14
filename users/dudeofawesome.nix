@@ -14,6 +14,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "jorgebucaran";
           repo = "fisher";
+          rev = "4.3.1";
+          sha256 = "sha256-TR01V4Ol7zAj+3hvBj23PGSNjH+EHTcOQSKtA5uneGE";
         };
       }
     ];
