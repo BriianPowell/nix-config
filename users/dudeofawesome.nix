@@ -7,7 +7,7 @@
       userEmail = "louis@orleans.io";
     };
 
-    programs.fish.enable = true;
+    #programs.fish.enable = true;
     programs.fish.plugins = [
       {
         name = "fisher";
@@ -21,7 +21,7 @@
     ];
 
     imports = [
-      ../../utils/dotfiles.nix
+      # ../pkgs/dotfiles.nix
     ];
 
     # home.file = {
