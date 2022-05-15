@@ -1,0 +1,7 @@
+{
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+  "nix.enableLanguageServer": true,
+  "nix.formatterPath": "nixpkgs-fmt"
+}

@@ -26,6 +26,8 @@ in
     ./auth.nix
     ./disks.nix
     ./boot.nix
+
+    ./kubernetes.nix
   ];
 
   networking.hostName = "doa-server"; # Define your hostname.
@@ -59,7 +61,6 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    crun
     deno
     eternal-terminal
     fish
@@ -68,12 +69,11 @@ in
     lynx
     most
     ncdu
-    nixpkgs-fmt
     nodejs-16_x
+    nodePackages.prettier
     ruby
     tmux
     vim
-    wget
     wget
     zsh
   ];
@@ -87,13 +87,6 @@ in
   # };
 
   hardware.opengl.enable = true;
-
-  # Enable Docker daemon.
-  virtualisation.docker = {
-    enable = true;
-    # enableNvidia = true;
-    autoPrune.enable = true;
-  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
