@@ -26,27 +26,13 @@ in
     ./auth.nix
     ./disks.nix
     ./boot.nix
+    ./networking.nix
 
     ./kubernetes.nix
   ];
 
-  networking.hostName = "doa-server"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
-
-  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
-  # Per-interface useDHCP will be mandatory in the future, so this generated config
-  # replicates the default behaviour.
-  networking.useDHCP = false;
-  networking.interfaces.eno1.useDHCP = true;
-  networking.interfaces.eno2.useDHCP = true;
-  networking.interfaces.idrac.useDHCP = true;
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Select internationalisation properties.
   # i18n.defaultLocale = "en_US.UTF-8";
@@ -75,7 +61,7 @@ in
     tmux
     vim
     wget
-    zsh
+    zfs
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -87,10 +73,4 @@ in
   # };
 
   hardware.opengl.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 }
