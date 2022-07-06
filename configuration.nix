@@ -59,7 +59,7 @@ in
     nodePackages.prettier
     ruby
     tmux
-    vim
+    vim_configurable
     wget
     zfs
   ];

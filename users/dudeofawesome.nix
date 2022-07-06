@@ -1,4 +1,4 @@
-{ config, pkgs, epkgs, ... }:
+{ config, pkgs, epkgs, lib, ... }:
 {
   home-manager.users.dudeofawesome = {
     programs.git = {
@@ -19,6 +19,18 @@
         };
       }
     ];
+
+    programs.vim = {
+      enable = true;
+      # defaultEditor = true;
+      plugins = with pkgs.vimPlugins; [
+        nerdtree
+        papercolor-theme
+        rainbow_parentheses
+        vim-airline
+        vim-prettier
+      ];
+    };
 
     imports = [
       # ../pkgs/dotfiles.nix
