@@ -11,7 +11,13 @@
   networking.interfaces.idrac.useDHCP = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [
+    22 # ssh
+    2022 # et
+    8080 # http
+    8443 # https
+    6443 # k8s API server
+  ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   networking.firewall.enable = false;
