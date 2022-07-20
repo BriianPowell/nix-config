@@ -16,6 +16,7 @@
     options = [ "defaults" "noatime" "nodiratime" "discard" ];
   };
 
+  # TODO: k8s might not like running with swap?
   swapDevices = [{
     device = "/dev/disk/by-partuuid/cad7be81-9d07-4d20-aa14-8b41ea4357c0";
     options = [ "defaults" "discard" ];
