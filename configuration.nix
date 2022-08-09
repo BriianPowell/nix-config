@@ -42,6 +42,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    cudaPackages.cudatoolkit # TODO: we might not need this
     deno
     eternal-terminal
     fish
@@ -66,5 +67,7 @@
   #   enableSSHSupport = true;
   # };
 
+  services.xserver.videoDrivers = [ "nvidia" ];
   hardware.opengl.enable = true;
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
 }
