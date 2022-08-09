@@ -19,7 +19,6 @@
       2022 # et
       8080 # http
       8443 # https
-      6443 # k8s API server
     ];
     # allowedUDPPorts = [ ... ];
   };

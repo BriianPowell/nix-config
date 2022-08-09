@@ -68,5 +68,12 @@ in
 
   # k8s doesn't work with nftables
   networking.nftables.enable = false;
-  networking.firewall.package = pkgs.iptables-legacy;
+  networking.firewall = {
+    package = pkgs.iptables-legacy;
+
+    allowedTCPPorts = [
+      6443 # k8s API server
+    ];
+    # allowedUDPPorts = [ ... ];
+  };
 }
