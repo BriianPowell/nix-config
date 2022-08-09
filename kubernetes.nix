@@ -1,8 +1,14 @@
 { config, pkgs, epkgs, ... }:
+let
+  # https://github.com/NixOS/nixpkgs/pull/176520
+  k3s = pkgs.k3s.overrideAttrs
+    (old: rec { buildInputs = old.buildInputs ++ [ pkgs.ipset ]; });
+in
 {
   environment.systemPackages = with pkgs; [
     crun
     docker
+    iptables-legacy
     k3s
     kubectl
     podman
@@ -10,30 +16,57 @@
 
   # Enable Docker daemon.
   virtualisation.docker = {
-    enable = true;
+    enable = false;
     # enableNvidia = true;
+    # TODO: this might not be necessary
+    # extraOptions = "--default-runtime=nvidia";
     autoPrune.enable = true;
   };
 
   virtualisation.containerd = {
     enable = true;
-    # settings = {
-    #   version = 2;
-    #   plugins."io.containerd.grp.v1.cri" = {
-    #     cni.conf_dir = "/var/lib/rancher/k3s/agent/etc/cni/net.d/";
-    #   };
-    # };
+    settings =
+      let
+        fullCNIPlugins = pkgs.buildEnv {
+          name = "full-cni";
+          paths = with pkgs; [
+            cni-plugins
+            cni-plugin-flannel
+          ];
+        };
+      in
+      {
+        plugins."io.containerd.grpc.v1.cri" = {
+          # TODO: this may or may not be upstreamed already
+          cni = {
+            bin_dir = "${fullCNIPlugins}/bin";
+            conf_dir = "/var/lib/rancher/k3s/agent/etc/cni/net.d/";
+          };
+        };
+      };
   };
 
   services.k3s = {
+    # https://github.com/NixOS/nixpkgs/pull/176520
+    package = k3s;
     enable = true;
     role = "server";
     # docker = true;
-    extraFlags = "--container-runtime-endpoint unix:///run/containerd/containerd.sock";
+    extraFlags = toString [
+      "--flannel-backend=host-gw"
+      "--container-runtime-endpoint unix:///run/containerd/containerd.sock"
+    ];
   };
 
   systemd.services.k3s = {
-    wants = [ "containerd.service" ];
+    wants = [
+      "containerd.service"
+      "network-online.target"
+    ];
     after = [ "containerd.service" ];
   };
+
+  # k8s doesn't work with nftables
+  networking.nftables.enable = false;
+  networking.firewall.package = pkgs.iptables-legacy;
 }
