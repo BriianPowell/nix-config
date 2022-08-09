@@ -21,6 +21,7 @@
     ./disks.nix
     ./boot.nix
     ./networking.nix
+    ./fs.nix
 
     ./kubernetes.nix
   ];
@@ -55,7 +56,6 @@
     tmux
     vim_configurable
     wget
-    zfs
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
