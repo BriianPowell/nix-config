@@ -1,6 +1,8 @@
 { config, pkgs, epkgs, lib, ... }:
 {
   home-manager.users.dudeofawesome = {
+    home.stateVersion = "21.11";
+
     programs.git = {
       enable = true;
       userName = "Louis Orleans";
