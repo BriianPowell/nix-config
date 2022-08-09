@@ -8,6 +8,7 @@ in
   environment.systemPackages = with pkgs; [
     crun
     docker
+    helm
     iptables-legacy
     k3s
     kubectl
