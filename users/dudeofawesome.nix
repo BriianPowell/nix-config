@@ -78,6 +78,7 @@
           };
         }
       ];
+      shellInit = ". ~/.config/fish/dotfiles-config.fish";
     };
 
     xdg.configFile."fish/conf.d/plugin-tide.fish".text = lib.mkAfter ''
@@ -102,20 +103,17 @@
       # ../pkgs/dotfiles.nix
     ];
 
-    # home.file = {
-    #   ".config/xorg".source = ./config/xorg;
-    #   ".config/zsh".source = ./config/zsh;
-    #   ".config/nvim".source = ./config/nvim;
-    #   ".config/qutebrowser".source = ./config/qutebrowser;
-    #   ".config/sxiv".source = ./config/sxiv;
-    #   ".local/share/qutebrowser/userscripts".source = ./config/qutebrowser/userscripts;
-    #   ".local/share/qutebrowser/greasemonkey".source = ./config/qutebrowser/greasemonkey;
-    #   # ".local/share/qutebrowser/sessions".source = ./private-config/qutebrowser/sessions;
-    #   ".config/dunst".source = ./config/dunst;
-    #   ".config/lf".source = ./config/lf;
-    #   ".config/picom.conf".source = ./config/picom.conf;
-    #   ".wyrdrc".source = ./config/remind/.wyrdrc;
-    #   "scripts".source = ./scripts;
-    # };
+    # TODO: clone the dotfiles repo
+    home.file = {
+      # TODO: figure out how to make this more flexible in the source path
+      ".gemrc".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.gemrc;
+      ".vim/vimrc".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.vim/vimrc;
+      ".vim/filetype.vim".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.vim/filetype.vim;
+      ".config/fish/completions/et.fish".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/fish/completions/et.fish;
+      ".config/fish/dotfiles-config.fish".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/fish/config.fish;
+      ".config/fish/tide.config.fish".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/fish/tide.config.fish;
+      ".config/tmux/tmux.conf".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/tmux/tmux.conf;
+      ".config/.prettierrc.js".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/.prettierrc.js;
+    };
   };
 }
