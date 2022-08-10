@@ -103,7 +103,7 @@
       # ../pkgs/dotfiles.nix
     ];
 
-    # TODO: clone the dotfiles repo
+    # TODO: clone the dotfiles & server-admin-scripts repos
     home.file = {
       # TODO: figure out how to make this more flexible in the source path
       ".gemrc".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.gemrc;
@@ -114,6 +114,11 @@
       ".config/fish/tide.config.fish".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/fish/tide.config.fish;
       ".config/tmux/tmux.conf".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/tmux/tmux.conf;
       ".config/.prettierrc.js".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/.prettierrc.js;
+
+      ".local/bin/docker-logs".source = /home/dudeofawesome/git/dudeofawesome/server-admin-scripts/bin/docker-logs;
+      ".local/bin/docker-ps".source = /home/dudeofawesome/git/dudeofawesome/server-admin-scripts/bin/docker-ps;
+      ".local/bin/docker-top".source = /home/dudeofawesome/git/dudeofawesome/server-admin-scripts/bin/docker-top;
+      ".local/bin/lsdisk".source = /home/dudeofawesome/git/dudeofawesome/server-admin-scripts/bin/lsdisk;
     };
   };
 }
