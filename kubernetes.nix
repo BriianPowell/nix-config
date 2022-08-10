@@ -12,6 +12,7 @@ in
     iptables-legacy
     k3s
     kubectl
+    nvidia-podman
     podman
   ];
 
@@ -22,6 +23,11 @@ in
     # TODO: this might not be necessary
     # extraOptions = "--default-runtime=nvidia";
     autoPrune.enable = true;
+  };
+
+  virtualisation.podman = {
+    enable = true;
+    enableNvidia = true;
   };
 
   virtualisation.containerd = {
