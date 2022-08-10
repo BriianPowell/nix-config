@@ -53,6 +53,7 @@
     ncdu
     nodejs-16_x
     nodePackages.prettier
+    pciutils
     ruby
     tmux
     vim_configurable
