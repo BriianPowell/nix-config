@@ -9,9 +9,12 @@ in
     crun
     docker
     iptables-legacy
+    fluxcd
+    helmsman
     k3s
     kubectl
     kubernetes-helm
+    kubeseal
     nvidia-podman
     podman
   ];
