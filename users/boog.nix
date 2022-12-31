@@ -106,18 +106,18 @@
     # TODO: clone the dotfiles & server-admin-scripts repos
     home.file = {
       # TODO: figure out how to make this more flexible in the source path
-      ".gemrc".source = /home/boog/GitHub/dotfiles/home/.gemrc;
-      ".vim/vimrc".source = /home/boog/GitHub/dotfiles/home/.vim/vimrc;
-      ".config/fish/completions/et.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/completions/et.fish;
-      ".config/fish/dotfiles-config.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/config.fish;
-      ".config/fish/tide.config.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/tide.config.fish;
-      ".config/tmux/tmux.conf".source = /home/boog/GitHub/dotfiles/home/.config/tmux/tmux.conf;
-      ".config/.prettierrc".source = /home/boog/GitHub/dotfiles/home/.config/.prettierrc;
+      ".gemrc".source = /mnt/home/boog/GitHub/dotfiles/home/.gemrc;
+      ".vim/vimrc".source = /mnt/home/boog/GitHub/dotfiles/home/.vim/vimrc;
+      ".config/fish/completions/et.fish".source = /mnt/home/boog/GitHub/dotfiles/home/.config/fish/completions/et.fish;
+      ".config/fish/dotfiles-config.fish".source = /mnt/home/boog/GitHub/dotfiles/home/.config/fish/config.fish;
+      ".config/fish/tide.config.fish".source = /mnt/home/boog/GitHub/dotfiles/home/.config/fish/tide.config.fish;
+      ".config/tmux/tmux.conf".source = /mnt/home/boog/GitHub/dotfiles/home/.config/tmux/tmux.conf;
+      ".config/.prettierrc".source = /mnt/home/boog/GitHub/dotfiles/home/.config/.prettierrc;
 
-      ".local/bin/docker-logs".source = /home/dude/GitHub/server-admin-scripts/bin/docker-logs;
-      ".local/bin/docker-ps".source = /home/boog/GitHub/server-admin-scripts/bin/docker-ps;
-      ".local/bin/docker-top".source = /home/boog/GitHub/server-admin-scripts/bin/docker-top;
-      ".local/bin/lsdisk".source = /home/boog/GitHub/server-admin-scripts/bin/lsdisk;
+      ".local/bin/docker-logs".source = /mnt/home/dude/GitHub/server-admin-scripts/bin/docker-logs;
+      ".local/bin/docker-ps".source = /mnt/home/boog/GitHub/server-admin-scripts/bin/docker-ps;
+      ".local/bin/docker-top".source = /mnt/home/boog/GitHub/server-admin-scripts/bin/docker-top;
+      ".local/bin/lsdisk".source = /mnt/home/boog/GitHub/server-admin-scripts/bin/lsdisk;
     };
   };
 }
