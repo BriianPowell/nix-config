@@ -11,7 +11,7 @@ in
     # <home-manager/nixos>
     (import "${home-manager}/nixos")
 
-    ./users/dudeofawesome.nix
+    ./users/boog.nix
   ];
 
   # Define user accounts.
@@ -20,7 +20,7 @@ in
 
     users = {
       # root.hashedPassword = "!";
-      root.passwordFile = "/etc/passwd-dudeofawesome";
+      root.passwordFile = "/etc/passwd-boog";
     };
   };
 

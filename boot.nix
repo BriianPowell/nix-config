@@ -18,7 +18,7 @@
 
   boot.initrd = {
     luks.devices."crypt-root" = {
-      device = "/dev/disk/by-uuid/425ba9df-a7ac-454e-9c25-efeaa86e75b2"; # UUID for LUKS vol
+      device = "/dev/disk/by-uuid/dm-uuid-CRYPT-LUKS1-537a87db147b4e8eba7727072781757b-crypt-root"; # UUID for LUKS vol
       preLVM = true;
       keyFile = "/crypt-root-key.bin";
       allowDiscards = true;
