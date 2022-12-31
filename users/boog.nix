@@ -114,7 +114,7 @@
       ".config/tmux/tmux.conf".source = /mnt/home/boog/GitHub/dotfiles/home/.config/tmux/tmux.conf;
       ".config/.prettierrc".source = /mnt/home/boog/GitHub/dotfiles/home/.config/.prettierrc;
 
-      ".local/bin/docker-logs".source = /mnt/home/dude/GitHub/server-admin-scripts/bin/docker-logs;
+      ".local/bin/docker-logs".source = /mnt/home/boog/GitHub/server-admin-scripts/bin/docker-logs;
       ".local/bin/docker-ps".source = /mnt/home/boog/GitHub/server-admin-scripts/bin/docker-ps;
       ".local/bin/docker-top".source = /mnt/home/boog/GitHub/server-admin-scripts/bin/docker-top;
       ".local/bin/lsdisk".source = /mnt/home/boog/GitHub/server-admin-scripts/bin/lsdisk;
