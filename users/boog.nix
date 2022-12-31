@@ -28,8 +28,8 @@
           src = pkgs.fetchFromGitHub {
             owner = "jorgebucaran";
             repo = "fisher";
-            rev = "36810b39401536650d7a1018c8f3832f51741950";
-            sha256 = "06z34l0xq2b0ky493p2f3lsp07p0mvps8laf6z7mjd27k7lj5mmb";
+            rev = "4.3.1";
+            sha256 = "sha256-TR01V4Ol7zAj+3hvBj23PGSNjH+EHTcOQSKtA5uneGE";
           };
         }
         {
@@ -37,8 +37,8 @@
           src = pkgs.fetchFromGitHub {
             owner = "IlanCosman";
             repo = "tide";
-            rev = "6833806ba2eaa1a2d72a5015f59c284f06c1d2db";
-            sha256 = "1qqkxpi4pl0s507gj4xv7b58ykbqzxbhxmw949ja3srph9i2qbmy";
+            rev = "v5.3.0";
+            sha256 = "sha256-B6/0tNk5lb+1nup1dfXhPD2S5PURZyFd8nJJF6shvq4=";
           };
         }
         {
