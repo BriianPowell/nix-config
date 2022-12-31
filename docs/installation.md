@@ -7,7 +7,7 @@ How to do the initial NixOS installtion
 1. Partition drive
 
     ```sh
-    sudo parted /dev/disk/by-id/nvme-eui.000000000000000100a07521313b98f0
+    sudo parted /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0
     mklabel gpt
     mkpart ESP fat32 1MiB 512MiB
     mkpart primary 512MiB 100%
@@ -20,9 +20,9 @@ How to do the initial NixOS installtion
    dd if=/dev/random of=./crypt-root-key.bin bs=1024 count=4
    
 1. Setup LUKS
-    1. sudo cryptsetup luksFormat --type=luks1 /dev/disk/by-id/nvme-eui.000000000000000100a07521313b98f0-part2
-    1. sudo cryptsetup luksAddKey /dev/disk/by-id/nvme-eui.000000000000000100a07521313b98f0-part2 crypt-root-key.bin
-    1. sudo cryptsetup luksOpen /dev/disk/by-id/nvme-eui.000000000000000100a07521313b98f0-part2 crypt-root -d crypt-root-key.bin
+    1. sudo cryptsetup luksFormat --type=luks1 /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part2
+    1. sudo cryptsetup luksAddKey /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part2 crypt-root-key.bin
+    1. sudo cryptsetup luksOpen /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part2 crypt-root -d crypt-root-key.bin
     1. TODO: backup LUKS header
     
 1. Setup LVM
@@ -32,14 +32,14 @@ How to do the initial NixOS installtion
     1. sudo lvcreate --extents 15%VG --name home vg
     
 1. Create file systems
-    1. sudo mkfs.fat -F 32 /dev/disk/by-id/nvme-eui.000000000000000100a07521313b98f0-part1
+    1. sudo mkfs.fat -F 32 /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part1
     1. sudo mkfs.ext4 -L root /dev/vg/root
     1. sudo mkfs.btrfs -L home /dev/vg/home
     
 1. Mount file systems
     1. sudo mount /dev/vg/root /mnt
     1. sudo mkdir -p /mnt/boot/efi
-    1. sudo mount /dev/disk/by-id/nvme-eui.000000000000000100a07521313b98f0-part1 /mnt/boot/efi
+    1. sudo mount /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part1 /mnt/boot/efi
     1. sudo mkdir /mnt/home
     1. sudo mount /dev/vg/home /mnt/home
     
