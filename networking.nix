@@ -1,6 +1,6 @@
 { config, pkgs, epkgs, ... }:
 {
-  networking.hostName = "doa-server"; # Define your hostname.
+  networking.hostName = "sheol"; # Define your hostname.
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -17,8 +17,8 @@
     allowedTCPPorts = [
       22 # ssh
       2022 # et
-      8080 # http
-      8443 # https
+      80 # http
+      443 # https
     ];
     # allowedUDPPorts = [ ... ];
   };

@@ -1,23 +1,23 @@
 { config, pkgs, epkgs, lib, ... }:
 {
-  users.users.dudeofawesome = {
-    description = "Louis Orleans";
+  users.users.boog = {
+    description = "Brian Powell";
     isNormalUser = true;
     shell = pkgs.fish;
     extraGroups = [ "wheel" "docker" ];
-    passwordFile = "/etc/passwd-dudeofawesome";
+    passwordFile = "/etc/passwd-boog";
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINMhI7UVBgKfEK7k2vjE51SBvmlL4tKp6Y54SoI8yDFX"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex"
     ];
   };
 
-  home-manager.users.dudeofawesome = {
-    home.stateVersion = "21.11";
+  home-manager.users.boog = {
+    home.stateVersion = "22.11";
 
     programs.git = {
       enable = true;
-      userName = "Louis Orleans";
-      userEmail = "louis@orleans.io";
+      userName = "Brian Powell";
+      userEmail = "brian@powell.place";
     };
 
     programs.fish = {
@@ -106,19 +106,18 @@
     # TODO: clone the dotfiles & server-admin-scripts repos
     home.file = {
       # TODO: figure out how to make this more flexible in the source path
-      ".gemrc".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.gemrc;
-      ".vim/vimrc".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.vim/vimrc;
-      ".vim/filetype.vim".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.vim/filetype.vim;
-      ".config/fish/completions/et.fish".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/fish/completions/et.fish;
-      ".config/fish/dotfiles-config.fish".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/fish/config.fish;
-      ".config/fish/tide.config.fish".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/fish/tide.config.fish;
-      ".config/tmux/tmux.conf".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/tmux/tmux.conf;
-      ".config/.prettierrc.js".source = /home/dudeofawesome/git/dudeofawesome/dotfiles/home/.config/.prettierrc.js;
+      ".gemrc".source = /home/boog/GitHub/dotfiles/home/.gemrc;
+      ".vim/vimrc".source = /home/boog/GitHub/dotfiles/home/.vim/vimrc;
+      ".config/fish/completions/et.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/completions/et.fish;
+      ".config/fish/dotfiles-config.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/config.fish;
+      ".config/fish/tide.config.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/tide.config.fish;
+      ".config/tmux/tmux.conf".source = /home/boog/GitHub/dotfiles/home/.config/tmux/tmux.conf;
+      ".config/.prettierrc".source = /home/boog/GitHub/dotfiles/home/.config/.prettierrc;
 
-      ".local/bin/docker-logs".source = /home/dudeofawesome/git/dudeofawesome/server-admin-scripts/bin/docker-logs;
-      ".local/bin/docker-ps".source = /home/dudeofawesome/git/dudeofawesome/server-admin-scripts/bin/docker-ps;
-      ".local/bin/docker-top".source = /home/dudeofawesome/git/dudeofawesome/server-admin-scripts/bin/docker-top;
-      ".local/bin/lsdisk".source = /home/dudeofawesome/git/dudeofawesome/server-admin-scripts/bin/lsdisk;
+      ".local/bin/docker-logs".source = /home/dude/GitHub/server-admin-scripts/bin/docker-logs;
+      ".local/bin/docker-ps".source = /home/boog/GitHub/server-admin-scripts/bin/docker-ps;
+      ".local/bin/docker-top".source = /home/boog/GitHub/server-admin-scripts/bin/docker-top;
+      ".local/bin/lsdisk".source = /home/boog/GitHub/server-admin-scripts/bin/lsdisk;
     };
   };
 }
