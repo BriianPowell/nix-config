@@ -105,9 +105,6 @@
       ];
     };
 
-    imports = [
-      # ../pkgs/dotfiles.nix
-    ];
 
     # TODO: clone the dotfiles & server-admin-scripts repos
     home.file = {
