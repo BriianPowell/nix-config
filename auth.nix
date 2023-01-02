@@ -3,13 +3,13 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-# let
-#   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-22.11.tar.gz";
-# in
+let
+  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-22.11.tar.gz";
+in
 {
   imports = [
     # <home-manager/nixos>
-    # (import "${home-manager}/nixos")
+    (import "${home-manager}/nixos")
 
     ./users/boog.nix
   ];
