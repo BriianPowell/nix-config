@@ -18,7 +18,7 @@
 
   boot.initrd = {
     luks.devices."crypt-root" = {
-      device = "/dev/disk/by-uuid/2fb0126c-3434-4d3c-a9a7-58277566dd4a"; # UUID for LUKS Root Volume
+      device = "/dev/disk/by-uuid/e72f47ab-da87-440e-ad02-c3c2dad9a239"; # UUID for LUKS Partion
       preLVM = true;
       keyFile = "/crypt-root-key.bin";
       allowDiscards = true;
@@ -33,7 +33,7 @@
     network.ssh = {
       enable = true;
       port = 22;
-      authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILtyDFLTmU2WK5rsx7Hxd1X7Y2wCxanbTb3rIrGcyHzb" ];
+      authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICT7URJrtAw6z33JVFLeoEW20BT/Et7a1XddM9mBwuFF" ];
       hostKeys = [ "/etc/secrets/initrd/ssh_host_ed25519_key" ];
     };
     availableKernelModules = [
