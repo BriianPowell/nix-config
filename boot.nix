@@ -33,7 +33,7 @@
     network.ssh = {
       enable = true;
       port = 22;
-      authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICT7URJrtAw6z33JVFLeoEW20BT/Et7a1XddM9mBwuFF" ];
+      authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICyoha8WY7Pxd6THy+VbM4y+gvgrCUAx1RKAhDKMl+PE" ];
       hostKeys = [ "/etc/secrets/initrd/ssh_host_ed25519_key" ];
     };
     availableKernelModules = [

@@ -38,8 +38,8 @@ How to do the initial NixOS installtion
     
 1. Mount file systems
     1. sudo mount /dev/vg/root /mnt
-    1. sudo mkdir -p /mnt/boot
-    1. sudo mount /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part1 /mnt/boot
+    1. sudo mkdir -p /mnt/boot/efi
+    1. sudo mount /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part1 /mnt/boot/efi
     1. sudo mkdir /mnt/home
     1. sudo mount /dev/vg/home /mnt/home
     
