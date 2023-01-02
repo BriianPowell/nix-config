@@ -6,9 +6,8 @@
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking.useDHCP = false;
-  networking.interfaces.eno1.useDHCP = true;
-  networking.interfaces.eno2.useDHCP = true;
-  networking.interfaces.idrac.useDHCP = true;
+  networking.interfaces.enp6s0.useDHCP = true;
+  networking.interfaces.enp0s31f6.useDHCP = true;
 
   # Open ports in the firewall.
   networking.firewall = {
