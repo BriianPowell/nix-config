@@ -37,8 +37,8 @@
           src = pkgs.fetchFromGitHub {
             owner = "IlanCosman";
             repo = "tide";
-            rev = "v5.3.0";
-            sha256 = "sha256-B6/0tNk5lb+1nup1dfXhPD2S5PURZyFd8nJJF6shvq4=";
+            rev = "v5.5.1";
+            sha256 = "6833806ba2eaa1a2d72a5015f59c284f06c1d2db";
           };
         }
         {
