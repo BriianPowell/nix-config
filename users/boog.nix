@@ -14,12 +14,6 @@
   home-manager.users.boog = {
     home.stateVersion = "22.11";
 
-    imports = [
-      "${fetchTarball "https://github.com/msteen/nixos-vscode-server/tarball/master"}/modules/vscode-server/home.nix"
-    ];
-
-    services.vscode-server.enable = true;
-
     programs.git = {
       enable = true;
       userName = "Brian Powell";
@@ -104,7 +98,6 @@
         vim-prettier
       ];
     };
-
 
     # TODO: clone the dotfiles & server-admin-scripts repos
     home.file = {
