@@ -21,6 +21,11 @@
     "e1000e"
     "br_netfilter"
     "overlay"
+    "ip_vs"
+    "ip_vs_rr"
+    "ip_vs_wrr"
+    "ip_vs_sh"
+    "nf_conntrack"
   ];
 
   boot.initrd = {
