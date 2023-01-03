@@ -17,6 +17,8 @@ in
     kubeseal
     nvidia-podman
     podman
+
+    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ./k3s-reset-node))
   ];
 
   # Enable Docker daemon.
@@ -58,10 +60,8 @@ in
 
   services.k3s = {
     # https://github.com/NixOS/nixpkgs/pull/176520
-    package = k3s;
     enable = true;
     role = "server";
-    # docker = true;
     extraFlags = toString [
       "--flannel-backend=host-gw"
       "--container-runtime-endpoint unix:///run/containerd/containerd.sock"

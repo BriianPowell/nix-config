@@ -23,22 +23,22 @@
     programs.fish = {
       enable = true;
       plugins = [
-        {
-          name = "fisher";
-          src = pkgs.fetchFromGitHub {
-            owner = "jorgebucaran";
-            repo = "fisher";
-            rev = "4.3.1";
-            sha256 = "sha256-TR01V4Ol7zAj+3hvBj23PGSNjH+EHTcOQSKtA5uneGE";
-          };
-        }
+        # {
+        #   name = "fisher";
+        #   src = pkgs.fetchFromGitHub {
+        #     owner = "jorgebucaran";
+        #     repo = "fisher";
+        #     rev = "4.3.1";
+        #     sha256 = "sha256-TR01V4Ol7zAj+3hvBj23PGSNjH+EHTcOQSKtA5uneGE";
+        #   };
+        # }
         {
           name = "tide";
           src = pkgs.fetchFromGitHub {
             owner = "IlanCosman";
             repo = "tide";
-            rev = "v5.5.1";
-            sha256 = "6833806ba2eaa1a2d72a5015f59c284f06c1d2db";
+            rev = "6833806ba2eaa1a2d72a5015f59c284f06c1d2db";
+            sha256 = "vi4sYoI366FkIonXDlf/eE2Pyjq7E/kOKBrQS+LtE+M=";
           };
         }
         {
@@ -47,7 +47,7 @@
             owner = "oh-my-fish";
             repo = "plugin-pbcopy";
             rev = "e8d78bb01f66246f7996a4012655b8ddbad777c2";
-            sha256 = "sha256-B6/0tNk5lb+1nup1dfXhPD2S5PURZyFd8nJJF6shvq4=";
+            sha256 = "B6/0tNk5lb+1nup1dfXhPD2S5PURZyFd8nJJF6shvq4=";
           };
         }
         {
@@ -56,7 +56,7 @@
             owner = "dudeofawesome";
             repo = "plugin-node-binpath";
             rev = "3d190054a4eb49b1cf656de4e3893ded33ce3023";
-            sha256 = "sha256-8MQQ6LUBNgvUkgXu7ZWmfo2wRghCML4jXVxYUAXiwRc=";
+            sha256 = "8MQQ6LUBNgvUkgXu7ZWmfo2wRghCML4jXVxYUAXiwRc=";
           };
         }
         {
@@ -64,8 +64,8 @@
           src = pkgs.fetchFromGitHub {
             owner = "jorgebucaran";
             repo = "autopair.fish";
-            rev = "1.0.3";
-            sha256 = "sha256-l6WJ2kjDO/TnU9FSigjxk5xFp90xl68gDfggkE/wrlM=";
+            rev = "244bb1ebf74bf944a1ba1338fc1026075003c5e3";
+            sha256 = "s1o188TlwpUQEN3X5MxUlD/2CFCpEkWu83U9O+wg3VU=";
           };
         }
         {
@@ -74,7 +74,7 @@
             owner = "lilyball";
             repo = "nix-env.fish";
             rev = "7b65bd228429e852c8fdfa07601159130a818cfa";
-            sha256 = "sha256-RG/0rfhgq6aEKNZ0XwIqOaZ6K5S4+/Y5EEMnIdtfPhk=";
+            sha256 = "RG/0rfhgq6aEKNZ0XwIqOaZ6K5S4+/Y5EEMnIdtfPhk=";
           };
         }
       ];
