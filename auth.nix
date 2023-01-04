@@ -12,6 +12,7 @@ in
     (import "${home-manager}/nixos")
 
     ./users/boog.nix
+    ./users/louis.nix
   ];
 
   # Define user accounts.

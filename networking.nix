@@ -9,9 +9,10 @@
   networking.interfaces.enp6s0.useDHCP = true;
   networking.interfaces.enp0s31f6.useDHCP = true;
 
+
   # Open ports in the firewall.
   networking.firewall = {
-    enable = false;
+    enable = true;
 
     allowedTCPPorts = [
       22 # ssh
