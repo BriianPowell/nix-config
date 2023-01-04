@@ -1,12 +1,12 @@
 # Nix Server
 
 <details>
-  <summary>##NextJS README</summary>
-# Installation
+  <summary>NixOS Installation</summary>
 
-How to do the initial NixOS installtion
+NixOS Installation with encrypted root using LUKS
+Swap is turned off for this install as it will primarily be using K3S
 
-## Setup boot drive
+## Setup Boot Drive
 
 1. Partition drive
 
@@ -68,9 +68,7 @@ How to do the initial NixOS installtion
 
 </details>
 
-How to do the initial NixOS installtion
-
-## Using unstable
+## Using Unstable Nix Channels
 
 ```sh
 sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
