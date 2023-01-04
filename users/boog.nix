@@ -77,6 +77,15 @@
             sha256 = "RG/0rfhgq6aEKNZ0XwIqOaZ6K5S4+/Y5EEMnIdtfPhk=";
           };
         }
+        {
+          name = "fish-kubectl-aliases";
+          src = pkgs.fetchFromGitHub {
+            owner = "mibmo";
+            repo = "fish-kubectl-aliases";
+            rev = "29a3f686bbd7dc6d6cc5a7be6a50938f72845709";
+            sha256 = "uzUkxjNCyP77El3s9pRBpn6nUudvN3+xQwRuolAQRyg=";
+          };
+        }
       ];
       shellInit = ". ~/.config/fish/dotfiles-config.fish";
     };

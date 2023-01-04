@@ -1,6 +1,10 @@
 { config, pkgs, epkgs, ... }:
+#
+# Resources
+# https://github.com/NixOS/nixpkgs/issues/181790
+# https://github.com/moduon/nixpkgs/blob/60e0d3d73670ef8ddca24aa546a40283e3838e69/nixos/modules/services/cluster/k3s/default.nix
+#
 let
-  # https://github.com/NixOS/nixpkgs/pull/176520
   k3s = pkgs.k3s.overrideAttrs
     (old: rec { buildInputs = old.buildInputs ++ [ pkgs.ipset ]; });
 in
@@ -8,7 +12,7 @@ in
   environment.systemPackages = with pkgs; [
     crun
     docker
-    iptables
+    # iptables
     fluxcd
     helmsman
     k3s
@@ -36,13 +40,11 @@ in
   };
 
   services.k3s = {
-    # https://github.com/NixOS/nixpkgs/pull/176520
     package = k3s;
     enable = true;
     role = "server";
     extraFlags = toString [
       "--disable metrics-server"
-      # "--cluster-init"
       "--data-dir=/var/lib/rancher/k3s"
     ];
   };
@@ -56,16 +58,15 @@ in
   };
 
   # k8s doesn't work with nftables
-  networking.nftables.enable = false;
+  # networking.nftables.enable = false;
   networking.firewall = {
-    package = pkgs.iptables;
+    # package = pkgs.iptables;
 
     allowedTCPPorts = [
-      2379
-      2380
+      2379 # HA with embedded etcd
+      2380 # HA with embedded etcd
       6443 # k8s API server
-      8472
-      10250
+      10250 # Kubelet Metrics
     ];
     allowedUDPPorts = [ 8472 ];
 

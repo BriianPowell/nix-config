@@ -21,7 +21,8 @@ in
 
     users = {
       # root.hashedPassword = "!";
-      root.passwordFile = "/etc/passwd-boog";
+      root.passwordFile = "/etc/passwd-root";
+      boog.passwordFile = "/etc/passwd-boog";
     };
   };
 
