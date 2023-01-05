@@ -1,4 +1,4 @@
-# Nix Server
+# Nix Configuration for Sheol
 
 <details>
   <summary>Installation</summary>
@@ -74,20 +74,6 @@
 
 </details>
 
-## Using Unstable Nix Channels
+## Attribution
 
-```sh
-sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
-sudo nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
-sudo nix-channel --update nixpkgs
-```
-
-## Troubleshooting
-
-### Random issues with Home Manager?
-
-Try updating channels:
-
-```sh
-sudo nix-channel --update
-```
+Inspiration and adoptation from [@DudeofAwesome](https://github.com/dudeofawesome/nix-server). The guy who usually sends me down these rabbit holes. Hoping to turn this repo into a central deployment configuration for my RPi's and other devices.
