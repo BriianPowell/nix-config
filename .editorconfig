@@ -1,8 +1,5 @@
-# EditorConfig helps developers define and maintain consistent coding styles
-#   between different editors and IDEs
-# https://editorconfig.org
-
-root = true
+# EditorConfig helps developers define and maintain consistent coding styles between different editors and IDEs
+# editorconfig.org
 
 [*]
 indent_style = space
@@ -11,7 +8,6 @@ end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
-max_line_length = 80
 
 [*.md]
 trim_trailing_whitespace = false
