@@ -28,6 +28,9 @@
     "nf_conntrack"
   ];
 
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1; # enable for k3s
+  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1; #enable for k3s
+
   boot.initrd = {
     luks.devices."crypt-root" = {
       device = "/dev/disk/by-uuid/32155fc1-0d72-4cf5-a22b-280b8bf6896b"; # UUID for LUKS Disk Partion
