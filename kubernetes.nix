@@ -44,6 +44,7 @@ in
     enable = true;
     role = "server";
     extraFlags = toString [
+      "--disable traefik"
       "--disable metrics-server"
       "--data-dir=/var/lib/rancher/k3s"
     ];
