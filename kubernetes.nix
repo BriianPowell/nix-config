@@ -44,6 +44,7 @@ in
     enable = true;
     role = "server";
     extraFlags = toString [
+      "--flannel-backend=host-gw"
       "--disable traefik"
       "--disable metrics-server"
       "--data-dir=/var/lib/rancher/k3s"
@@ -68,8 +69,13 @@ in
       2380 # HA with embedded etcd
       6443 # k8s API server
       10250 # Kubelet Metrics
+      21063 # Home Assistant
     ];
-    allowedUDPPorts = [ 8472 ];
+
+    allowedUDPPorts = [
+      8472
+      5353 # Home Assistant on k3s
+    ];
 
     trustedInterfaces = [ "cni+" ];
   };
