@@ -12,7 +12,7 @@ in
   environment.systemPackages = with pkgs; [
     crun
     docker
-    # iptables
+    iptables-legacy
     fluxcd
     helmsman
     k3s
@@ -44,7 +44,7 @@ in
     enable = true;
     role = "server";
     extraFlags = toString [
-      "--flannel-backend=host-gw"
+      "--flannel-backend=vxlan"
       "--disable traefik"
       "--disable metrics-server"
       "--data-dir=/var/lib/rancher/k3s"
@@ -56,20 +56,23 @@ in
       "containerd.service"
       "network-online.target"
     ];
-    after = [ "containerd.service" ];
+    after = [
+      "containerd.service"
+      "firewall.service"
+    ];
   };
 
   # k8s doesn't work with nftables
-  # networking.nftables.enable = false;
+  networking.nftables.enable = false;
   networking.firewall = {
-    # package = pkgs.iptables;
+    package = pkgs.iptables-legacy;
 
     allowedTCPPorts = [
       2379 # HA with embedded etcd
       2380 # HA with embedded etcd
       6443 # k8s API server
       10250 # Kubelet Metrics
-      21063 # Home Assistant
+      21063 # Home Assistant on k3s
     ];
 
     allowedUDPPorts = [
@@ -77,6 +80,10 @@ in
       5353 # Home Assistant on k3s
     ];
 
-    trustedInterfaces = [ "cni+" ];
+    extraCommands = ''
+      iptables -A INPUT -i cni+ -j ACCEPT
+    '';
+
+    # trustedInterfaces = [ "cni+" ];
   };
 }
