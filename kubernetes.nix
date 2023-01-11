@@ -12,7 +12,7 @@ in
   environment.systemPackages = with pkgs; [
     crun
     docker
-    iptables-legacy
+    # iptables-legacy
     fluxcd
     helmsman
     k3s
@@ -44,7 +44,7 @@ in
     enable = true;
     role = "server";
     extraFlags = toString [
-      "--flannel-backend=vxlan"
+      # "--flannel-backend=host-gw"
       "--disable traefik"
       "--disable metrics-server"
       "--data-dir=/var/lib/rancher/k3s"
@@ -63,9 +63,9 @@ in
   };
 
   # k8s doesn't work with nftables
-  networking.nftables.enable = false;
+  # networking.nftables.enable = false;
   networking.firewall = {
-    package = pkgs.iptables-legacy;
+    # package = pkgs.iptables-legacy;
 
     allowedTCPPorts = [
       2379 # HA with embedded etcd
@@ -80,10 +80,10 @@ in
       5353 # Home Assistant on k3s
     ];
 
-    extraCommands = ''
-      iptables -A INPUT -i cni+ -j ACCEPT
-    '';
-
-    # trustedInterfaces = [ "cni+" ];
+    trustedInterfaces = [
+      "enp6s0"
+      "enp0s31f6"
+      "cni+"
+    ];
   };
 }
