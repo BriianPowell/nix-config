@@ -44,23 +44,22 @@ in
     enable = true;
     role = "server";
     extraFlags = toString [
-      # "--flannel-backend=host-gw"
+      "--flannel-backend=host-gw"
       "--disable traefik"
       "--disable metrics-server"
       "--data-dir=/var/lib/rancher/k3s"
     ];
   };
 
-  systemd.services.k3s = {
-    wants = [
-      "containerd.service"
-      "network-online.target"
-    ];
-    after = [
-      "containerd.service"
-      "firewall.service"
-    ];
-  };
+  # systemd.services.k3s = {
+  #   wants = [
+  #     "containerd.service"
+  #     "network-online.target"
+  #   ];
+  #   after = [
+  #     "containerd.service"
+  #   ];
+  # };
 
   # k8s doesn't work with nftables
   # networking.nftables.enable = false;
@@ -83,7 +82,8 @@ in
     trustedInterfaces = [
       "enp6s0"
       "enp0s31f6"
-      "cni+"
+      "cni0"
+      "lo"
     ];
   };
 }

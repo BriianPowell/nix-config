@@ -12,8 +12,6 @@
   networking.interfaces.enp6s0.useDHCP = true;
   networking.interfaces.enp0s31f6.useDHCP = true;
 
-  # networking.useNetworkd = true;
-
   # Open ports in the firewall.
   networking.firewall = {
     enable = true;
@@ -26,9 +24,15 @@
     ];
   };
 
-  # mDNS needed for Home Assistant
+  # mDNS implementation for Home Assistant in K3S
   # https://nixos.org/manual/nixos/unstable/options.html#opt-services.avahi.enable
-  services.avahi.enable = false;
+  services.avahi.enable = false; # USE SYSTEMD-RESOLVED
+
+  networking.networkmanager = {
+    enable = true;
+    dns = "systemd-resolved";
+    dhcp = "dhcpcd";
+  };
 
   services.resolved = {
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.enable
