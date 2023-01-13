@@ -20,11 +20,15 @@
     ./auth.nix
     ./disks.nix
     ./boot.nix
-    ./networking.nix
     ./fs.nix
 
+    ./networking.nix
     ./kubernetes.nix
+
+    (fetchTarball "https://github.com/msteen/nixos-vscode-server/tarball/master")
   ];
+
+  services.vscode-server.enable = true;
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
