@@ -10,10 +10,9 @@
   boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
   boot.kernelParams = [ "nohibernate" ];
 
-
-  # TODO: IMPORT ENCRYPTED ZFS POOL
-
+  # Prompt to Import Encrypted Zpool at boot
   boot.zfs.requestEncryptionCredentials = [ "moriyya" ];
+
   services.zfs.trim.enable = true;
   services.zfs.autoScrub.enable = true;
   # TODO: services.sanoid
