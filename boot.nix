@@ -48,21 +48,23 @@
     };
 
     # Enable SSH in initrd. Useful for unlocking LUKS remotely.
-    network.enable = true;
-    network.ssh = {
+    network = {
       enable = true;
-      port = 2222;
-      authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICyoha8WY7Pxd6THy+VbM4y+gvgrCUAx1RKAhDKMl+PE" ];
-      hostKeys = [ "/etc/secrets/initrd/ssh_host_ed25519_key" ];
+      ssh = {
+        enable = true;
+        port = 2222;
+        authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICyoha8WY7Pxd6THy+VbM4y+gvgrCUAx1RKAhDKMl+PE" ];
+        hostKeys = [ "/etc/secrets/initrd/ssh_host_ed25519_key" ];
+      };
+      availableKernelModules = [
+        "aesni_intel"
+        "cryptd"
+        # TODO: add a NIC module
+      ];
+      kernelModules = [
+        "r8169"
+        "e1000e"
+      ];
     };
-    availableKernelModules = [
-      "aesni_intel"
-      "cryptd"
-      # TODO: add a NIC module
-    ];
-    kernelModules = [
-      "r8169"
-      "e1000e"
-    ];
   };
 }

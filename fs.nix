@@ -10,8 +10,11 @@
   boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
   boot.kernelParams = [ "nohibernate" ];
 
-  boot.zfs.extraPools = [ "moriyya" ];
 
-  # TODO: services.zfs.trim.enable = true;
+  # TODO: IMPORT ENCRYPTED ZFS POOL
+
+  boot.zfs.requestEncryptionCredentials = [ "moriyya" ];
+  services.zfs.trim.enable = true;
+  services.zfs.autoScrub.enable = true;
   # TODO: services.sanoid
 }

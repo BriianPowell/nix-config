@@ -74,6 +74,16 @@
 
 </details>
 
+## Failed FDE Password
+
+When grub enters the rescue shell, use the following commands
+
+```sh
+cryptomount hdX,gptY    # Device to mount: drive X, GPT partition Y, this forces the re-prompt.
+insmod normal           # Load the normal mode boot module.
+normal                  # Enter normal mode and display the GRUB menu.
+```
+
 ## Attribution
 
 Inspiration and adoptation from [@DudeofAwesome](https://github.com/dudeofawesome/nix-server). The guy who usually sends me down these rabbit holes. Hoping to turn this repo into a central deployment configuration for my RPi's and other devices.
