@@ -11,7 +11,7 @@
   boot.kernelParams = [ "nohibernate" ];
 
   # Prompt to Import Encrypted Zpool at boot
-  boot.zfs.requestEncryptionCredentials = [ "moriyya" ];
+  boot.zfs.extraPools = [ "moriyya" ];
 
   services.zfs.trim.enable = true;
   services.zfs.autoScrub.enable = true;

@@ -12,7 +12,7 @@ in
   environment.systemPackages = with pkgs; [
     crun
     docker
-    # iptables-legacy
+    iptables
     fluxcd
     helmsman
     k3s
@@ -62,9 +62,9 @@ in
   # };
 
   # k8s doesn't work with nftables
-  # networking.nftables.enable = false;
+  networking.nftables.enable = false;
   networking.firewall = {
-    # package = pkgs.iptables-legacy;
+    package = pkgs.iptables;
 
     allowedTCPPorts = [
       2379 # HA with embedded etcd
