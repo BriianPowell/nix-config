@@ -59,7 +59,7 @@
     3. sudo chmod 000 /mnt/etc/secrets/initrd/*.bin
     4. sudo ssh-keygen -t ed25519 -N "" -f /mnt/etc/secrets/initrd/ssh_host_ed25519_key
 
-  8. mkpasswd -m sha-512 | sudo tee /mnt/etc/passwd-boog
+  8. mkpasswd -m sha-512 | sudo tee /mnt/etc/secrets/passwd-boog
 
   9. sudo nixos-generate-config --root /mnt
 

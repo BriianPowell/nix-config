@@ -5,7 +5,7 @@
     isNormalUser = true;
     shell = pkgs.fish;
     extraGroups = [ "wheel" "docker" ];
-    passwordFile = "/etc/passwd-boog";
+    passwordFile = "/etc/secrets/passwd-boog";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex"
     ];
