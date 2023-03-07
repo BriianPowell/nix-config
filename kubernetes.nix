@@ -49,15 +49,11 @@ in
       "--disable metrics-server"
       "--data-dir=/var/lib/rancher/k3s"
       "--etcd-expose-metrics"
+      "--kube-proxy-arg --metrics-bind-address=0.0.0.0"
+      "--kube-controller-manager-arg --bind-address=0.0.0.0"
+      "--kube-scheduler-arg --bind-address=0.0.0.0"
     ];
   };
-
-  # ExtraFlags that need to be set in the config.yaml
-  # "--kube-proxy-arg metrics-bind-address=0.0.0.0"
-  # "--kube-controller-manager-arg address=0.0.0.0"
-  # "--kube-controller-manager-arg bind-address=0.0.0.0"
-  # "--kube-scheduler-arg address=0.0.0.0"
-  # "--kube-scheduler-arg --bind-address=0.0.0.0"
 
   # systemd.services.k3s = {
   #   wants = [
