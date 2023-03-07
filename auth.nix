@@ -29,6 +29,14 @@ in
   # Don't require password for sudo.
   security.sudo.wheelNeedsPassword = false;
 
+  # Fix for 'Too many open files error'
+  security.pam.loginLimits = [{
+    domain = "*";
+    type = "soft";
+    item = "nofile";
+    value = "8192";
+  }];
+
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;
