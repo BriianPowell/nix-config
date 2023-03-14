@@ -33,6 +33,8 @@
     "net.bridge-nf-call-iptables" = 1;
     "net.ipv4.ip_forward" = 1; # enable for k3s
     "net.ipv6.conf.all.forwarding" = 1; #enable for k3s
+    "fs.inotify.max_user_instances" = 8192;
+    "fs.inotify.max_user_watches" = 524288;
   };
 
   boot.initrd = {
