@@ -2,53 +2,18 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
-let
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-22.11.tar.gz";
-in
-{
-  imports = [
-    # <home-manager/nixos>
-    (import "${home-manager}/nixos")
+# { config, pkgs, ... }:
+# let
+#   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-22.11.tar.gz";
+# in
+# {
+#   imports = [
+#     # <home-manager/nixos>
+#     (import "${home-manager}/nixos")
 
-    ./users/boog.nix
-    ./users/louis.nix
-  ];
+#     ./users/boog.nix
+#     ./users/louis.nix
+#   ];
 
-  # Define user accounts.
-  users = {
-    mutableUsers = false;
 
-    users = {
-      # root.hashedPassword = "!";
-      root.passwordFile = "/etc/secrets/passwd-root";
-      boog.passwordFile = "/etc/secrets/passwd-boog";
-    };
-  };
-
-  # Don't require password for sudo.
-  security.sudo.wheelNeedsPassword = false;
-
-  # Fix for 'Too many open files error'
-  security.pam.loginLimits = [{
-    domain = "*";
-    type = "soft";
-    item = "nofile";
-    value = "8192";
-  }];
-
-  # Enable the OpenSSH daemon.
-  services.openssh = {
-    enable = true;
-
-    permitRootLogin = "no";
-
-    # disable password authentication
-    passwordAuthentication = false;
-    # challengeResponseAuthentication = false;
-    kbdInteractiveAuthentication = false;
-
-    forwardX11 = false;
-  };
-  services.eternal-terminal.enable = true;
-}
+# }

@@ -84,9 +84,16 @@ insmod normal           # Load the normal mode boot module.
 normal                  # Enter normal mode and display the GRUB menu.
 ```
 
-## Commans
+## Nix Flake Packages
 
-- `nixos-rebuild switch` update nix environment with latest configruation
+- [Home Manager](https://github.com/nix-community/home-manager)
+- [Flake Utils Plus](https://github.com/gytis-ivaskevicius/flake-utils-plus/tree/master)
+- [VSCode Server](https://github.com/msteen/nixos-vscode-server)
+
+## Commands
+
+- `nixos-rebuild switch` update nix environment with latest configuration
+- `nixos-rebuild switch --flake '.#sheol'`
 
 ## Attribution
 

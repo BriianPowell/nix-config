@@ -1,49 +1,53 @@
 {
-  description = "Nix 4 Lyfe";
+  description = "Nix Configurations";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
+    latest.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    utils = {
+      url = "github:gytis-ivaskevicius/flake-utils-plus";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.utils.follows = "utils";
     };
+
+    vscode-server = {
+      url = "github:msteen/nixos-vscode-server";
+    };
+
+    nixos-hardware.url = "github:nixos/nixos-hardware/master";
   };
 
-  outputs = { nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, latest, utils, home-manager, vscode-server, nixos-hardware }@inputs:
     let
-      inherit (nixpkgs) lib;
-
-      util = import ./lib {
-        inherit system pkgs home-manager lib; overlays = (pkgs.overlays);
-      };
-
-      inherit (util) user;
-      inherit (util) host;
-
-      pkgs = import nixpkgs {
-        inherit system;
-        # config.allowUnfree = true;
-        overlays = [ ];
-      };
-
-      system = "x86_64-linux";
+      pkgs = self.pkgs.x86_64-linux.nixpkgs;
+      mkApp = utils.lib.mkApp;
+      suites = import ./suites.nix { inherit utils; };
     in
-    {
-      #   packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
-      #   packages.x86_64-linux.default = self.packages.x86_64-linux.hello;
+    with suites.nixosModules;
+    utils.lib.mkFlake {
+      inherit self inputs;
+      inherit (suites) nixosModules;
 
-      homeManagerConfigurations = {
-        boog = user.mkHMUser {
-          # ...
-        };
+      supportedSystems = [ "x86_64-linux" ];
+      channelsConfig = {
+        allowUnfree = true;
       };
 
-      nixosConfigurations = {
-        sheol = host.mkHost {
-          # ...
-        };
+      hostDefaults = {
+        modules = [
+          home-manager.nixosModule
+          vscode-server.nixosModule
+        ] ++ suites.sharedModules;
+      };
+
+      hosts = {
+        sheol.modules = [ ./hosts/sheol ];
+        abaddon.modules = [ ./hosts/abaddon ];
       };
     };
-
 }
