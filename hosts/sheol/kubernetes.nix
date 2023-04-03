@@ -10,8 +10,8 @@ let
 in
 {
   environment.systemPackages = with pkgs; [
-    crun
-    docker
+    # crun
+    # docker
     iptables
     fluxcd
     helmsman
@@ -20,9 +20,9 @@ in
     kubernetes-helm
     kubeseal
     nvidia-podman
-    podman
+    # podman
 
-    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ./scripts/k3s-reset-node))
+    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../scripts/k3s-reset-node))
   ];
 
   # Enable Docker daemon.

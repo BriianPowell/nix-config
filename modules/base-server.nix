@@ -29,6 +29,8 @@
 
   sound.enable = false;
 
+  time.timeZone = lib.mkDefault "America/Los_Angeles";
+
   networking = {
     defaultGateway = "10.0.0.1";
     nameservers = [
@@ -57,8 +59,6 @@
       dhcp = "dhcpcd";
     };
   };
-
-  time.timeZone = lib.mkDefault "America/Los_Angeles";
 
   # mDNS implementation for Home Assistant in K3S
   # https://nixos.org/manual/nixos/unstable/options.html#opt-services.avahi.enable

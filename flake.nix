@@ -2,8 +2,9 @@
   description = "Nix Configurations";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
+    nixos.url = "github:nixos/nixpkgs/nixos-22.11";
     latest.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.follows = "latest";
 
     utils = {
       url = "github:gytis-ivaskevicius/flake-utils-plus";
@@ -37,6 +38,10 @@
       channelsConfig = {
         allowUnfree = true;
       };
+
+      sharedOverlays = [
+        self.overlay
+      ];
 
       hostDefaults = {
         modules = [
