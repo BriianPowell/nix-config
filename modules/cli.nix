@@ -26,6 +26,9 @@
 
     jq # https://stedolan.github.io/jq/
     ripgrep # https://github.com/BurntSushi/ripgrep
+
+    fishPlugins.tide
+    fishPlugins.autopair-fish
   ];
 
   programs.fish.enable = true;

@@ -10,23 +10,13 @@
 
   programs.fish = {
     plugins = [
-      # {
-      #   name = "fisher";
-      #   src = pkgs.fetchFromGitHub {
-      #     owner = "jorgebucaran";
-      #     repo = "fisher";
-      #     rev = "4.3.1";
-      #     sha256 = "sha256-TR01V4Ol7zAj+3hvBj23PGSNjH+EHTcOQSKtA5uneGE";
-      #   };
-      # }
       {
         name = "tide";
-        src = pkgs.fetchFromGitHub {
-          owner = "IlanCosman";
-          repo = "tide";
-          rev = "6833806ba2eaa1a2d72a5015f59c284f06c1d2db";
-          sha256 = "vi4sYoI366FkIonXDlf/eE2Pyjq7E/kOKBrQS+LtE+M=";
-        };
+        src = pkgs.fishPlugins.tide.src;
+      }
+      {
+        name = "autopair.fish";
+        src = pkgs.pkgs.fishPlugins.autopair-fish.src;
       }
       {
         name = "pbcopy";
@@ -44,15 +34,6 @@
           repo = "plugin-node-binpath";
           rev = "3d190054a4eb49b1cf656de4e3893ded33ce3023";
           sha256 = "8MQQ6LUBNgvUkgXu7ZWmfo2wRghCML4jXVxYUAXiwRc=";
-        };
-      }
-      {
-        name = "autopair.fish";
-        src = pkgs.fetchFromGitHub {
-          owner = "jorgebucaran";
-          repo = "autopair.fish";
-          rev = "244bb1ebf74bf944a1ba1338fc1026075003c5e3";
-          sha256 = "s1o188TlwpUQEN3X5MxUlD/2CFCpEkWu83U9O+wg3VU=";
         };
       }
       {
@@ -74,7 +55,7 @@
         };
       }
     ];
-    shellInit = ". ~/.config/fish/dotfiles-config.fish";
+    shellInit = ". ~/.config/fish/config.fish";
   };
 
   xdg.configFile."fish/conf.d/plugin-tide.fish".text = lib.mkAfter ''
@@ -96,19 +77,19 @@
   };
 
   # TODO: clone the dotfiles & server-admin-scripts repos
-  # home.file = {
-  #   # TODO: figure out how to make this more flexible in the source path
-  #   ".gemrc".source = /home/boog/GitHub/dotfiles/home/.gemrc;
-  #   ".vim/vimrc".source = /home/boog/GitHub/dotfiles/home/.vim/vimrc;
-  #   ".config/fish/completions/et.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/completions/et.fish;
-  #   ".config/fish/dotfiles-config.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/config.fish;
-  #   ".config/fish/tide.config.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/tide.config.fish;
-  #   ".config/tmux/tmux.conf".source = /home/boog/GitHub/dotfiles/home/.config/tmux/tmux.conf;
-  #   ".config/.prettierrc".source = /home/boog/GitHub/dotfiles/home/.config/.prettierrc;
+  home.file = {
+    # TODO: figure out how to make this more flexible in the source path
+    ".gemrc".source = /home/boog/GitHub/dotfiles/home/.gemrc;
+    ".vim/vimrc".source = /home/boog/GitHub/dotfiles/home/.vim/vimrc;
+    ".config/fish/completions/et.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/completions/et.fish;
+    ".config/fish/config.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/config.fish;
+    ".config/fish/tide.config.fish".source = /home/boog/GitHub/dotfiles/home/.config/fish/tide.config.fish;
+    ".config/tmux/tmux.conf".source = /home/boog/GitHub/dotfiles/home/.config/tmux/tmux.conf;
+    ".config/.prettierrc".source = /home/boog/GitHub/dotfiles/home/.config/.prettierrc;
 
-  #   ".local/bin/docker-logs".source = /home/boog/GitHub/server-admin-scripts/bin/docker-logs;
-  #   ".local/bin/docker-ps".source = /home/boog/GitHub/server-admin-scripts/bin/docker-ps;
-  #   ".local/bin/docker-top".source = /home/boog/GitHub/server-admin-scripts/bin/docker-top;
-  #   ".local/bin/lsdisk".source = /home/boog/GitHub/server-admin-scripts/bin/lsdisk;
-  # };
+    ".local/bin/docker-logs".source = /home/boog/GitHub/server-admin-scripts/bin/docker-logs;
+    ".local/bin/docker-ps".source = /home/boog/GitHub/server-admin-scripts/bin/docker-ps;
+    ".local/bin/docker-top".source = /home/boog/GitHub/server-admin-scripts/bin/docker-top;
+    ".local/bin/lsdisk".source = /home/boog/GitHub/server-admin-scripts/bin/lsdisk;
+  };
 }
