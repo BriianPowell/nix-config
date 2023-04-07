@@ -1,16 +1,5 @@
 { config, pkgs, epkgs, lib, ... }:
 {
-  users.users.louis = {
-    description = "Louis Orleans";
-    isNormalUser = true;
-    shell = pkgs.fish;
-    extraGroups = [ "wheel" "docker" ];
-    # passwordFile = "/etc/secrets/passwd-louis";
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXZP1BhadI1hxgexqZX4p5TCARSxnSwC7zXFoXWtKeH"
-    ];
-  };
-
   home-manager.users.louis = {
     home.stateVersion = "22.11";
 

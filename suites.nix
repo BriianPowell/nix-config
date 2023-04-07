@@ -8,7 +8,10 @@ let
     ./modules/security.nix
     ./modules/tcp-hardening.nix
     ./modules/tcp-optimization.nix
+    ./modules/cli.nix
     ./modules/users.nix
+
+    ./home/boog.nix
   ];
   sharedModules = with nixosModules; [
     base-server
@@ -19,6 +22,7 @@ let
     tcp-hardening
     tcp-optimization
     users
+    cli
 
     #utils.nixosModules.saneFlakeDefaults
     {
@@ -26,32 +30,28 @@ let
       home-manager.useUserPackages = true;
     }
   ];
-  # desktopModules = with nixosModules; [
-  #   base-desktop
-  #   cli
-  #   cli-extras
-  #   #./hosts/work/i3
-  #   sway
-  #   ({ pkgs, lib, config, ... }: {
-  #     nix.generateRegistryFromInputs = true;
-  #     nix.linkInputs = true;
-  #     #nix.generateNixPathFromInputs = true;
-  #     home-manager.users.gytis = import ./home-manager/sway.nix;
-  #     boot.kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_5_15;
-  #     #boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
-  #     #boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
-  #     nixpkgs.config.allowBroken = false;
-  #     hardware.bluetooth.enable = true;
-  #     nix.extraOptions = ''
-  #       http-connections = 50
-  #       log-lines = 50
-  #       warn-dirty = false
-  #       http2 = true
-  #       allow-import-from-derivation = true
-  #     '';
-  #   })
-  # ];
+  userModules = with nixosModules; [
+    cli
+
+    ({ pkgs, lib, config, ... }: {
+      nix.generateRegistryFromInputs = true;
+      nix.linkInputs = true;
+      #nix.generateNixPathFromInputs = true;
+      home-manager.users.gytis = import ./home/boog.nix;
+      #boot.kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_5_15;
+      #boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
+      #boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
+      nixpkgs.config.allowBroken = false;
+      # nix.extraOptions = ''
+      #   http-connections = 50
+      #   log-lines = 50
+      #   warn-dirty = false
+      #   http2 = true
+      #   allow-import-from-derivation = true
+      # '';
+    })
+  ];
 in
 {
-  inherit nixosModules sharedModules; # desktopModules;
+  inherit nixosModules sharedModules userModules;
 }

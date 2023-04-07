@@ -94,6 +94,7 @@ normal                  # Enter normal mode and display the GRUB menu.
 
 - `nixos-rebuild switch` update nix environment with latest configuration
 - `nixos-rebuild switch --flake '.#sheol'`
+- `nixos-rebuild dry-activate --flake .#sheol`
 
 ## Attribution
 

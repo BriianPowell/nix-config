@@ -1,16 +1,5 @@
 { config, pkgs, epkgs, lib, ... }:
 {
-  users.users.boog = {
-    description = "Brian Powell";
-    isNormalUser = true;
-    shell = pkgs.fish;
-    extraGroups = [ "wheel" "docker" ];
-    passwordFile = "/etc/secrets/passwd-boog";
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex"
-    ];
-  };
-
   home-manager.users.boog = {
     home.stateVersion = "22.11";
 

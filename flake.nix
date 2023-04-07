@@ -1,10 +1,10 @@
 {
-  description = "Nix Configurations";
+  description = "BriianPowell's Nix Configurations";
 
   inputs = {
-    nixos.url = "github:nixos/nixpkgs/nixos-22.11";
-    latest.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs.follows = "latest";
+    stable.url = "github:nixos/nixpkgs/nixos-22.11";
+    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.follows = "unstable";
 
     utils = {
       url = "github:gytis-ivaskevicius/flake-utils-plus";
@@ -23,7 +23,7 @@
     nixos-hardware.url = "github:nixos/nixos-hardware/master";
   };
 
-  outputs = { self, nixpkgs, latest, utils, home-manager, vscode-server, nixos-hardware }@inputs:
+  outputs = { self, nixpkgs, stable, unstable, utils, home-manager, vscode-server, nixos-hardware }@inputs:
     let
       pkgs = self.pkgs.x86_64-linux.nixpkgs;
       mkApp = utils.lib.mkApp;
@@ -39,20 +39,46 @@
         allowUnfree = true;
       };
 
-      sharedOverlays = [
+      sharedOverlays = with inputs; [
         self.overlay
       ];
 
+      channels = {
+        stable = {
+          input = stable;
+        };
+        unstable = {
+          input = unstable;
+          overlaysBuilder = channels: [
+            (final: prev: {
+              inherit (channels) stable;
+            })
+          ];
+        };
+      };
+
       hostDefaults = {
         modules = [
-          home-manager.nixosModule
+          home-manager.nixosModule.home-manager
           vscode-server.nixosModule
         ] ++ suites.sharedModules;
       };
 
       hosts = {
-        sheol.modules = [ ./hosts/sheol ];
-        abaddon.modules = [ ./hosts/abaddon ];
+        sheol = {
+          modules = userModules ++ [ ./hosts/sheol ];
+        };
+        abaddon = {
+          modules = [ ./hosts/abaddon ];
+        };
       };
+
+      outputsBuilder = channels:
+        let pkgs = channels.unstable; in
+        {
+          devShells = mkShell {
+            buildInputs = [ git transcrypt ];
+          };
+        };
     };
 }
