@@ -37,7 +37,7 @@ let
       nix.generateRegistryFromInputs = true;
       nix.linkInputs = true;
       #nix.generateNixPathFromInputs = true;
-      home-manager.users.gytis = import ./home/boog.nix;
+      home-manager.users.boog = import ./home/boog.nix;
       #boot.kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_5_15;
       #boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
       #boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;

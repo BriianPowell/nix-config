@@ -1,4 +1,5 @@
 { pkgs, lib, ... }: {
+  system.stateVersion = "22.11";
   sound.enable = false;
 
   time.timeZone = lib.mkDefault "America/Los_Angeles";

@@ -10,7 +10,6 @@
     };
 
     programs.fish = {
-      enable = true;
       plugins = [
         {
           name = "tide";

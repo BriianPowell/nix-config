@@ -22,7 +22,7 @@ in
     nvidia-podman
     # podman
 
-    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../scripts/k3s-reset-node))
+    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
   ];
 
   # Enable Docker daemon.

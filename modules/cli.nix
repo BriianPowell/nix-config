@@ -27,4 +27,6 @@
     jq # https://stedolan.github.io/jq/
     ripgrep # https://github.com/BurntSushi/ripgrep
   ];
+
+  programs.fish.enable = true;
 }

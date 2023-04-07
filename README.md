@@ -90,6 +90,7 @@ normal                  # Enter normal mode and display the GRUB menu.
 - [Flake Utils Plus](https://github.com/gytis-ivaskevicius/flake-utils-plus/tree/master)
 - [VSCode Server](https://github.com/msteen/nixos-vscode-server)
 
+
 ## Commands
 
 - `nixos-rebuild switch` update nix environment with latest configuration

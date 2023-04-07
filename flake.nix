@@ -11,7 +11,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.utils.follows = "utils";
     };
@@ -20,7 +20,7 @@
       url = "github:msteen/nixos-vscode-server";
     };
 
-    nixos-hardware.url = "github:nixos/nixos-hardware/master";
+    nixos-hardware.url = "github:nixos/nixos-hardware";
   };
 
   outputs = { self, nixpkgs, stable, unstable, utils, home-manager, vscode-server, nixos-hardware }@inputs:
@@ -39,10 +39,6 @@
         allowUnfree = true;
       };
 
-      sharedOverlays = with inputs; [
-        self.overlay
-      ];
-
       channels = {
         stable = {
           input = stable;
@@ -51,26 +47,26 @@
           input = unstable;
           overlaysBuilder = channels: [
             (final: prev: {
-              inherit (channels) stable;
+              # inherit (channels) stable;
             })
           ];
         };
       };
 
+      # sharedOverlays = [
+      #   self.overlay
+      # ];
+
       hostDefaults = {
         modules = [
-          home-manager.nixosModule.home-manager
+          home-manager.nixosModules.home-manager
           vscode-server.nixosModule
         ] ++ suites.sharedModules;
       };
 
       hosts = {
-        sheol = {
-          modules = userModules ++ [ ./hosts/sheol ];
-        };
-        abaddon = {
-          modules = [ ./hosts/abaddon ];
-        };
+        sheol.modules = suites.userModules ++ [ ./hosts/sheol ];
+        abaddon.modules = [ ./hosts/abaddon ];
       };
 
       outputsBuilder = channels:
