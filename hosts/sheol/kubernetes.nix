@@ -10,8 +10,8 @@ let
 in
 {
   environment.systemPackages = with pkgs; [
-    crun
-    docker
+    # crun
+    # docker
     iptables
     fluxcd
     helmsman
@@ -20,24 +20,24 @@ in
     kubernetes-helm
     kubeseal
     nvidia-podman
-    podman
+    # podman
 
-    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ./scripts/k3s-reset-node))
+    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
   ];
 
   # Enable Docker daemon.
-  virtualisation.docker = {
-    enable = false;
-    # enableNvidia = true;
-    # TODO: this might not be necessary
-    # extraOptions = "--default-runtime=nvidia";
-    autoPrune.enable = true;
-  };
+  # virtualisation.docker = {
+  #   enable = false;
+  #   # enableNvidia = true;
+  #   # TODO: this might not be necessary
+  #   # extraOptions = "--default-runtime=nvidia";
+  #   autoPrune.enable = true;
+  # };
 
-  virtualisation.podman = {
-    enable = true;
-    enableNvidia = true;
-  };
+  # virtualisation.podman = {
+  #   enable = true;
+  #   enableNvidia = true;
+  # };
 
   services.k3s = {
     package = k3s;
