@@ -22,6 +22,7 @@
     htop # https://github.com/htop-dev/htop/
     bottom # https://github.com/ClementTsang/bottom
     bind # https://www.isc.org/bind/
+    # dig # https://www.isc.org/bind/
     pciutils # https://mj.ucw.cz/sw/pciutils/
 
     jq # https://stedolan.github.io/jq/
