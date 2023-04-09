@@ -60,4 +60,8 @@
     vscode-server.enable = true;
     eternal-terminal.enable = true;
   };
+
+  programs = {
+    fish.enable = true;
+  };
 }

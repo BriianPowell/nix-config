@@ -4,10 +4,6 @@
 # https://github.com/NixOS/nixpkgs/issues/181790
 # https://github.com/moduon/nixpkgs/blob/60e0d3d73670ef8ddca24aa546a40283e3838e69/nixos/modules/services/cluster/k3s/default.nix
 #
-let
-  k3s = pkgs.k3s.overrideAttrs
-    (old: rec { buildInputs = old.buildInputs ++ [ pkgs.ipset ]; });
-in
 {
   environment.systemPackages = with pkgs; [
     # crun
@@ -40,7 +36,6 @@ in
   # };
 
   services.k3s = {
-    package = k3s;
     enable = true;
     role = "server";
     extraFlags = toString [
@@ -55,21 +50,7 @@ in
     ];
   };
 
-  # systemd.services.k3s = {
-  #   wants = [
-  #     "containerd.service"
-  #     "network-online.target"
-  #   ];
-  #   after = [
-  #     "containerd.service"
-  #   ];
-  # };
-
-  # k8s doesn't work with nftables
-  networking.nftables.enable = false;
   networking.firewall = {
-    package = pkgs.iptables;
-
     allowedTCPPorts = [
       2379 # HA with embedded etcd
       2380 # HA with embedded etcd

@@ -8,13 +8,10 @@
   environment.systemPackages = with pkgs; [
     zfs
     # cudaPackages.cudatoolkit # TODO: we might not need this
-    # nodePackages.prettier
-    # helix # https://helix-editor.com/
-    # httpie # https://httpie.io/
   ];
 
-
   services.xserver.videoDrivers = [ "nvidia" ];
+
   hardware.bluetooth.enable = false;
   hardware.opengl.enable = true;
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;

@@ -7,16 +7,22 @@
     # nodejs-16_x
 
     # Terminal Tools
-    tmux # https://github.com/tmux/tmux
     fish # https://fishshell.com/
-    git # https://git-scm.com/
     eternal-terminal # https://eternalterminal.dev/
+    tmux # https://github.com/tmux/tmux
+    git # https://git-scm.com/
     bat # https://github.com/sharkdp/bat
     lynx # https://lynx.invisible-island.net/
     most # https://www.jedsoft.org/most/index.html
     ncdu # https://dev.yorhel.nl/ncdu
     curl # https://curl.se/
     wget # https://www.gnu.org/software/wget/
+    # httpie # https://httpie.io/
+
+    jq # https://stedolan.github.io/jq/
+    ripgrep # https://github.com/BurntSushi/ripgrep
+
+    # helix # https://helix-editor.com/
 
     # System Monitoring
     htop # https://github.com/htop-dev/htop/
@@ -25,12 +31,8 @@
     # dig # https://www.isc.org/bind/
     pciutils # https://mj.ucw.cz/sw/pciutils/
 
-    jq # https://stedolan.github.io/jq/
-    ripgrep # https://github.com/BurntSushi/ripgrep
-
+    # Terminal Plugins
     fishPlugins.tide
     fishPlugins.autopair-fish
   ];
-
-  programs.fish.enable = true;
 }
