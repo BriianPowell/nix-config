@@ -10,14 +10,12 @@
 
   1. Partition drive
 
-    ```sh
     sudo parted /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0
     mklabel gpt
     mkpart ESP fat32 1MiB 512MiB
     mkpart primary 512MiB 100%
     set 1 esp on
     quit
-    ```
 
   2. Create a LUKS key
 

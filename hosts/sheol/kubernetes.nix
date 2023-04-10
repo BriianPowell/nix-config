@@ -8,7 +8,7 @@
   environment.systemPackages = with pkgs; [
     # crun
     # docker
-    iptables
+    # podman
     fluxcd
     helmsman
     k3s
@@ -16,7 +16,6 @@
     kubernetes-helm
     kubeseal
     nvidia-podman
-    # podman
 
     (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
   ];
