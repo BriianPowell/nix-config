@@ -1,0 +1,25 @@
+{
+  "name": "nix-config",
+  "version": "1.0.0",
+  "description": "<details>   <summary>Installation</summary>",
+  "main": ".prettierrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dudeofawesome/nix-config.git"
+  },
+  "keywords": [
+    "nixos"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/dudeofawesome/nix-config/issues"
+  },
+  "homepage": "https://github.com/dudeofawesome/nix-config#readme",
+  "dependencies": {
+    "@dudeofawesome/code-style": "^1.2.0"
+  }
+}
