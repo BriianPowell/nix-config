@@ -16,7 +16,7 @@
           repo = "plugin-pbcopy";
           rev = "e8d78bb01f66246f7996a4012655b8ddbad777c2";
           hash = "sha256-B6/0tNk5lb+1nup1dfXhPD2S5PURZyFd8nJJF6shvq4=";
-        }
+        };
       }
       {
         name = "node-binpath";
