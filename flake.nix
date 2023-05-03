@@ -13,21 +13,28 @@
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.utils.follows = "utils";
+    };
+
+    agenix = {
+      url = "github:ryantm/agenix";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     vscode-server = {
       url = "github:msteen/nixos-vscode-server";
     };
 
+    dotfiles = {
+      url = "github:briianpowell/dotfiles";
+      flake = false;
+    };
+
     nixos-hardware.url = "github:nixos/nixos-hardware";
   };
 
-  outputs = { self, nixpkgs, stable, unstable, utils, home-manager, vscode-server, nixos-hardware }@inputs:
+  outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, nixos-hardware }:
     let
-      pkgs = self.pkgs.x86_64-linux.nixpkgs;
-      mkApp = utils.lib.mkApp;
-      suites = import ./suites.nix { inherit utils; };
+      suites = import ./suites.nix { inherit utils; inherit dotfiles; };
     in
     with suites.nixosModules;
     utils.lib.mkFlake {
@@ -47,7 +54,7 @@
           input = unstable;
           overlaysBuilder = channels: [
             (final: prev: {
-              # inherit (channels) stable;
+              #inherit (channel) stable;
             })
           ];
         };
@@ -60,12 +67,17 @@
       hostDefaults = {
         modules = [
           home-manager.nixosModules.home-manager
+          agenix.nixosModules.default
           vscode-server.nixosModule
         ] ++ suites.sharedModules;
       };
 
       hosts = {
-        sheol.modules = suites.userModules ++ [ ./hosts/sheol ];
+        sheol = {
+          channelName = "unstable";
+          modules = suites.userModules ++ [ ./hosts/sheol ];
+          specialArgs = { inherit dotfiles; };
+        };
         abaddon.modules = [ ./hosts/abaddon ];
       };
 

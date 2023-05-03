@@ -1,4 +1,4 @@
-{ utils }:
+{ utils, dotfiles }:
 let
   nixosModules = utils.lib.exportModules [
     ./modules/base-server.nix
@@ -11,7 +11,9 @@ let
     ./modules/cli.nix
     ./modules/users.nix
 
-    ./home/boog.nix
+    ./users/boog
+    ./users/louis
+    ./users/root
   ];
   sharedModules = with nixosModules; [
     base-server
@@ -21,8 +23,6 @@ let
     security
     tcp-hardening
     tcp-optimization
-    users
-    cli
 
     #utils.nixosModules.saneFlakeDefaults
     {
@@ -32,23 +32,27 @@ let
   ];
   userModules = with nixosModules; [
     cli
+    boog
+    louis
+    root
 
-    ({ pkgs, lib, config, ... }: {
+    ({ pkgs, lib, config, dotfiles, ... }: {
+      nix.settings.trusted-users = [ "boog" ];
       nix.generateRegistryFromInputs = true;
       nix.linkInputs = true;
       #nix.generateNixPathFromInputs = true;
-      home-manager.users.boog = import ./home/boog.nix;
+      home-manager.users.boog = import ./home;
+      home-manager.extraSpecialArgs = {
+        inherit dotfiles;
+      };
       #boot.kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_5_15;
       #boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
-      #boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
       nixpkgs.config.allowBroken = false;
-      # nix.extraOptions = ''
-      #   http-connections = 50
-      #   log-lines = 50
-      #   warn-dirty = false
-      #   http2 = true
-      #   allow-import-from-derivation = true
-      # '';
+      nix.extraOptions = ''
+        http-connections = 50
+        log-lines = 50
+        warn-dirty = false
+      '';
     })
   ];
 in

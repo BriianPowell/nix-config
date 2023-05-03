@@ -92,7 +92,7 @@ normal                  # Enter normal mode and display the GRUB menu.
 ## Commands
 
 - `nixos-rebuild switch` update nix environment with latest configuration
-- `nixos-rebuild switch --flake .#sheol'`
+- `nixos-rebuild switch --flake .#sheol`
 - `nixos-rebuild dry-activate --flake .#sheol`
 
 **Currently will need to use the `--impure` flag while utilizing the current dotfile structure**
