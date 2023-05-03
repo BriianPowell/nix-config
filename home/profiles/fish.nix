@@ -15,8 +15,8 @@
           owner = "oh-my-fish";
           repo = "plugin-pbcopy";
           rev = "e8d78bb01f66246f7996a4012655b8ddbad777c2";
-          sha256 = "B6/0tNk5lb+1nup1dfXhPD2S5PURZyFd8nJJF6shvq4=";
-        };
+          hash = "sha256-B6/0tNk5lb+1nup1dfXhPD2S5PURZyFd8nJJF6shvq4=";
+        }
       }
       {
         name = "node-binpath";
@@ -24,7 +24,7 @@
           owner = "dudeofawesome";
           repo = "plugin-node-binpath";
           rev = "3d190054a4eb49b1cf656de4e3893ded33ce3023";
-          sha256 = "8MQQ6LUBNgvUkgXu7ZWmfo2wRghCML4jXVxYUAXiwRc=";
+          hash = "8MQQ6LUBNgvUkgXu7ZWmfo2wRghCML4jXVxYUAXiwRc=";
         };
       }
       {
@@ -33,7 +33,7 @@
           owner = "lilyball";
           repo = "nix-env.fish";
           rev = "7b65bd228429e852c8fdfa07601159130a818cfa";
-          sha256 = "RG/0rfhgq6aEKNZ0XwIqOaZ6K5S4+/Y5EEMnIdtfPhk=";
+          hash = "RG/0rfhgq6aEKNZ0XwIqOaZ6K5S4+/Y5EEMnIdtfPhk=";
         };
       }
       {
@@ -42,7 +42,7 @@
           owner = "mibmo";
           repo = "fish-kubectl-aliases";
           rev = "29a3f686bbd7dc6d6cc5a7be6a50938f72845709";
-          sha256 = "uzUkxjNCyP77El3s9pRBpn6nUudvN3+xQwRuolAQRyg=";
+          hash = "uzUkxjNCyP77El3s9pRBpn6nUudvN3+xQwRuolAQRyg=";
         };
       }
     ];

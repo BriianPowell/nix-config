@@ -17,6 +17,7 @@
     ncdu # https://dev.yorhel.nl/ncdu
     curl # https://curl.se/
     wget # https://www.gnu.org/software/wget/
+    nurl # https://github.com/nix-community/nurl
     # httpie # https://httpie.io/
 
     jq # https://stedolan.github.io/jq/

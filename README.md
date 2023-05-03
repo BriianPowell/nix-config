@@ -95,8 +95,6 @@ normal                  # Enter normal mode and display the GRUB menu.
 - `nixos-rebuild switch --flake .#sheol`
 - `nixos-rebuild dry-activate --flake .#sheol`
 
-**Currently will need to use the `--impure` flag while utilizing the current dotfile structure**
-
 ## Attribution
 
 Inspiration and adoptation from [@DudeofAwesome](https://github.com/dudeofawesome/nix-server). The guy who usually sends me down these rabbit holes. Hoping to turn this repo into a central deployment configuration for my RPi's and other devices.
