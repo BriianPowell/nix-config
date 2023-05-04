@@ -9,7 +9,7 @@ let
     ./modules/tcp-hardening.nix
     ./modules/tcp-optimization.nix
     ./modules/cli.nix
-    ./modules/users.nix
+    ./modules/secrets.nix
 
     ./users/boog
     ./users/louis
@@ -23,11 +23,15 @@ let
     security
     tcp-hardening
     tcp-optimization
+    secrets
 
     #utils.nixosModules.saneFlakeDefaults
     {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
+      home-manager.extraSpecialArgs = {
+        inherit dotfiles;
+      };
     }
   ];
   userModules = with nixosModules; [
@@ -42,9 +46,6 @@ let
       nix.linkInputs = true;
       #nix.generateNixPathFromInputs = true;
       home-manager.users.boog = import ./home;
-      home-manager.extraSpecialArgs = {
-        inherit dotfiles;
-      };
       #boot.kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_5_15;
       #boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
       nixpkgs.config.allowBroken = false;

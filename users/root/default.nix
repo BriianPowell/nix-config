@@ -1,5 +1,5 @@
-{ ... }: {
+{ config, ... }: {
   users = {
-    users.root.passwordFile = "/etc/secrets/passwd-root";
+    users.root.passwordFile = config.age.secrets."passwords/users/root".path;
   };
 }

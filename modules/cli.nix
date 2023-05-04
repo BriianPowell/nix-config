@@ -1,6 +1,9 @@
 { config, pkgs, lib, inputs, ... }:
 {
   environment.systemPackages = with pkgs; [
+    # Secrets Management
+    inputs.agenix.packages."${system}".default
+
     # Build Tools
     deno # https://deno.land/
     ruby # https://www.ruby-lang.org/en/
@@ -20,6 +23,7 @@
     nurl # https://github.com/nix-community/nurl
     # httpie # https://httpie.io/
 
+    rnix-lsp # https://github.com/nix-community/rnix-lsp
     jq # https://stedolan.github.io/jq/
     ripgrep # https://github.com/BurntSushi/ripgrep
 
