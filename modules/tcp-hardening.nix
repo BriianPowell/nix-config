@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ ... }: {
   # TCP Hardening
   boot.kernel.sysctl = {
     # Prevent bogus ICMP errors from filling up logs.

@@ -37,6 +37,10 @@
       "fs.inotify.max_user_watches" = 524288; # Fix for 'Too many open files error'
     };
 
+    #
+    # Something to try:
+    # https://mth.st/blog/nixos-initrd-ssh/
+    #
     initrd = {
       luks.devices."crypt-root" = {
         device = "/dev/disk/by-uuid/32155fc1-0d72-4cf5-a22b-280b8bf6896b"; # UUID for LUKS Disk Partion

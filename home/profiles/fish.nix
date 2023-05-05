@@ -1,4 +1,4 @@
-{ pkgs, lib, dotfiles, ...}: {
+{ pkgs, lib, dotfiles, ... }: {
   programs.fish = {
     plugins = [
       {
@@ -7,7 +7,7 @@
       }
       {
         name = "autopair.fish";
-        src = pkgs.pkgs.fishPlugins.autopair-fish.src;
+        src = pkgs.fishPlugins.autopair-fish.src;
       }
       {
         name = "pbcopy";

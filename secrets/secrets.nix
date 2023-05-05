@@ -1,3 +1,8 @@
+#
+# Resources:
+# https://nixos.wiki/wiki/Agenix
+#
+
 let
   sheol = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO5jDeelt6JuZ4EKKIWonGay4YSkF2+zIdfghwDo7phl";
   hosts = [
@@ -9,7 +14,8 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex"
   ];
   users = boog;
-in {
+in
+{
   "passwords/users/boog.age".publicKeys = hosts ++ users;
   "passwords/users/root.age".publicKeys = hosts ++ users;
 }
