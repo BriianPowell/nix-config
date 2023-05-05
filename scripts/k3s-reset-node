@@ -1,4 +1,6 @@
 #!/bin/sh
+set -eux -o pipefail
+
 systemctl stop k3s
-rm -rf /var/lib/rancher/ /etc/rancher
+rm -rf /var/lib/rancher/ /var/lib/containerd /etc/rancher /run/containerd/ /var/lib/cni/
 systemctl start k3s
