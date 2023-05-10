@@ -5,14 +5,8 @@
   time.timeZone = lib.mkDefault "America/Los_Angeles";
 
   networking = {
-    defaultGateway = "10.0.0.1";
-    nameservers = [
-      "1.1.1.1"
-      "1.0.0.1"
-      "2606:4700:4700::1111"
-      "2606:4700:4700::1001"
-    ];
     useDHCP = false;
+    useNetworkd = true;
 
     firewall = {
       enable = false;
@@ -26,10 +20,40 @@
 
     enableIPv6 = false;
 
-    networkmanager = {
-      enable = true;
-      dns = "systemd-resolved";
-      dhcp = "dhcpcd";
+    # networkmanager = {
+    #   enable = true;
+    #   dns = "systemd-resolved";
+    #   dhcp = "dhcpcd";
+    # };
+  };
+
+  systemd.network = {
+    enable = true;
+    networks = {
+      "10-enp6s0" = {
+        matchConfig.Name = "enp6s0";
+        networkConfig = {
+          DHCP = "ipv4";
+          LLMNR = "resolve";
+          MulticastDNS = true;
+          LinkLocalAddressing = "no";
+          DNSOverTLS = "opportunistic";
+          DNSSEC = "allow-downgrade";
+        };
+        linkConfig.RequiredForOnline = "no";
+      };
+      "10-enp0s3" = {
+        matchConfig.Name = "enp0s31f6";
+        networkConfig = {
+          DHCP = "ipv4";
+          LLMNR = "resolve";
+          MulticastDNS = true;
+          LinkLocalAddressing = "no";
+          DNSOverTLS = "opportunistic";
+          DNSSEC = "allow-downgrade";
+        };
+        linkConfig.RequiredForOnline = "no";
+      };
     };
   };
 
@@ -52,7 +76,7 @@
     '';
 
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.fallbackDns
-    fallbackDns = [ "1.0.0.1" "2606:4700:4700::1001" ];
+    fallbackDns = [ "1.0.0.1" ];
   };
 
   services = {

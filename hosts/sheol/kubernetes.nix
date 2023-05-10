@@ -40,6 +40,7 @@
     enable = true;
     role = "server";
     extraFlags = toString [
+      "--cluster-init"
       "--flannel-backend host-gw"
       "--disable traefik"
       "--disable metrics-server"

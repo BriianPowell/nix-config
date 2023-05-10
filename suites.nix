@@ -10,6 +10,7 @@ let
     ./modules/tcp-optimization.nix
     ./modules/cli.nix
     ./modules/secrets.nix
+    ./modules/fonts.nix
 
     ./users/boog
     ./users/louis
@@ -23,6 +24,7 @@ let
     security
     tcp-hardening
     tcp-optimization
+    fonts
     secrets
 
     #utils.nixosModules.saneFlakeDefaults
