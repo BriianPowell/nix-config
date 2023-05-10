@@ -40,4 +40,8 @@
     fishPlugins.tide
     fishPlugins.autopair-fish
   ];
+
+  environment.variables = {
+    EDITOR = "vim";
+  };
 }
