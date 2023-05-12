@@ -95,6 +95,13 @@ normal                  # Enter normal mode and display the GRUB menu.
 - `nixos-rebuild switch --flake .#sheol`
 - `nixos-rebuild dry-activate --flake .#sheol`
 
+### Revert Generations
+
+```bash
+sudo nix-env --switch-generation 12345 -p /nix/var/nix/profiles/system
+sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
+```
+
 ## Attribution
 
 Inspiration and adoptation from [@DudeofAwesome](https://github.com/dudeofawesome/nix-server). The guy who usually sends me down these rabbit holes. Hoping to turn this repo into a central deployment configuration for my RPi's and other devices.
