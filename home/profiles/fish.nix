@@ -1,5 +1,21 @@
-{ pkgs, lib, dotfiles, ... }: {
+{ pkgs, lib, dotfiles, ... }:
+let
+  osxPlugin =
+    if pkgs.system == "aarch64-darwin"
+    then {
+      name = "plugin-osx";
+      src = pkgs.fetchFromGitHub {
+        owner = "oh-my-fish";
+        repo = "plugin-osx";
+        rev = "27039b251201ec2e70d8e8052cbc59fa0ac3b3cd";
+        sha256 = "032yfxz10vypywfivggsam77b8zplmgafbc0gqks8cxhfy9hh9cd";
+      };
+    }
+    else { };
+in
+{
   programs.fish = {
+    enable = true;
     plugins = [
       {
         name = "tide";
@@ -15,7 +31,7 @@
           owner = "oh-my-fish";
           repo = "plugin-pbcopy";
           rev = "e8d78bb01f66246f7996a4012655b8ddbad777c2";
-          hash = "sha256-B6/0tNk5lb+1nup1dfXhPD2S5PURZyFd8nJJF6shvq4=";
+          sha256 = "1bmy46mifjbjy9fj2rqiypj94g9ww7spaxgakssvz59rv6sg9bq7";
         };
       }
       {
@@ -24,7 +40,7 @@
           owner = "dudeofawesome";
           repo = "plugin-node-binpath";
           rev = "3d190054a4eb49b1cf656de4e3893ded33ce3023";
-          hash = "8MQQ6LUBNgvUkgXu7ZWmfo2wRghCML4jXVxYUAXiwRc=";
+          sha256 = "05y1w82m0n2wblivwc22113b13bylsayvvh5jba0ndh1npl11i7h";
         };
       }
       {
@@ -33,7 +49,16 @@
           owner = "lilyball";
           repo = "nix-env.fish";
           rev = "7b65bd228429e852c8fdfa07601159130a818cfa";
-          hash = "RG/0rfhgq6aEKNZ0XwIqOaZ6K5S4+/Y5EEMnIdtfPhk=";
+          sha256 = "069ybzdj29s320wzdyxqjhmpm9ir5815yx6n522adav0z2nz8vs4";
+        };
+      }
+      {
+        name = "plugin-rbenv";
+        src = pkgs.fetchFromGitHub {
+          owner = "oh-my-fish";
+          repo = "plugin-rbenv";
+          rev = "e879897d0cb09667f14b48901446b31d10a21b1b";
+          sha256 = "0ypm6fk3i5fqdxsz2ja85pg7qxihzck8vhinfdln9jdi05l49a6i";
         };
       }
       {
@@ -42,16 +67,17 @@
           owner = "mibmo";
           repo = "fish-kubectl-aliases";
           rev = "29a3f686bbd7dc6d6cc5a7be6a50938f72845709";
-          hash = "uzUkxjNCyP77El3s9pRBpn6nUudvN3+xQwRuolAQRyg=";
+          sha256 = "0a27218a4vh48fqpydvgwx9afzm686agdv2x2bxzxj226g328ddv";
         };
       }
+      osxPlugin
     ];
     shellInit = ". ~/.config/fish/config.fish";
   };
 
   xdg.configFile = {
     "fish/completions/et.fish".source = "${dotfiles}/home/.config/fish/completions/et.fish";
-    "fish/config.fish".source = "${dotfiles}/home/.config/fish/config.fish";
+    "fish/config.fish".source = lib.mkForce "${dotfiles}/home/.config/fish/config.fish";
     "fish/tide.config.fish".source = "${dotfiles}/home/.config/fish/tide.config.fish";
     "fish/kubectl_aliases.fish".source = "${dotfiles}/home/.config/fish/kubectl_aliases.fish";
     ".prettierrc.js".source = "${dotfiles}/home/.config/.prettierrc.js";

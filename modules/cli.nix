@@ -1,47 +1,60 @@
 { pkgs, inputs, ... }:
 {
-  environment.systemPackages = with pkgs; [
-    # Secrets Management
-    inputs.agenix.packages."${system}".default
+  environment = {
+    shells = with pkgs; [ fish ];
+    variables = {
+      EDITOR = "vim";
+      VISUAL = "vim";
+    };
+    systemPackages = with pkgs; [
+      # Secrets Management
+      inputs.agenix.packages."${system}".default
 
-    # Build Tools
-    deno # https://deno.land/
-    ruby # https://www.ruby-lang.org/en/
-    # nodejs-16_x
+      # Build Tools
+      # deno # https://deno.land/
+      # ruby # https://www.ruby-lang.org/en/
+      rbenv # https://github.com/rbenv/rbenv
 
-    # Terminal Tools
-    fish # https://fishshell.com/
-    eternal-terminal # https://eternalterminal.dev/
-    tmux # https://github.com/tmux/tmux
-    git # https://git-scm.com/
-    bat # https://github.com/sharkdp/bat
-    lynx # https://lynx.invisible-island.net/
-    most # https://www.jedsoft.org/most/index.html
-    ncdu # https://dev.yorhel.nl/ncdu
-    curl # https://curl.se/
-    wget # https://www.gnu.org/software/wget/
-    nurl # https://github.com/nix-community/nurl
-    # httpie # https://httpie.io/
+      # Terminal Tools
+      fish # https://fishshell.com/
+      eternal-terminal # https://eternalterminal.dev/
+      tmux # https://github.com/tmux/tmux
+      git # https://git-scm.com/
+      bat # https://github.com/sharkdp/bat
+      lynx # https://lynx.invisible-island.net/
+      most # https://www.jedsoft.org/most/index.html
+      ncdu # https://dev.yorhel.nl/ncdu
+      curl # https://curl.se/
+      wget # https://www.gnu.org/software/wget/
+      nurl # https://github.com/nix-community/nurl
+      # httpie # https://httpie.io/
 
-    rnix-lsp # https://github.com/nix-community/rnix-lsp
-    jq # https://stedolan.github.io/jq/
-    ripgrep # https://github.com/BurntSushi/ripgrep
+      rnix-lsp # https://github.com/nix-community/rnix-lsp
+      jq # https://stedolan.github.io/jq/
+      ripgrep # https://github.com/BurntSushi/ripgrep
 
-    # helix # https://helix-editor.com/
+      # helix # https://helix-editor.com/
 
-    # System Monitoring
-    htop # https://github.com/htop-dev/htop/
-    bottom # https://github.com/ClementTsang/bottom
-    bind # https://www.isc.org/bind/
-    # dig # https://www.isc.org/bind/
-    pciutils # https://mj.ucw.cz/sw/pciutils/
+      # System Monitoring
+      htop # https://github.com/htop-dev/htop/
+      bottom # https://github.com/ClementTsang/bottom
+      bind # https://www.isc.org/bind/
+      # dig # https://www.isc.org/bind/
+      pciutils # https://mj.ucw.cz/sw/pciutils/
 
-    # Terminal Plugins
-    fishPlugins.tide
-    fishPlugins.autopair-fish
-  ];
+      # Terminal Plugins
+      fishPlugins.tide
+      fishPlugins.autopair-fish
 
-  environment.variables = {
-    EDITOR = "vim";
+      # k8s
+      fluxcd
+      kubectl
+      kubernetes-helm
+      kubeseal
+    ];
+  };
+
+  programs = {
+    fish.enable = true;
   };
 }

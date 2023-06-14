@@ -2,3 +2,7 @@
 *.bin
 *.key
 *passwd*
+
+
+result
+./darwin/result

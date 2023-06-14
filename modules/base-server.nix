@@ -1,5 +1,5 @@
 { lib, ... }: {
-  system.stateVersion = "22.11";
+  system.stateVersion = "23.05";
   sound.enable = false;
 
   time.timeZone = lib.mkDefault "America/Los_Angeles";
@@ -57,9 +57,5 @@
     avahi.enable = false; # USE SYSTEMD-RESOLVED
     vscode-server.enable = true;
     eternal-terminal.enable = true;
-  };
-
-  programs = {
-    fish.enable = true;
   };
 }
