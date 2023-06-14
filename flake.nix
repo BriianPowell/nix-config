@@ -2,7 +2,7 @@
   description = "BriianPowell's Nix Configurations";
 
   inputs = {
-    stable.url = "github:nixos/nixpkgs/nixos-22.11";
+    stable.url = "github:nixos/nixpkgs/nixos-23.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.follows = "unstable";
 
@@ -30,20 +30,26 @@
     };
 
     nixos-hardware.url = "github:nixos/nixos-hardware";
+
+    darwin = {
+      url = "github:lnl7/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, nixos-hardware }:
+  outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, nixos-hardware, darwin }:
     let
-      suites = import ./suites.nix { inherit utils; inherit dotfiles; };
+      suites = import ./suites.nix { inherit utils; inherit home-manager; inherit dotfiles; };
     in
     with suites.nixosModules;
     utils.lib.mkFlake {
       inherit self inputs;
       inherit (suites) nixosModules;
 
-      supportedSystems = [ "x86_64-linux" ];
+      supportedSystems = [ "x86_64-linux" "aarch64-darwin" ];
       channelsConfig = {
         allowUnfree = true;
+        allowBroken = false;
       };
 
       channels = {
@@ -65,20 +71,27 @@
       # ];
 
       hostDefaults = {
-        modules = [
-          home-manager.nixosModules.home-manager
-          agenix.nixosModules.default
-          vscode-server.nixosModule
-        ] ++ suites.sharedModules;
+        modules = [ agenix.nixosModules.default ] ++ suites.sharedModules;
+        channelName = "unstable";
       };
 
       hosts = {
         sheol = {
-          channelName = "unstable";
-          modules = suites.userModules ++ [ ./hosts/sheol ];
+          system = "x86_64-linux";
           specialArgs = { inherit dotfiles; };
+          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/sheol ] ++ suites.serverModules ++ suites.userModules;
         };
-        abaddon.modules = [ ./hosts/abaddon ];
+        abaddon = {
+          system = "x86_64-linux";
+          modules = [ ./hosts/abaddon ];
+        };
+        boog-MBP = {
+          system = "aarch64-darwin";
+          specialArgs = { inherit dotfiles; };
+          modules = [ ./hosts/boog-MBP ] ++ suites.darwinModules;
+          output = "darwinConfigurations";
+          builder = darwin.lib.darwinSystem;
+        };
       };
 
       outputsBuilder = channels:

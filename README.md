@@ -3,10 +3,10 @@
 <details>
   <summary>Installation</summary>
 
-  - Encrypted root using LUKS
-  - Swap is turned off for this install as it will primarily be using K3S
+- Encrypted root using LUKS
+- Swap is turned off for this install as it will primarily be using K3S
 
-  ## Setup Boot Drive
+## Setup Boot Drive
 
   1. Partition drive
 
@@ -63,7 +63,7 @@
 
   10. reboot
 
-  ## Recovering from a bad time
+## Recovering from a bad time
 
   1. Boot into recovery environment.
   2. sudo cryptsetup luksOpen /dev/disk/by-id/ata-Samsung_SSD_870_EVO_500GB_S62ANJ0NC40669A-part2 crypt-root
@@ -87,13 +87,29 @@ normal                  # Enter normal mode and display the GRUB menu.
 - [Home Manager](https://github.com/nix-community/home-manager)
 - [Flake Utils Plus](https://github.com/gytis-ivaskevicius/flake-utils-plus/tree/master)
 - [VSCode Server](https://github.com/msteen/nixos-vscode-server)
-
+- [Nix Darwin](https://github.com/LnL7/nix-darwin)
 
 ## Commands
 
 - `nixos-rebuild switch` update nix environment with latest configuration
 - `nixos-rebuild switch --flake .#sheol`
 - `nixos-rebuild dry-activate --flake .#sheol`
+
+### Darwin
+
+**First Time Installation:**
+
+```bash
+nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
+./result/bin/darwin-installer
+```
+
+- `nix build .#darwinConfigurations.boog-MBP.system` use nix build to create the initial installion
+- `./result/sw/bin/darwin-rebuild switch --flake .#boog-MBP` use nix-darwin to use the configuration
+
+**then:**
+
+- `darwin-rebuild switch --blake .#boog-MBP` to switch the configuration
 
 ### Revert Generations
 
