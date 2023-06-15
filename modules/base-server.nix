@@ -7,13 +7,12 @@
   networking = {
     defaultGateway = "10.0.2.1";
     nameservers = [
-      "1.1.1.1"
-      "1.0.0.1"
+      "10.0.2.1"
     ];
     useDHCP = false;
 
     firewall = {
-      enable = false;
+      enable = true;
       allowedTCPPorts = [
         22 # ssh
         2022 # et
@@ -41,16 +40,16 @@
     dnssec = "allow-downgrade";
 
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.llmnr
-    llmnr = "resolve";
+    llmnr = "false";
 
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.extraConfig
     extraConfig = ''
-      DNSOverTLS=opportunistic
+      DNSOverTLS=oppurtunistic
       MulticastDNS=yes
     '';
 
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.fallbackDns
-    fallbackDns = [ "1.0.0.1" ];
+    fallbackDns = [ "10.0.0.1" ];
   };
 
   services = {

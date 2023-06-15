@@ -2,16 +2,21 @@
 let
   osxPlugin =
     if pkgs.system == "aarch64-darwin"
-    then {
-      name = "plugin-osx";
-      src = pkgs.fetchFromGitHub {
-        owner = "oh-my-fish";
-        repo = "plugin-osx";
-        rev = "27039b251201ec2e70d8e8052cbc59fa0ac3b3cd";
-        sha256 = "032yfxz10vypywfivggsam77b8zplmgafbc0gqks8cxhfy9hh9cd";
-      };
-    }
-    else { };
+    then
+      {
+        name = "plugin-osx";
+        src = pkgs.fetchFromGitHub
+          {
+            owner = "oh-my-fish";
+            repo = "plugin-osx";
+            rev = "27039b251201ec2e70d8e8052cbc59fa0ac3b3cd";
+            sha256 = "032yfxz10vypywfivggsam77b8zplmgafbc0gqks8cxhfy9hh9cd";
+          };
+      }
+    else {
+      name = "";
+      src = "/";
+    };
 in
 {
   programs.fish = {

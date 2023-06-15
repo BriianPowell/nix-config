@@ -29,7 +29,7 @@ let
     openssh
     security
     tcp-hardening
-    tcp-optimizations
+    tcp-optimization
   ];
   userModules = with nixosModules; [
     boog
