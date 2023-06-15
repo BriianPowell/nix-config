@@ -109,7 +109,8 @@ nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
 
 **then:**
 
-- `darwin-rebuild switch --blake .#boog-MBP` to switch the configuration
+- `darwin-rebuild switch --flake .#boog-MBP`
+- `darwin-rebuild check --flake .#boog-MBP`
 
 ### Revert Generations
 
