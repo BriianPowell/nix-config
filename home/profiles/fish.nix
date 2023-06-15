@@ -17,6 +17,22 @@ let
       name = "";
       src = "/";
     };
+
+  nvmPlugin =
+    if pkgs.system == "aarch64-darwin"
+    then {
+      name = "nvm.fish";
+      src = pkgs.fetchFromGitHub {
+        owner = "jorgebucaran";
+        repo = "nvm.fish";
+        rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
+        sha256 = "084wvdinas1d7v3da16lim7s8asimh389frmfamr7q70fy44spid";
+      };
+    }
+    else {
+      name = "";
+      src = "/";
+    };
 in
 {
   programs.fish = {
@@ -76,8 +92,9 @@ in
         };
       }
       osxPlugin
+      nvmPlugin
     ];
-    shellInit = ". ~/.config/fish/config.fish";
+    shellInit = ''. ~/.config/fish/config.fish'';
   };
 
   xdg.configFile = {
@@ -85,14 +102,16 @@ in
     "fish/config.fish".source = lib.mkForce "${dotfiles}/home/.config/fish/config.fish";
     "fish/tide.config.fish".source = "${dotfiles}/home/.config/fish/tide.config.fish";
     "fish/kubectl_aliases.fish".source = "${dotfiles}/home/.config/fish/kubectl_aliases.fish";
-    ".prettierrc.js".source = "${dotfiles}/home/.config/.prettierrc.js";
     "tmux/tmux.conf".source = "${dotfiles}/home/.config/tmux/tmux.conf";
   };
 
-  # TODO: clone the dotfiles & server-admin-scripts repos
+  # TODO: clone the server-admin-scripts repos
   home.file = {
+    ".editorconfig".source = "${dotfiles}/home/.editorconfig";
+    ".finicky.js".source = "${dotfiles}/home/.finicky.js";
     ".gemrc".source = "${dotfiles}/home/.gemrc";
     ".vim/vimrc".source = "${dotfiles}/home/.vim/vimrc";
+    ".prettierrc.js".source = "${dotfiles}/home/.prettierrc.js";
     # ".local/bin/docker-logs".source = /home/boog/GitHub/server-admin-scripts/bin/docker-logs;
     # ".local/bin/docker-ps".source = /home/boog/GitHub/server-admin-scripts/bin/docker-ps;
     # ".local/bin/docker-top".source = /home/boog/GitHub/server-admin-scripts/bin/docker-top;

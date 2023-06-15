@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   networking.hostName = "boog-MBP";
 
   services = {
@@ -9,8 +9,8 @@
     # CLI
     coreutils-full
     awscli2
-    # semgrep
     trivy
+    git-secrets
 
     # DevOps
     act
@@ -26,29 +26,43 @@
     stateVersion = 4;
     defaults = {
       NSGlobalDomain = {
-        InitialKeyRepeat = 15;
-        KeyRepeat = 2;
-
+        AppleEnableMouseSwipeNavigateWithScrolls = true;
+        AppleEnableSwipeNavigateWithScrolls = true;
+        AppleICUForce24HourTime = true;
         AppleInterfaceStyleSwitchesAutomatically = true;
+        AppleKeyboardUIMode = 3;
+        AppleMeasurementUnits = "Inches";
+        AppleMetricUnits = 0;
+        AppleTemperatureUnit = "Fahrenheit";
         ApplePressAndHoldEnabled = false;
         AppleShowAllExtensions = true;
+        AppleShowAllFiles = true;
         AppleShowScrollBars = "WhenScrolling";
 
-        NSAutomaticCapitalizationEnabled = false;
-        NSAutomaticSpellingCorrectionEnabled = false;
-        NSAutomaticQuoteSubstitutionEnabled = false;
-        NSAutomaticPeriodSubstitutionEnabled = false;
-        NSAutomaticDashSubstitutionEnabled = false;
+        InitialKeyRepeat = 10;
+        KeyRepeat = 1;
 
+        NSAutomaticCapitalizationEnabled = false;
+        NSAutomaticDashSubstitutionEnabled = false;
+        NSAutomaticPeriodSubstitutionEnabled = false;
+        NSAutomaticQuoteSubstitutionEnabled = false;
+        NSAutomaticSpellingCorrectionEnabled = false;
         NSDocumentSaveNewDocumentsToCloud = false;
+        NSNavPanelExpandedStateForSaveMode = true;
+        NSNavPanelExpandedStateForSaveMode2 = true;
+
+        "com.apple.sound.beep.volume" = 0.472367;
+        "com.apple.springing.delay" = 0.5;
+        "com.apple.springing.enabled" = true;
       };
       dock = {
         autohide = true;
-        orientation = "left";
-        showhidden = true;
-        tilesize = 40;
+        mineffect = "genie";
         minimize-to-application = true;
         mru-spaces = false;
+        orientation = "left";
+        showhidden = true;
+        tilesize = 35;
 
         wvous-bl-corner = 5;
         wvous-br-corner = 14;
@@ -56,6 +70,9 @@
       finder = {
         AppleShowAllExtensions = true;
         AppleShowAllFiles = true;
+        FXEnableExtensionChangeWarning = false;
+        FXPreferredViewStyle = "Nlsv"; # "icnv" = Icon view, "Nlsv" = List view, "clmv" = Column View, "Flwv" = Gallery View - The default is icnv.
+        QuitMenuItem = true;
       };
       trackpad = {
         Clicking = true;

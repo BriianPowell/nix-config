@@ -71,18 +71,17 @@
       # ];
 
       hostDefaults = {
+        system = "x86_64-linux";
         modules = [ agenix.nixosModules.default ] ++ suites.sharedModules;
         channelName = "unstable";
       };
 
       hosts = {
         sheol = {
-          system = "x86_64-linux";
           specialArgs = { inherit dotfiles; };
           modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/sheol ] ++ suites.serverModules ++ suites.userModules;
         };
         abaddon = {
-          system = "x86_64-linux";
           modules = [ ./hosts/abaddon ];
         };
         boog-MBP = {
