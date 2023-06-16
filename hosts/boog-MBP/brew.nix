@@ -10,8 +10,12 @@
       upgrade = false;
       cleanup = "zap";
     };
-    taps = [ ];
-    brews = [ ];
+    taps = [
+      "qmk/qmk"
+    ];
+    brews = [
+      "qmk"
+    ];
     casks = [
       "1password-cli"
       "1password"

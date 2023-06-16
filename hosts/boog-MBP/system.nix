@@ -6,7 +6,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    # CLI
+    # Utils
     coreutils-full
     awscli2
     trivy
@@ -39,7 +39,7 @@
         AppleShowAllFiles = true;
         AppleShowScrollBars = "WhenScrolling";
 
-        InitialKeyRepeat = 10;
+        InitialKeyRepeat = 15;
         KeyRepeat = 1;
 
         NSAutomaticCapitalizationEnabled = false;
