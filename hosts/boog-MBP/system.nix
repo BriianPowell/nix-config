@@ -40,7 +40,7 @@
         AppleShowScrollBars = "WhenScrolling";
 
         InitialKeyRepeat = 15;
-        KeyRepeat = 1;
+        KeyRepeat = 2;
 
         NSAutomaticCapitalizationEnabled = false;
         NSAutomaticDashSubstitutionEnabled = false;
