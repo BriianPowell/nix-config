@@ -1,4 +1,4 @@
-{ lib, ... }: {
+{ pkgs, lib, ... }: {
   system = {
     stateVersion = "23.05";
     userActivationScripts.vim = ''
