@@ -16,7 +16,6 @@
       rbenv # https://github.com/rbenv/rbenv
 
       # Terminal Tools
-      vim # https://www.vim.org/
       fish # https://fishshell.com/
       eternal-terminal # https://eternalterminal.dev/
       tmux # https://github.com/tmux/tmux
