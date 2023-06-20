@@ -1,5 +1,10 @@
 { lib, ... }: {
-  system.stateVersion = "23.05";
+  system = {
+    stateVersion = "23.05";
+    userActivationScripts.vim = ''
+      ${pkgs.vim}/bin/vim +PluginInstall +qall
+    '';
+  };
   sound.enable = false;
 
   time.timeZone = lib.mkDefault "America/Los_Angeles";

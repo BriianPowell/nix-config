@@ -83,6 +83,10 @@
       enableKeyMapping = true;
       remapCapsLockToEscape = true;
     };
-    activationScripts.postActivation.text = ''sudo chsh -s ${pkgs.fish}/bin/fish'';
+
+    activationScripts.postActivation.text = ''
+      ${pkgs.vim}/bin/vim +PluginInstall +qall
+      sudo chsh -s ${pkgs.fish}/bin/fish
+    '';
   };
 }
