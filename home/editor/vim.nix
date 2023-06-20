@@ -11,3 +11,11 @@
     ".vim/vimrc".source = "${dotfiles}/home/.vim/vimrc";
   };
 }
+
+
+#
+# Plugin Install
+# vim then :PluginInstall
+# or
+# vim +PluginInstall +qall
+#
