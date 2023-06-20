@@ -16,7 +16,6 @@
         mkdir -p $HOME/.vim/bundle
         ${pkgs.git}/bin/git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim
       fi
-      ${pkgs.vim}/bin/vim +PluginInstall +qall
     '';
   };
 }

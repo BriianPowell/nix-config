@@ -110,7 +110,6 @@ in
     ".editorconfig".source = "${dotfiles}/home/.editorconfig";
     ".finicky.js".source = "${dotfiles}/home/.finicky.js";
     ".gemrc".source = "${dotfiles}/home/.gemrc";
-    ".vim/vimrc".source = "${dotfiles}/home/.vim/vimrc";
     ".prettierrc.js".source = "${dotfiles}/home/.prettierrc.js";
     # ".local/bin/docker-logs".source = /home/boog/GitHub/server-admin-scripts/bin/docker-logs;
     # ".local/bin/docker-ps".source = /home/boog/GitHub/server-admin-scripts/bin/docker-ps;
