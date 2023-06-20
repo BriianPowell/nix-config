@@ -16,6 +16,7 @@
       rbenv # https://github.com/rbenv/rbenv
 
       # Terminal Tools
+      vim # https://www.vim.org/
       fish # https://fishshell.com/
       eternal-terminal # https://eternalterminal.dev/
       tmux # https://github.com/tmux/tmux
@@ -47,10 +48,10 @@
       fishPlugins.autopair-fish
 
       # k8s
-      fluxcd
-      kubectl
-      kubernetes-helm
-      kubeseal
+      fluxcd # https://fluxcd.io/
+      kubectl # https://github.com/kubernetes/kubectl
+      kubernetes-helm # https://github.com/helm/helm
+      kubeseal # https://github.com/bitnami-labs/sealed-secrets
     ];
   };
 
