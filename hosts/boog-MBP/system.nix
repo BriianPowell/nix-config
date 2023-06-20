@@ -83,5 +83,6 @@
       enableKeyMapping = true;
       remapCapsLockToEscape = true;
     };
+    activationScripts.postActivation.text = ''sudo chsh -s ${pkgs.fish}/bin/fish'';
   };
 }
