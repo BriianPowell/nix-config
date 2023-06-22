@@ -20,6 +20,7 @@
     # Build
     jdk
     python3Full
+    # dotnet-sdk
   ];
 
   system = {
