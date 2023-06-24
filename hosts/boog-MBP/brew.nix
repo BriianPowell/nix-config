@@ -26,6 +26,7 @@
       "docker"
       "finicky"
       "firefox"
+      "google-chrome"
       "hex-fiend"
       "iina"
       "insomnia"
