@@ -2,12 +2,17 @@
   boot = {
     loader = {
       # Use the grub2 EFI boot loader.
-      grub = {
+      # grub = {
+      #   enable = true;
+      #   device = "nodev";
+      #   version = 2;
+      #   efiSupport = true;
+      #   enableCryptodisk = true;
+      # };
+      systemd-boot = {
         enable = true;
-        device = "nodev";
-        version = 2;
-        efiSupport = true;
-        enableCryptodisk = true;
+        configurationLimit = 10;
+        editor = false;
       };
       efi = {
         efiSysMountPoint = "/boot/efi";
@@ -45,17 +50,17 @@
       preLVMCommands = lib.mkOrder 400 "sleep 1";
       luks = {
         forceLuksSupportInInitrd = true;
-        devices."crypt-root" = {
-          device = "/dev/disk/by-uuid/a4296409-c3b8-4984-ab51-17cec9209d32"; # UUID for LUKS Disk Partion
-          preLVM = true;
-          keyFile = "/crypt-root-key.bin";
-          allowDiscards = true;
-        };
+        # devices."crypt-root" = {
+        #   device = "/dev/disk/by-uuid/a4296409-c3b8-4984-ab51-17cec9209d32"; # UUID for LUKS Disk Partion
+        #   preLVM = true;
+        #   keyFile = "/crypt-root-key.bin";
+        #   allowDiscards = true;
+        # };
       };
 
-      secrets = {
-        "crypt-root-key.bin" = "/etc/secrets/initrd/crypt-root-key.bin";
-      };
+      # secrets = {
+      #   "crypt-root-key.bin" = "/etc/secrets/initrd/crypt-root-key.bin";
+      # };
 
       # Enable SSH in initrd. Useful for unlocking LUKS remotely.
       network = {
