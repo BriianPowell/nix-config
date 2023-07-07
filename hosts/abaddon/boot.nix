@@ -1,14 +1,6 @@
 { config, lib, ... }: {
   boot = {
     loader = {
-      # Use the grub2 EFI boot loader.
-      # grub = {
-      #   enable = true;
-      #   device = "nodev";
-      #   version = 2;
-      #   efiSupport = true;
-      #   enableCryptodisk = true;
-      # };
       systemd-boot = {
         enable = true;
         configurationLimit = 10;
@@ -43,24 +35,14 @@
     };
 
     #
-    # Something to try:
+    # Utilizing:
     # https://mth.st/blog/nixos-initrd-ssh/
     #
     initrd = {
       preLVMCommands = lib.mkOrder 400 "sleep 1";
       luks = {
         forceLuksSupportInInitrd = true;
-        # devices."crypt-root" = {
-        #   device = "/dev/disk/by-uuid/a4296409-c3b8-4984-ab51-17cec9209d32"; # UUID for LUKS Disk Partion
-        #   preLVM = true;
-        #   keyFile = "/crypt-root-key.bin";
-        #   allowDiscards = true;
-        # };
       };
-
-      # secrets = {
-      #   "crypt-root-key.bin" = "/etc/secrets/initrd/crypt-root-key.bin";
-      # };
 
       # Enable SSH in initrd. Useful for unlocking LUKS remotely.
       network = {
