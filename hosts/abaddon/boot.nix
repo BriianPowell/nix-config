@@ -42,14 +42,18 @@
     # https://mth.st/blog/nixos-initrd-ssh/
     #
     initrd = {
-      luks.devices."crypt-root" = {
-        device = "/dev/disk/by-uuid/a4296409-c3b8-4984-ab51-17cec9209d32"; # UUID for LUKS Disk Partion
-        preLVM = true;
-        keyFile = "/crypt-root-key.bin";
-        allowDiscards = true;
+      preLVMCommands = lib.mkBefore 400 "sleep 1";
+      luks = {
+        forceLuksSupportInInitrd = true;
+        devices."crypt-root" = {
+          device = "/dev/disk/by-uuid/a4296409-c3b8-4984-ab51-17cec9209d32"; # UUID for LUKS Disk Partion
+          preLVM = true;
+          keyFile = "/crypt-root-key.bin";
+          allowDiscards = true;
+        };
       };
+
       secrets = {
-        # Create /mnt/etc/secrets/initrd directory and copy keys to it
         "crypt-root-key.bin" = "/etc/secrets/initrd/crypt-root-key.bin";
       };
 
@@ -59,10 +63,25 @@
         ssh = {
           enable = true;
           port = 2222;
-          authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICyoha8WY7Pxd6THy+VbM4y+gvgrCUAx1RKAhDKMl+PE" ];
           hostKeys = [ "/etc/secrets/initrd/ssh_host_ed25519_key" ];
+          authorizedKeys = config.users.users.boog.openssh.authorizedKeys.keys;
         };
+        postCommands =
+          let
+            disk = "/dev/disk/by-uuid/a4296409-c3b8-4984-ab51-17cec9209d32";
+          in
+          ''
+            echo 'cryptsetup luksOpen ${disk} root && echo > /tmp/continue' >> /root/.profile
+            echo 'starting sshd...'
+          '';
       };
+
+      # Block the boot process until /tmp/continue is written to
+      postDeviceCommands = ''
+        echo 'waiting for root device to be opened...'
+        mkfifo /tmp/continue
+        cat /tmp/continue
+      '';
 
       kernelModules = [
         "r8169"

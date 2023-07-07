@@ -11,6 +11,7 @@ let
     ./modules/cli.nix
     ./modules/secrets.nix
     ./modules/fonts.nix
+    ./modules/console.nix
 
     ./users/boog
     ./users/louis
@@ -24,6 +25,7 @@ let
   ];
   serverModules = with nixosModules; [
     base-server
+    console
     i18n
     minimal-docs
     openssh
