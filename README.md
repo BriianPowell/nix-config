@@ -158,6 +158,8 @@ normal                  # Enter normal mode and display the GRUB menu.
 - `nixos-rebuild switch --flake .#sheol`
 - `nixos-rebuild dry-activate --flake .#sheol`
 
+- `nixos-rebuild switch --flake .#abaddon`
+
 ### Darwin
 
 **First Time Installation:**

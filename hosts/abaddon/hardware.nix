@@ -5,19 +5,19 @@
     ];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/b531c422-2edc-4913-b631-53308ce5efee";
+    device = "/dev/disk/by-uuid/e0ebf86c-17ed-4d73-9d1c-c079e5d089b3";
     fsType = "ext4";
     options = [ "defaults" "noatime" "nodiratime" "discard" ];
   };
 
   fileSystems."/boot/efi" = {
-    device = "/dev/disk/by-uuid/BE68-0A21";
+    device = "/dev/disk/by-uuid/C7D3-B98D";
     fsType = "vfat";
     options = [ "defaults" "noatime" "nodiratime" "discard" ];
   };
 
   fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/b33cbb9d-676d-458a-9fd3-612b9c80d152";
+    device = "/dev/disk/by-uuid/8bed607d-fd79-4151-9a01-03d3bd9ec775";
     fsType = "btrfs";
     options = [ "defaults" "noatime" "nodiratime" "discard=async" ];
   };
