@@ -34,14 +34,15 @@
   services.k3s = {
     enable = true;
     role = "server";
+    clusterInit = true;
     extraFlags = toString [
-      "--cluster-init"
       "--node-name sheol"
       "--flannel-backend host-gw"
       "--disable traefik"
       "--disable metrics-server"
       "--data-dir /var/lib/rancher/k3s"
       "--etcd-expose-metrics"
+      "--advertise-address 10.0.2.10"
       "--tls-san 10.0.2.10"
       "--kube-apiserver-arg service-node-port-range=1-65000"
       "--kube-apiserver-arg advertise-address=10.0.2.10"
