@@ -82,7 +82,8 @@
           modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/sheol ] ++ suites.serverModules ++ suites.userModules;
         };
         abaddon = {
-          modules = [ ./hosts/abaddon ];
+          specialArgs = { inherit dotfiles; };
+          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/abaddon ] ++ suites.serverModules ++ suites.userModules;
         };
         boog-MBP = {
           system = "aarch64-darwin";
