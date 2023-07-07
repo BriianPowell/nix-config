@@ -2,18 +2,18 @@
   boot = {
     loader = {
       # Use the grub2 EFI boot loader.
-      # grub = {
-      #   enable = true;
-      #   device = "nodev";
-      #   version = 2;
-      #   efiSupport = true;
-      #   enableCryptodisk = true;
-      # };
-      systemd-boot = {
+      grub = {
         enable = true;
-        configurationLimit = 10;
-        editor = false;
+        device = "nodev";
+        version = 2;
+        efiSupport = true;
+        enableCryptodisk = true;
       };
+      # systemd-boot = {
+      #   enable = true;
+      #   configurationLimit = 10;
+      #   editor = false;
+      # };
       efi = {
         efiSysMountPoint = "/boot/efi";
         canTouchEfiVariables = true;
