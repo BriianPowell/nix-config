@@ -1,4 +1,4 @@
-{ ... }: {
+{ config, lib, ... }: {
   boot = {
     loader = {
       # Use the grub2 EFI boot loader.
