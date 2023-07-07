@@ -1,7 +1,7 @@
 { ... }: {
   console = {
     font = "JetBrainsMono";
-    color = [
+    colors = [
       "#22212C"
       "#22212C"
       "#9580FF"
