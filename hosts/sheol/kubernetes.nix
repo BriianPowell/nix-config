@@ -39,7 +39,7 @@
       "--flannel-backend host-gw"
       "--disable traefik"
       "--disable metrics-server"
-      "--data-dir=/var/lib/rancher/k3s"
+      "--data-dir /var/lib/rancher/k3s"
       "--etcd-expose-metrics"
       "--kube-proxy-arg --metrics-bind-address=0.0.0.0"
       "--kube-controller-manager-arg --bind-address=0.0.0.0"

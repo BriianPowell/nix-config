@@ -12,8 +12,8 @@
     serverAddr = lib.mkDefault "https://10.0.2.10:6443";
     token = lib.mkDefault config.age.secrets."passwords/k3s/token".path;
     extraFlags = toString [
-      "--node-ip ${config.networking.abaddon.currenthost.ipv4}"
-      "--data-dir=/var/lib/rancher/k3s"
+      "--node-ip 10.0.2.11"
+      "--data-dir /var/lib/rancher/k3s"
     ];
   };
 }
