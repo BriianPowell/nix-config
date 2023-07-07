@@ -118,7 +118,8 @@
     1. sudo mkdir -p /mnt/etc/secrets/initrd/
     2. sudo cp crypt-root-key.bin /mnt/etc/secrets/initrd/
     3. sudo chmod 000 /mnt/etc/secrets/initrd/*.bin
-    4. sudo ssh-keygen -t ed25519 -N "" -f /mnt/etc/secrets/initrd/ssh_host_ed25519_key
+    4. ssh-keygen -t rsa -N "" -f /etc/secrets/initrd/ssh_host_rsa_key
+    5. sudo ssh-keygen -t ed25519 -N "" -f /mnt/etc/secrets/initrd/ssh_host_ed25519_key
 
   8. sudo nixos-generate-config --root /mnt
 
