@@ -42,7 +42,7 @@
     # https://mth.st/blog/nixos-initrd-ssh/
     #
     initrd = {
-      preLVMCommands = lib.mkBefore 400 "sleep 1";
+      preLVMCommands = lib.mkOrder 400 "sleep 1";
       luks = {
         forceLuksSupportInInitrd = true;
         devices."crypt-root" = {
