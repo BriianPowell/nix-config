@@ -20,4 +20,5 @@ in
 {
   "passwords/users/boog.age".publicKeys = hosts ++ users;
   "passwords/users/root.age".publicKeys = hosts ++ users;
+  "passwords/k3s/token.age".publicKeys = hosts ++ users;
 }
