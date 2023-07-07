@@ -1,4 +1,4 @@
-# Nix Configuration for Sheol
+# Nix Configurations
 
 <details>
 
@@ -154,11 +154,16 @@ normal                  # Enter normal mode and display the GRUB menu.
 
 ## Commands
 
+### Sheol
+
 - `nixos-rebuild switch` update nix environment with latest configuration
 - `nixos-rebuild switch --flake .#sheol`
 - `nixos-rebuild dry-activate --flake .#sheol`
 
+### Abaddon
+
 - `nixos-rebuild switch --flake .#abaddon`
+- `nixos-rebuild dry-activate --flake .#abaddon`
 
 ### Darwin
 
