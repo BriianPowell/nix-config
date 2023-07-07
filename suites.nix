@@ -25,7 +25,7 @@ let
   ];
   serverModules = with nixosModules; [
     base-server
-    console
+    # console
     i18n
     minimal-docs
     openssh
