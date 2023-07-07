@@ -20,7 +20,6 @@
 
   2. Create a LUKS key
 
-    TODO: is this the best way to generate a key? I don't think so.
     1. dd if=/dev/random of=./crypt-root-key.bin bs=1024 count=4
 
   3. Setup LUKS
@@ -28,7 +27,7 @@
     1. sudo cryptsetup luksFormat --type=luks1 /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part2
     2. sudo cryptsetup luksAddKey /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part2 crypt-root-key.bin
     3. sudo cryptsetup luksOpen /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part2 crypt-root -d crypt-root-key.bin
-    4. TODO: backup LUKS header
+    4. sudo cryptsetup luksHeaderBackup /dev/disk/by-id/nvme-CT1000P5PSSD8_2135313B98F0-part2 --header-backup-file sheolLuksHeaderBackup
 
   4. Setup LVM
 
@@ -83,7 +82,6 @@
 
   2. Create a LUKS key
 
-    TODO: is this the best way to generate a key? I don't think so.
     1. dd if=/dev/random of=./crypt-root-key.bin bs=1024 count=4
 
   3. Setup LUKS
@@ -91,7 +89,7 @@
     1. sudo cryptsetup luksFormat --type=luks1 /dev/disk/by-id/ata-SK_hynix_SC311_SATA_128GB_MI81N035211101A0U-part2
     2. sudo cryptsetup luksAddKey /dev/disk/by-id/ata-SK_hynix_SC311_SATA_128GB_MI81N035211101A0U-part2 crypt-root-key.bin
     3. sudo cryptsetup luksOpen /dev/disk/by-id/ata-SK_hynix_SC311_SATA_128GB_MI81N035211101A0U-part2 crypt-root -d crypt-root-key.bin
-    4. TODO: backup LUKS header
+    4. sudo cryptsetup luksHeaderBackup /dev/disk/by-id/ata-SK_hynix_SC311_SATA_128GB_MI81N035211101A0U-part2 --header-backup-file abaddonLuksHeaderBackup
 
   4. Setup LVM
 
