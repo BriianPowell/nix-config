@@ -9,14 +9,13 @@
   services.k3s = {
     enable = true;
     role = "agent";
-    #serverAddr = "https://10.0.2.10:6443";
-    #token = config.age.secrets."passwords/k3s/token".path;
+    serverAddr = "https://10.0.2.10:6443";
+    tokenFile = config.age.secrets."passwords/k3s/token".path;
     extraFlags = toString [
       "--node-name abaddon"
       "--node-ip 10.0.2.11"
       "--node-external-ip 10.0.2.11"
       "--server https://10.0.2.10:6443"
-      "--token ${config.age.secrets."passwords/k3s/token".path}"
       "--data-dir /var/lib/rancher/k3s"
     ];
   };
