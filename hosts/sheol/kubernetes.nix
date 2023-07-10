@@ -37,19 +37,20 @@
     clusterInit = true;
     extraFlags = toString [
       "--node-name sheol"
+      "--node-ip 10.0.2.10"
+      "--node-external-ip 10.0.2.10"
+      "--tls-san 10.0.2.10"
       "--flannel-backend host-gw"
       "--disable traefik"
       "--disable metrics-server"
-      "--data-dir /var/lib/rancher/k3s"
       "--etcd-expose-metrics"
-      "--advertise-address 10.0.2.10"
-      "--tls-san 10.0.2.10"
-      "--kube-apiserver-arg service-node-port-range=1-65000"
-      "--kube-apiserver-arg advertise-address=10.0.2.10"
-      "--kube-apiserver-arg external-hostname=10.0.2.10"
+      #"--kube-apiserver-arg service-node-port-range=1-65000"
+      #"--kube-apiserver-arg external-hostname=10.0.2.10"
+      #"--kube-apiserver-arg advertise-address=10.0.2.10"
       "--kube-proxy-arg --metrics-bind-address=0.0.0.0"
       "--kube-controller-manager-arg --bind-address=0.0.0.0"
       "--kube-scheduler-arg --bind-address=0.0.0.0"
+      "--data-dir /var/lib/rancher/k3s"
     ];
   };
 
