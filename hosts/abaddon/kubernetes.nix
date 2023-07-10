@@ -15,8 +15,27 @@
       "--node-name abaddon"
       "--node-ip 10.0.2.11"
       "--node-external-ip 10.0.2.11"
-      "--server https://10.0.2.10:6443"
+      "--node-label node-role.kubernetes.io/"
       "--data-dir /var/lib/rancher/k3s"
+    ];
+  };
+
+  networking.firewall = {
+    allowedTCPPorts = [
+      2379 # HA with embedded etcd
+      2380 # HA with embedded etcd
+      6443 # k8s API server
+      10250 # Kubelet Metrics
+    ];
+
+    allowedUDPPorts = [
+      8472
+    ];
+
+    trustedInterfaces = [
+      "enp0s31f6"
+      "cni0"
+      "lo"
     ];
   };
 }
