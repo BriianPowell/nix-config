@@ -1,5 +1,4 @@
-{ pkgs, inputs, ... }:
-{
+{ pkgs, inputs, ... }: {
   environment = {
     shells = with pkgs; [ fish ];
     variables = {

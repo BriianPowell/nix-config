@@ -15,7 +15,7 @@
       "--node-name abaddon"
       "--node-ip 10.0.2.11"
       "--node-external-ip 10.0.2.11"
-      "--node-label node-role.kubernetes.io/"
+      "--node-label node-role.kubernetes.io/worker=''"
       "--data-dir /var/lib/rancher/k3s"
     ];
   };

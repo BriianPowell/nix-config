@@ -4,8 +4,7 @@
 # https://github.com/moduon/nixpkgs/blob/60e0d3d73670ef8ddca24aa546a40283e3838e69/nixos/modules/services/cluster/k3s/default.nix
 #
 
-{ config, pkgs, ... }:
-{
+{ config, pkgs, ... }: {
   environment.systemPackages = with pkgs; [
     # crun
     # docker
