@@ -16,6 +16,7 @@
     act
     ansible
     terraform
+    terraform-docs
 
     # Build
     jdk
