@@ -7,7 +7,8 @@
     nixpkgs.follows = "unstable";
 
     utils = {
-      url = "github:gytis-ivaskevicius/flake-utils-plus";
+      # url = "github:gytis-ivaskevicius/flake-utils-plus";
+      url = "github:ravensiris/flake-utils-plus?ref=ravensiris/fix-devshell-legacy-packages";
     };
 
     home-manager = {
