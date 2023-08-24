@@ -36,9 +36,14 @@
       url = "github:lnl7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    NixOS-WSL = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, nixos-hardware, darwin }:
+  outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, nixos-hardware, darwin, NixOS-WSL }:
     let
       suites = import ./suites.nix { inherit utils; inherit home-manager; inherit dotfiles; };
     in
@@ -92,6 +97,10 @@
           modules = [ ./hosts/boog-MBP ] ++ suites.darwinModules;
           output = "darwinConfigurations";
           builder = darwin.lib.darwinSystem;
+        };
+        mephistopheles-WSL = {
+          specialArgs = { inherit dotfiles; };
+          modules = [ home-manager.nixosModules.home-manager NixOS-WSL.nixosModules.wsl ./hosts/mephistopheles-WSL ] ++ suites.userModules;
         };
       };
 

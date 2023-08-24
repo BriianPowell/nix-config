@@ -164,6 +164,11 @@ normal                  # Enter normal mode and display the GRUB menu.
 - `nixos-rebuild switch --flake .#abaddon`
 - `nixos-rebuild dry-activate --flake .#abaddon`
 
+### mephistopheles-WSL
+
+- `nixos-rebuild switch --flake .#mephistopheles-WSL`
+- `nixos-rebuild dry-activate --flake .#mephistopheles-WSL`
+
 ### Darwin
 
 **First Time Installation:**

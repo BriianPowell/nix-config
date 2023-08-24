@@ -6,9 +6,11 @@
 let
   sheol = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO5jDeelt6JuZ4EKKIWonGay4YSkF2+zIdfghwDo7phl";
   abaddon = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILE9al/X5pmA8Fm+l/8B6kRQo+56dZtLt6ow/2D2EgOw";
+  mephistopheles-WSL = "";
   hosts = [
     sheol
     abaddon
+    mephistopheles-WSL
   ];
   boog = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIECylZ+bt6dh7k1PW32yqV94A7T51copoWC0ePYOti6z"
