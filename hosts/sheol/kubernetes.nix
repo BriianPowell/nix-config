@@ -6,11 +6,11 @@
 
 { config, pkgs, ... }: {
   environment.systemPackages = with pkgs; [
+    k3s
+    nvidia-podman
     # crun
     # docker
     # podman
-    # nvidia-podman
-    k3s
 
     (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
     (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (builtins.readFile ../../scripts/k3s-remove-unused-rs))
@@ -25,10 +25,39 @@
   #   autoPrune.enable = true;
   # };
 
-  # virtualisation.podman = {
-  #   enable = true;
-  #   enableNvidia = true;
-  # };
+  virtualisation.podman = {
+    enable = true;
+    enableNvidia = true;
+  };
+
+  virtualisation.containerd = {
+    enable = true;
+    settings =
+      let
+        fullCNIPlugins = pkgs.buildEnv {
+          name = "full-cni";
+          paths = with pkgs; [
+            cni-plugins
+            cni-plugin-flannel
+          ];
+        };
+      in
+      {
+        plugins."io.containerd.grpc.v1.cri" = {
+          # TODO: this may or may not be upstreamed already
+          cni = {
+            bin_dir = "${fullCNIPlugins}/bin";
+            conf_dir = "/var/lib/rancher/k3s/agent/etc/cni/net.d/";
+          };
+        };
+      };
+  };
+
+  systemd.services.containerd.serviceConfig = {
+    ExecStartPre = [
+      "-${pkgs.zfs}/bin/zfs create -o mountpoint=/var/lib/containerd/io.containerd.snapshotter.v1.zfs moriyya/containerd"
+    ];
+  };
 
   services.k3s = {
     enable = true;
@@ -46,7 +75,13 @@
       "--kube-controller-manager-arg --bind-address=0.0.0.0"
       "--kube-scheduler-arg --bind-address=0.0.0.0"
       "--data-dir /var/lib/rancher/k3s"
+      "--container-runtime-endpoint unix:///run/containerd/containerd.sock"
     ];
+  };
+
+  systemd.services.k3s = {
+    wants = [ "containerd.service" ];
+    after = [ "containerd.service" ];
   };
 
   networking.firewall = {
