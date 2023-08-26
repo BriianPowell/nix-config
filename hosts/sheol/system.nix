@@ -14,6 +14,4 @@
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.bluetooth.enable = false;
-  hardware.opengl.enable = true;
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
 }
