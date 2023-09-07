@@ -25,10 +25,10 @@
   #   autoPrune.enable = true;
   # };
 
-  virtualisation.podman = {
-    enable = true;
-    enableNvidia = true;
-  };
+  # virtualisation.podman = {
+  #   enable = true;
+  #   enableNvidia = true;
+  # };
 
   virtualisation.containerd = {
     enable = true;
@@ -43,19 +43,41 @@
         };
       in
       {
+        version = 2;
         plugins."io.containerd.grpc.v1.cri" = {
           # TODO: this may or may not be upstreamed already
           cni = {
             bin_dir = "${fullCNIPlugins}/bin";
             conf_dir = "/var/lib/rancher/k3s/agent/etc/cni/net.d/";
           };
+          containerd = {
+            default_runtime_name = "nvidia";
+            runtimes = {
+              nvidia = {
+                privileged_without_host_devices = false;
+                runtime_engine = "";
+                runtime_root = "";
+                runtime_type = "io.containerd.runc.v2";
+                options = {
+                  BinaryName = "${pkgs.nvidia-podman}/bin/nvidia-container-runtime";
+                };
+              };
+            };
+          };
         };
       };
   };
 
-  systemd.services.containerd.serviceConfig = {
-    ExecStartPre = [
-      "-${pkgs.zfs}/bin/zfs create -o mountpoint=/var/lib/containerd/io.containerd.snapshotter.v1.zfs moriyya/containerd"
+  systemd.services.containerd = {
+    serviceConfig = {
+      ExecStartPre = [
+        "-${pkgs.zfs}/bin/zfs create -o mountpoint=/var/lib/containerd/io.containerd.snapshotter.v1.zfs moriyya/containerd"
+      ];
+    };
+    path = with pkgs; [
+      containerd
+      runc
+      nvidia-podman
     ];
   };
 
@@ -75,6 +97,7 @@
       "--kube-controller-manager-arg --bind-address=0.0.0.0"
       "--kube-scheduler-arg --bind-address=0.0.0.0"
       "--data-dir /var/lib/rancher/k3s"
+      "--snapshotter zfs"
       "--container-runtime-endpoint unix:///run/containerd/containerd.sock"
     ];
   };
