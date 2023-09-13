@@ -75,11 +75,11 @@
       hosts = {
         sheol = {
           specialArgs = { inherit dotfiles; };
-          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule.home ./hosts/sheol ] ++ suites.serverModules ++ suites.userModules;
+          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/sheol ] ++ suites.serverModules ++ suites.userModules;
         };
         abaddon = {
           specialArgs = { inherit dotfiles; };
-          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule.home ./hosts/abaddon ] ++ suites.serverModules ++ suites.userModules;
+          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/abaddon ] ++ suites.serverModules ++ suites.userModules;
         };
         boog-MBP = {
           system = "aarch64-darwin";
