@@ -7,7 +7,7 @@
     nixpkgs.follows = "unstable";
 
     utils = {
-      url = "github:gytis-ivaskevicius/flake-utils-plus";
+      url = "github:gytis-ivaskevicius/flake-utils-plus/v1.4.0";
     };
 
     home-manager = {
@@ -38,7 +38,10 @@
 
   outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, nixos-hardware, darwin }:
     let
-      suites = import ./suites.nix { inherit utils; inherit home-manager; inherit dotfiles; };
+      nvidia-overlay = import ./overlays/nvidia/nvidia.nix;
+      suites = import ./suites.nix {
+        inherit utils; inherit home-manager; inherit dotfiles;
+      };
     in
     with suites.nixosModules;
     utils.lib.mkFlake {
@@ -46,6 +49,7 @@
       inherit (suites) nixosModules;
 
       supportedSystems = [ "x86_64-linux" "aarch64-darwin" ];
+
       channelsConfig = {
         allowUnfree = true;
         allowBroken = false;
@@ -58,9 +62,7 @@
         unstable = {
           input = unstable;
           overlaysBuilder = channels: [
-            (final: prev: {
-              #inherit (channel) stable;
-            })
+            nvidia-overlay
           ];
         };
       };
@@ -96,5 +98,5 @@
             buildInputs = [ git transcrypt ];
           };
         };
-    };
+      };
 }

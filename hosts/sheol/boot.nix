@@ -30,6 +30,8 @@
       "net.bridge-nf-call-iptables" = 1;
       "net.ipv4.ip_forward" = 1; # enable for k3s
       "net.ipv6.conf.all.forwarding" = 1; #enable for k3s
+      "net.ipv6.conf.enp6s0.accept_ra" = 2;
+      "net.ipv6.conf.enp0s31f6.accept_ra" = 2;
       "fs.inotify.max_user_instances" = 8192; # Fix for 'Too many open files error'
       "fs.inotify.max_user_watches" = 524288; # Fix for 'Too many open files error'
     };
