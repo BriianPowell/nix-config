@@ -22,7 +22,7 @@
     };
 
     vscode-server = {
-      url = "github:msteen/nixos-vscode-server";
+      url = "github:nix-community/nixos-vscode-server";
     };
 
     dotfiles = {
@@ -66,10 +66,6 @@
           ];
         };
       };
-
-      # sharedOverlays = [
-      #   self.overlay
-      # ];
 
       hostDefaults = {
         system = "x86_64-linux";

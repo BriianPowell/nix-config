@@ -7,7 +7,7 @@
       options = "--delete-older-than 7d";
     };
     extraOptions = ''
-      auto-optimise-store = true
+      auto-optimise-store = false
     '';
   };
 }
