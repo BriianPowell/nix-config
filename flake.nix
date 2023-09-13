@@ -22,7 +22,7 @@
     };
 
     vscode-server = {
-      url = "github:nix-community/nixos-vscode-server/hm-module-import";
+      url = "github:nix-community/nixos-vscode-server";
     };
 
     dotfiles = {
@@ -75,11 +75,11 @@
       hosts = {
         sheol = {
           specialArgs = { inherit dotfiles; };
-          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule.default ./hosts/sheol ] ++ suites.serverModules ++ suites.userModules;
+          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/sheol ] ++ suites.serverModules ++ suites.userModules;
         };
         abaddon = {
           specialArgs = { inherit dotfiles; };
-          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule.default ./hosts/abaddon ] ++ suites.serverModules ++ suites.userModules;
+          modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/abaddon ] ++ suites.serverModules ++ suites.userModules;
         };
         boog-MBP = {
           system = "aarch64-darwin";
