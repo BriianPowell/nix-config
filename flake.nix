@@ -7,8 +7,7 @@
     nixpkgs.follows = "unstable";
 
     utils = {
-      # url = "github:gytis-ivaskevicius/flake-utils-plus";
-      url = "github:ravensiris/flake-utils-plus?ref=ravensiris/fix-devshell-legacy-packages";
+      url = "github:gytis-ivaskevicius/flake-utils-plus";
     };
 
     home-manager = {
@@ -33,7 +32,7 @@
     nixos-hardware.url = "github:nixos/nixos-hardware";
 
     darwin = {
-      url = "github:lnl7/nix-darwin/master";
+      url = "github:lnl7/nix-darwin";
     };
   };
 
