@@ -1,4 +1,5 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, ... }:
+{
   networking.hostName = "boog-MBP";
 
   services = {
@@ -20,7 +21,7 @@
 
     # Build
     jdk
-    python3Full
+    # python311Full
     # dotnet-sdk
   ];
 

@@ -89,10 +89,10 @@
         };
       };
 
-      outputsBuilder = channels:
-        let pkgs = channels.unstable; in
+      outputsBuilder = channels: with channels.unstable;
         {
-          devShells = mkShell {
+          devShell = mkShell {
+            name = "devShell";
             buildInputs = [ git transcrypt ];
           };
         };
