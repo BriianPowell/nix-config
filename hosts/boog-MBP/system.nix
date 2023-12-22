@@ -21,7 +21,7 @@
 
     # Build
     jdk
-    # python311Full
+    python311Full
     # dotnet-sdk
   ];
 

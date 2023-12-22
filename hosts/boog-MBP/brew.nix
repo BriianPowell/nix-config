@@ -38,6 +38,7 @@
       "nextcloud"
       "parsec"
       "postico"
+      "postman"
       "provisionql"
       "qlcolorcode"
       "qlimagesize"
