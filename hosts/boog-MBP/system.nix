@@ -7,6 +7,9 @@
   };
 
   environment.systemPackages = with pkgs; [
+    # OS
+    darwin.lsusb
+
     # Utils
     coreutils-full
     awscli2
@@ -26,7 +29,7 @@
   ];
 
   system = {
-    stateVersion = 4;
+    stateVersion = lib.mkDefault 4;
     defaults = {
       NSGlobalDomain = {
         AppleEnableMouseSwipeNavigateWithScrolls = true;

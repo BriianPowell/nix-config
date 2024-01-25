@@ -16,47 +16,54 @@
     brews = [
       "qmk"
     ];
-    casks = [
-      "1password-cli"
-      "1password"
-      "amazon-chime"
-      "bartender"
-      "bettertouchtool"
-      "dash"
-      "docker"
-      "finicky"
-      "firefox"
-      "google-chrome"
-      "hex-fiend"
-      "iina"
-      "insomnia"
-      "iterm2"
-      "keka"
-      "logi-options-plus"
-      "microsoft-teams"
-      "monitorcontrol"
-      "nextcloud"
-      "parsec"
-      "postico"
-      "postman"
-      "provisionql"
-      "qlcolorcode"
-      "qlimagesize"
-      "qlmarkdown"
-      "qlstephen"
-      "qlvideo"
-      "quicklook-json"
-      "rectangle"
-      "slack"
-      "spotify"
-      "stay"
-      "sublime-text"
-      "typora"
-      "visual-studio-code"
-      "webull"
-      "workman"
-      "zoom"
-    ];
+    casks =
+      let
+        noQuarantine = name: {
+          inherit name;
+          args = { no_quarantine = true; };
+        };
+      in
+      [
+        "1password-cli"
+        "1password"
+        "amazon-chime"
+        "bartender"
+        "bettertouchtool"
+        "dash"
+        "docker"
+        "finicky"
+        "firefox"
+        "google-chrome"
+        "hex-fiend"
+        "iina"
+        "insomnia"
+        "iterm2"
+        "keka"
+        "logi-options-plus"
+        "microsoft-teams"
+        "monitorcontrol"
+        "nextcloud"
+        "parsec"
+        "postico"
+        "postman"
+        "provisionql"
+        (noQuarantine "qlcolorcode")
+        (noQuarantine "qlimagesize")
+        (noQuarantine "qlmarkdown")
+        (noQuarantine "qlstephen")
+        (noQuarantine "qlvideo")
+        (noQuarantine "quicklook-json")
+        "rectangle"
+        "slack"
+        "spotify"
+        "stay"
+        "sublime-text"
+        "typora"
+        "visual-studio-code"
+        "webull"
+        "workman"
+        "zoom"
+      ];
     masApps = {
       "1Password for Safari" = 1569813296;
       "Amphetamine" = 937984704;
