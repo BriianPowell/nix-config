@@ -1,39 +1,4 @@
 { pkgs, lib, dotfiles, ... }:
-let
-  osxPlugin =
-    if pkgs.system == "aarch64-darwin"
-    then
-      {
-        name = "plugin-osx";
-        src = pkgs.fetchFromGitHub
-          {
-            owner = "oh-my-fish";
-            repo = "plugin-osx";
-            rev = "27039b251201ec2e70d8e8052cbc59fa0ac3b3cd";
-            sha256 = "032yfxz10vypywfivggsam77b8zplmgafbc0gqks8cxhfy9hh9cd";
-          };
-      }
-    else {
-      name = "";
-      src = "/";
-    };
-
-  nvmPlugin =
-    if pkgs.system == "aarch64-darwin"
-    then {
-      name = "nvm.fish";
-      src = pkgs.fetchFromGitHub {
-        owner = "jorgebucaran";
-        repo = "nvm.fish";
-        rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
-        sha256 = "084wvdinas1d7v3da16lim7s8asimh389frmfamr7q70fy44spid";
-      };
-    }
-    else {
-      name = "";
-      src = "/";
-    };
-in
 {
   programs.fish = {
     enable = true;
@@ -91,9 +56,28 @@ in
           sha256 = "0a27218a4vh48fqpydvgwx9afzm686agdv2x2bxzxj226g328ddv";
         };
       }
-      osxPlugin
-      nvmPlugin
-    ];
+    ]
+    ++ (if pkgs.system == "aarch64-darwin" then [
+      {
+        name = "plugin-osx";
+        src = pkgs.fetchFromGitHub
+          {
+            owner = "oh-my-fish";
+            repo = "plugin-osx";
+            rev = "27039b251201ec2e70d8e8052cbc59fa0ac3b3cd";
+            sha256 = "032yfxz10vypywfivggsam77b8zplmgafbc0gqks8cxhfy9hh9cd";
+          };
+      }
+      {
+        name = "nvm.fish";
+        src = pkgs.fetchFromGitHub {
+          owner = "jorgebucaran";
+          repo = "nvm.fish";
+          rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
+          sha256 = "084wvdinas1d7v3da16lim7s8asimh389frmfamr7q70fy44spid";
+        };
+      }
+    ] else [ ]);
     shellInit = ''. ~/.config/fish/config.fish'';
   };
 
@@ -111,9 +95,5 @@ in
     ".finicky.js".source = "${dotfiles}/home/.finicky.js";
     ".gemrc".source = "${dotfiles}/home/.gemrc";
     ".prettierrc.js".source = "${dotfiles}/home/.prettierrc.js";
-    # ".local/bin/docker-logs".source = /home/boog/GitHub/server-admin-scripts/bin/docker-logs;
-    # ".local/bin/docker-ps".source = /home/boog/GitHub/server-admin-scripts/bin/docker-ps;
-    # ".local/bin/docker-top".source = /home/boog/GitHub/server-admin-scripts/bin/docker-top;
-    # ".local/bin/lsdisk".source = /home/boog/GitHub/server-admin-scripts/bin/lsdisk;
   };
 }

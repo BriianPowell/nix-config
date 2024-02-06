@@ -25,6 +25,7 @@
     # Build
     jdk
     python311Full
+    google-cloud-sdk
     # dotnet-sdk
   ];
 
