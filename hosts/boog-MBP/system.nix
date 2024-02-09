@@ -19,7 +19,7 @@
     # DevOps
     act
     ansible
-    terraform
+    # terraform - use tfenv instead
     terraform-docs
 
     # Build

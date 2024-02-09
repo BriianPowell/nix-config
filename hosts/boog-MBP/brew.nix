@@ -15,6 +15,7 @@
     ];
     brews = [
       "qmk"
+      "tfenv"
     ];
     casks =
       let
