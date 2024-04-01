@@ -24,7 +24,7 @@
 
     # Build
     jdk
-    python310Full
+    pyenv
     google-cloud-sdk
     # dotnet-sdk
   ];
