@@ -41,7 +41,7 @@
         "iterm2"
         "keka"
         "logi-options-plus"
-        "microsoft-teams"
+        # "microsoft-teams"
         "monitorcontrol"
         "nextcloud"
         "parsec"

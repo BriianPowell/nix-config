@@ -65,11 +65,11 @@
     "dotfiles": {
       "flake": false,
       "locked": {
-        "lastModified": 1692912384,
-        "narHash": "sha256-R83gsV2efjjFVhGILZvQ5Pk48NRdIHiOUcEbPnsupec=",
+        "lastModified": 1712012205,
+        "narHash": "sha256-yep/GJgu4XCHcpJbLEHy7NiJHo2/rkwcP0M695e2uMU=",
         "owner": "briianpowell",
         "repo": "dotfiles",
-        "rev": "047f9501eba4c94a53bffc5da4f4cffc9803a927",
+        "rev": "4b8d68364a8a67e7ff955332dee3cc439efb4a28",
         "type": "github"
       },
       "original": {
