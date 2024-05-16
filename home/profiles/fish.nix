@@ -83,6 +83,7 @@
 
   xdg.configFile = {
     "fish/completions/et.fish".source = "${dotfiles}/home/.config/fish/completions/et.fish";
+    "fish/completions/kubectl.fish".source = "${dotfiles}/home/.config/fish/completions/kubectl.fish";
     "fish/config.fish".source = lib.mkForce "${dotfiles}/home/.config/fish/config.fish";
     "fish/tide.config.fish".source = "${dotfiles}/home/.config/fish/tide.config.fish";
     "fish/kubectl_aliases.fish".source = "${dotfiles}/home/.config/fish/kubectl_aliases.fish";
