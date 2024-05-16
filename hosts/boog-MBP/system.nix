@@ -24,7 +24,6 @@
 
     # Build
     jdk
-    pyenv
     google-cloud-sdk
     # dotnet-sdk
   ];

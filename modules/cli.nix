@@ -13,6 +13,7 @@
       # deno # https://deno.land/
       # ruby # https://www.ruby-lang.org/en/
       rbenv # https://github.com/rbenv/rbenv
+      pyenv # https://github.com/pyenv/pyenv
 
       # Terminal Tools
       fish # https://fishshell.com/
