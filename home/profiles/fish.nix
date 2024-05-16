@@ -8,8 +8,8 @@
         src = pkgs.fishPlugins.tide.src;
       }
       {
-        name = "autopair.fish";
-        src = pkgs.fishPlugins.autopair-fish.src;
+        name = "autopair";
+        src = pkgs.fishPlugins.autopair.src;
       }
       {
         name = "pbcopy";
@@ -89,7 +89,6 @@
     "tmux/tmux.conf".source = "${dotfiles}/home/.config/tmux/tmux.conf";
   };
 
-  # TODO: clone the server-admin-scripts repos
   home.file = {
     ".editorconfig".source = "${dotfiles}/home/.editorconfig";
     ".finicky.js".source = "${dotfiles}/home/.finicky.js";

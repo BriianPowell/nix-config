@@ -28,7 +28,7 @@
       nurl # https://github.com/nix-community/nurl
       # httpie # https://httpie.io/
 
-      rnix-lsp # https://github.com/nix-community/rnix-lsp
+      nixd # https://github.com/nix-community/nixd
       jq # https://stedolan.github.io/jq/
       ripgrep # https://github.com/BurntSushi/ripgrep
 
@@ -40,10 +40,6 @@
       bind # https://www.isc.org/bind/
       # dig # https://www.isc.org/bind/
       pciutils # https://mj.ucw.cz/sw/pciutils/
-
-      # Terminal Plugins
-      fishPlugins.tide
-      fishPlugins.autopair-fish
 
       # k8s
       fluxcd # https://fluxcd.io/
