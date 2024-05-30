@@ -4,81 +4,25 @@
 # https://github.com/moduon/nixpkgs/blob/60e0d3d73670ef8ddca24aa546a40283e3838e69/nixos/modules/services/cluster/k3s/default.nix
 #
 
-{ config, pkgs, ... }: {
+{ config, pkgs, lib, ... }:
+let
+  containerdTemplate = lib.readFile ./config.toml.tmpl;
+in
+{
   environment.systemPackages = with pkgs; [
     k3s
     nvidia-podman
-    # crun
-    # docker
-    # podman
+    docker
+    runc
 
     (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
     (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (builtins.readFile ../../scripts/k3s-remove-unused-rs))
   ];
 
   # Enable Docker daemon.
-  # virtualisation.docker = {
-  #   enable = false;
-  #   # enableNvidia = true;
-  #   # TODO: this might not be necessary
-  #   # extraOptions = "--default-runtime=nvidia";
-  #   autoPrune.enable = true;
-  # };
-
-  # virtualisation.podman = {
-  #   enable = true;
-  #   enableNvidia = true;
-  # };
-
-  virtualisation.containerd = {
+  virtualisation.docker = {
     enable = true;
-    settings =
-      let
-        fullCNIPlugins = pkgs.buildEnv {
-          name = "full-cni";
-          paths = with pkgs; [
-            cni-plugins
-            cni-plugin-flannel
-          ];
-        };
-      in
-      {
-        version = 2;
-        plugins."io.containerd.grpc.v1.cri" = {
-          # TODO: this may or may not be upstreamed already
-          cni = {
-            bin_dir = "${fullCNIPlugins}/bin";
-            conf_dir = "/var/lib/rancher/k3s/agent/etc/cni/net.d/";
-          };
-          containerd = {
-            default_runtime_name = "nvidia";
-            runtimes = {
-              nvidia = {
-                privileged_without_host_devices = false;
-                runtime_engine = "";
-                runtime_root = "";
-                runtime_type = "io.containerd.runc.v2";
-                options = {
-                  BinaryName = "${pkgs.nvidia-podman}/bin/nvidia-container-runtime";
-                };
-              };
-            };
-          };
-        };
-      };
-  };
-
-  systemd.services.containerd = {
-    serviceConfig = {
-      ExecStartPre = [
-        "-${pkgs.zfs}/bin/zfs create -o mountpoint=/var/lib/containerd/io.containerd.snapshotter.v1.zfs moriyya/containerd"
-      ];
-    };
-    path = with pkgs; [
-      containerd
-      runc
-      nvidia-podman
-    ];
+    enableNvidia = true;
   };
 
   services.k3s = {
@@ -102,10 +46,11 @@
     ];
   };
 
-  systemd.services.k3s = {
-    wants = [ "containerd.service" ];
-    after = [ "containerd.service" ];
-  };
+  # The tmpl needs the full path to the container-shim
+  # https://github.com/k3s-io/k3s/issues/6518
+  system.activationScripts.writeContainerdConfigTemplate = lib.mkIf (builtins.elem config.networking.hostName [ "sheol" ]) (lib.stringAfter [ "var" ] ''
+    cp ${containerdTemplate} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+  '');
 
   networking.firewall = {
     allowedTCPPorts = [
