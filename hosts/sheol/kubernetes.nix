@@ -5,9 +5,9 @@
 #
 
 { config, pkgs, lib, ... }:
-let
-  containerdTemplate = (builtins.readFile ./config.toml.tmpl);
-in
+# let
+#   # containerdTemplate = (builtins.readFile ./config.toml.tmpl);
+# in
 {
   environment.systemPackages = with pkgs;
     [
@@ -47,11 +47,11 @@ in
     ];
   };
 
-  # The tmpl needs the full path to the container-shim
-  # https://github.com/k3s-io/k3s/issues/6518
-  system.activationScripts.writeContainerdConfigTemplate = lib.mkIf (builtins.elem config.networking.hostName [ "sheol" ]) ''
-    cp ${containerdTemplate} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
-  '';
+  # # The tmpl needs the full path to the container-shim
+  # # https://github.com/k3s-io/k3s/issues/6518
+  # system.activationScripts.writeContainerdConfigTemplate = lib.mkIf (builtins.elem config.networking.hostName [ "sheol" ]) ''
+  #   cp ${containerdTemplate} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+  # '';
 
   networking.firewall = {
     allowedTCPPorts = [
