@@ -30,7 +30,7 @@
       # httpie # https://httpie.io/
 
       nixpkgs-fmt # https://github.com/nix-community/nixpkgs-fmt
-      nixd # https://github.com/nix-community/nixd
+      nil # https://github.com/oxalica/nil
       jq # https://stedolan.github.io/jq/
       ripgrep # https://github.com/BurntSushi/ripgrep
 
