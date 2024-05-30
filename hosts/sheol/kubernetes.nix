@@ -4,20 +4,21 @@
 # https://github.com/moduon/nixpkgs/blob/60e0d3d73670ef8ddca24aa546a40283e3838e69/nixos/modules/services/cluster/k3s/default.nix
 #
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 let
-  containerdTemplate = lib.readFile ./config.toml.tmpl;
+  containerdTemplate = (builtins.readFile ./config.toml.tmpl);
 in
 {
-  environment.systemPackages = with pkgs; [
-    k3s
-    nvidia-podman
-    docker
-    runc
+  environment.systemPackages = with pkgs;
+    [
+      k3s
+      nvidia-podman
+      docker
+      runc
 
-    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
-    (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (builtins.readFile ../../scripts/k3s-remove-unused-rs))
-  ];
+      (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
+      (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (builtins.readFile ../../scripts/k3s-remove-unused-rs))
+    ];
 
   # Enable Docker daemon.
   virtualisation.docker = {
