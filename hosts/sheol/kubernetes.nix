@@ -6,7 +6,7 @@
 
 { config, pkgs, lib, ... }:
 # let
-#   # containerdTemplate = (builtins.readFile ./config.toml.tmpl);
+#   containerdTemplate = (builtins.readFile ./config.toml.tmpl);
 # in
 {
   environment.systemPackages = with pkgs;
@@ -42,16 +42,17 @@
       "--kube-controller-manager-arg --bind-address=0.0.0.0"
       "--kube-scheduler-arg --bind-address=0.0.0.0"
       "--data-dir /var/lib/rancher/k3s"
-      "--snapshotter zfs"
+      # "--snapshotter zfs"
       # "--container-runtime-endpoint unix:///run/containerd/containerd.sock"
     ];
   };
 
-  # # The tmpl needs the full path to the container-shim
-  # # https://github.com/k3s-io/k3s/issues/6518
-  # system.activationScripts.writeContainerdConfigTemplate = lib.mkIf (builtins.elem config.networking.hostName [ "sheol" ]) ''
-  #   cp ${containerdTemplate} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
-  # '';
+  # The tmpl needs the full path to the container-shim
+  # https://github.com/k3s-io/k3s/issues/6518
+  # system.activationScripts.writeContainerdConfigTemplate =
+  #   if (builtins.elem config.networking.hostName [ "sheol" ]) then
+  #     cp ${containerdTemplate} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+  #   '';
 
   networking.firewall = {
     allowedTCPPorts = [
