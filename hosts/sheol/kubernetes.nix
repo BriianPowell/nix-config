@@ -43,7 +43,7 @@
       "--kube-scheduler-arg --bind-address=0.0.0.0"
       "--data-dir /var/lib/rancher/k3s"
       "--snapshotter zfs"
-      "--container-runtime-endpoint unix:///run/containerd/containerd.sock"
+      # "--container-runtime-endpoint unix:///run/containerd/containerd.sock"
     ];
   };
 
