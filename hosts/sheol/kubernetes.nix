@@ -61,7 +61,7 @@ in
     ];
 
     allowedUDPPorts = [
-      8472
+      8472 # k3s, flannel: required if using multi-node for inter-node networking
       5353 # Home Assistant on k3s
     ];
 

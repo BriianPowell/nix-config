@@ -44,7 +44,7 @@
       pciutils # https://mj.ucw.cz/sw/pciutils/
 
       # k8s
-      # fluxcd # https://fluxcd.io/
+      fluxcd # https://fluxcd.io/
       kubectl # https://github.com/kubernetes/kubectl
       kubernetes-helm # https://github.com/helm/helm
       kubeseal # https://github.com/bitnami-labs/sealed-secrets
