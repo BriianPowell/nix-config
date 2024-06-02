@@ -1,6 +1,6 @@
 { pkgs, lib, ... }: {
   system = {
-    stateVersion = "23.11";
+    stateVersion = "24.05";
     userActivationScripts.vim = ''
       ${pkgs.vim}/bin/vim +PluginInstall +qall
     '';
