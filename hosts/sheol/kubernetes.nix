@@ -38,6 +38,9 @@ in
       "--disable traefik"
       "--disable metrics-server"
       "--etcd-expose-metrics"
+      "--kube-proxy-arg --metrics-bind-address=0.0.0.0"
+      "--kube-controller-manager-arg --bind-address=0.0.0.0"
+      "--kube-scheduler-arg --bind-address=0.0.0.0"
       "--data-dir /var/lib/rancher/k3s"
     ];
   };
