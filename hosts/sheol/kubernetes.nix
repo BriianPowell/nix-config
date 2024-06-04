@@ -38,9 +38,9 @@ in
       "--disable traefik"
       "--disable metrics-server"
       "--etcd-expose-metrics"
-      "--kube-proxy-arg --metrics-bind-address=0.0.0.0"
-      "--kube-controller-manager-arg --bind-address=0.0.0.0"
-      "--kube-scheduler-arg --bind-address=0.0.0.0"
+      "--kube-proxy-arg --metrics-bind-address=0.0.0.0" # Required for prometheus monitoring of kube-proxy
+      "--kube-controller-manager-arg --bind-address=0.0.0.0" # Required for prometheus monitoring of kube-controller-manager
+      "--kube-scheduler-arg --bind-address=0.0.0.0" # Required for prometheus monitoring of kube-scheduler
       "--data-dir /var/lib/rancher/k3s"
     ];
   };
