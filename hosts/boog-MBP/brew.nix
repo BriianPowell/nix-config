@@ -61,6 +61,7 @@
         "sublime-text"
         "typora"
         "visual-studio-code"
+        "webex-meetings"
         "webull"
         "workman"
         "zoom"
