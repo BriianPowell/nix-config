@@ -27,10 +27,11 @@
       [
         "1password-cli"
         "1password"
-        "amazon-chime"
-        "bartender"
+        # "amazon-chime"
+        # "bartender"
         "bettertouchtool"
         "dash"
+        # "displayplacer"
         "docker"
         "finicky"
         "firefox"
@@ -39,12 +40,14 @@
         "iina"
         "insomnia"
         "iterm2"
+        "jordanbaird-ice"
         "keka"
         "logi-options-plus"
         "microsoft-teams"
         "monitorcontrol"
         "nextcloud"
         "parsec"
+        "podman-desktop"
         "postico"
         "postman"
         "provisionql"
@@ -55,9 +58,11 @@
         (noQuarantine "qlvideo")
         (noQuarantine "quicklook-json")
         "rectangle"
+        # "signal" # Blocked firm laptop
         "slack"
         "spotify"
         "stay"
+        # "steam" # Blocked on firm laptop
         "sublime-text"
         "typora"
         "visual-studio-code"
