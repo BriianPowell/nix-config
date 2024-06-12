@@ -23,9 +23,10 @@
     terraform-docs
 
     # Build
+    # dotnet-sdk
     jdk
     google-cloud-sdk
-    # dotnet-sdk
+    podman
   ];
 
   system = {
