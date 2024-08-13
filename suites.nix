@@ -35,7 +35,6 @@ let
 
   userModules = with nixosModules; [
     boog
-    louis
     root
 
     ({ pkgs, lib, config, dotfiles, ... }: {
