@@ -1,6 +1,7 @@
 { ... }: {
   services.openssh = {
     enable = true;
+
     settings = {
       PermitRootLogin = "no";
       # disable password authentication

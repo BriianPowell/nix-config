@@ -1,4 +1,4 @@
-{ pkgs, dotfiles, ... }: {
+{ dotfiles, ... }: {
   programs.vim = {
     enable = true;
     defaultEditor = true;

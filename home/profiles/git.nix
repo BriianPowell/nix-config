@@ -1,21 +1,14 @@
-{ ... }: {
+{ dotfiles, pkgs, ... }: {
   programs.git = {
     enable = true;
-    userName = "Brian Powell";
-    userEmail = "brian@powell.place";
-    extraConfig = {
-      core = {
-        editor = "vim";
-      };
-      # url = {
-      #   "git@github.com:" = {
-      #     insteadOf = "https://github.com/";
-      #   };
-      # };
-      pull = {
-        rebase = true;
-      };
-    };
-    ignores = [ ".DS_Store" ];
   };
+
+  home.file =
+    if pkgs.system == "aarch64-darwin" then {
+      ".gitconfig".source = "${dotfiles}/home/darwin.gitconfig";
+      ".gitignore".source = "${dotfiles}/home/darwin.gitignore";
+      "GitHub/McKinsey/alcon/.gitconfig".source = "${dotfiles}/home/alcon.gitconfig";
+    } else {
+      ".gitconfig".source = "${dotfiles}/home/linux.gitconfig";
+    };
 }

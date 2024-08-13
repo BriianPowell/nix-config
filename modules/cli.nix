@@ -1,10 +1,12 @@
 { pkgs, inputs, ... }: {
   environment = {
     shells = with pkgs; [ fish ];
+
     variables = {
       EDITOR = "vim";
       VISUAL = "vim";
     };
+
     systemPackages = with pkgs; [
       # Secrets Management
       inputs.agenix.packages."${system}".default
@@ -49,9 +51,5 @@
       kubernetes-helm # https://github.com/helm/helm
       kubeseal # https://github.com/bitnami-labs/sealed-secrets
     ];
-  };
-
-  programs = {
-    fish.enable = true;
   };
 }

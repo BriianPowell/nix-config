@@ -4,29 +4,16 @@
     enable = true;
     plugins = [
       {
-        name = "tide";
-        src = pkgs.fishPlugins.tide.src;
-      }
-      {
-        name = "autopair";
+        name = "autopair.fish";
         src = pkgs.fishPlugins.autopair.src;
       }
       {
-        name = "pbcopy";
+        name = "fish-rbenv";
         src = pkgs.fetchFromGitHub {
-          owner = "oh-my-fish";
-          repo = "plugin-pbcopy";
-          rev = "e8d78bb01f66246f7996a4012655b8ddbad777c2";
-          sha256 = "1bmy46mifjbjy9fj2rqiypj94g9ww7spaxgakssvz59rv6sg9bq7";
-        };
-      }
-      {
-        name = "node-binpath";
-        src = pkgs.fetchFromGitHub {
-          owner = "dudeofawesome";
-          repo = "plugin-node-binpath";
-          rev = "3d190054a4eb49b1cf656de4e3893ded33ce3023";
-          sha256 = "05y1w82m0n2wblivwc22113b13bylsayvvh5jba0ndh1npl11i7h";
+          owner = "rbenv";
+          repo = "fish-rbenv";
+          rev = "209203428792db8c3084109b551d23e4e678fb17";
+          sha256 = "1cksi1s8pm3r2171h68c5m2ip12j1niv8hhfcab5gjhm37fhvzsm";
         };
       }
       {
@@ -39,22 +26,26 @@
         };
       }
       {
-        name = "plugin-rbenv";
+        name = "node-binpath";
         src = pkgs.fetchFromGitHub {
           owner = "oh-my-fish";
-          repo = "plugin-rbenv";
-          rev = "e879897d0cb09667f14b48901446b31d10a21b1b";
-          sha256 = "0ypm6fk3i5fqdxsz2ja85pg7qxihzck8vhinfdln9jdi05l49a6i";
+          repo = "plugin-node-binpath";
+          rev = "70ecbe7be606b1b26bfd1a11e074bc92fe65550c";
+          sha256 = "0zcl5jhq7n4b706hymhdg34dmag7b90214zqnbv5gxn22ivbsj8y";
         };
       }
       {
-        name = "fish-kubectl-aliases";
+        name = "nvm.fish";
         src = pkgs.fetchFromGitHub {
-          owner = "mibmo";
-          repo = "fish-kubectl-aliases";
-          rev = "29a3f686bbd7dc6d6cc5a7be6a50938f72845709";
-          sha256 = "0a27218a4vh48fqpydvgwx9afzm686agdv2x2bxzxj226g328ddv";
+          owner = "jorgebucaran";
+          repo = "nvm.fish";
+          rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
+          sha256 = "084wvdinas1d7v3da16lim7s8asimh389frmfamr7q70fy44spid";
         };
+      }
+      {
+        name = "tide";
+        src = pkgs.fishPlugins.tide.src;
       }
     ]
     ++ (if pkgs.system == "aarch64-darwin" then [
@@ -68,17 +59,18 @@
             sha256 = "032yfxz10vypywfivggsam77b8zplmgafbc0gqks8cxhfy9hh9cd";
           };
       }
+    ] else [
       {
-        name = "nvm.fish";
+        name = "pbcopy";
         src = pkgs.fetchFromGitHub {
-          owner = "jorgebucaran";
-          repo = "nvm.fish";
-          rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
-          sha256 = "084wvdinas1d7v3da16lim7s8asimh389frmfamr7q70fy44spid";
+          owner = "oh-my-fish";
+          repo = "plugin-pbcopy";
+          rev = "e8d78bb01f66246f7996a4012655b8ddbad777c2";
+          sha256 = "1bmy46mifjbjy9fj2rqiypj94g9ww7spaxgakssvz59rv6sg9bq7";
         };
       }
-    ] else [ ]);
-    shellInit = ''. ~/.config/fish/config.fish'';
+    ]);
+    shellInit = ''. $HOME/.config/fish/config.fish'';
   };
 
   xdg.configFile = {
@@ -86,14 +78,5 @@
     "fish/functions/.kubectl_aliases.fish".source = "${dotfiles}/home/.config/fish/functions/.kubectl_aliases.fish";
     "fish/config.fish".source = lib.mkForce "${dotfiles}/home/.config/fish/config.fish";
     "fish/tide.config.fish".source = "${dotfiles}/home/.config/fish/tide.config.fish";
-    "fish/kubectl_aliases.fish".source = "${dotfiles}/home/.config/fish/kubectl_aliases.fish";
-    "tmux/tmux.conf".source = "${dotfiles}/home/.config/tmux/tmux.conf";
-  };
-
-  home.file = {
-    ".editorconfig".source = "${dotfiles}/home/.editorconfig";
-    ".finicky.js".source = "${dotfiles}/home/.finicky.js";
-    ".gemrc".source = "${dotfiles}/home/.gemrc";
-    ".prettierrc.js".source = "${dotfiles}/home/.prettierrc.js";
   };
 }

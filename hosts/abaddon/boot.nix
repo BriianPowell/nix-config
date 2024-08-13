@@ -6,6 +6,7 @@
         configurationLimit = 10;
         editor = false;
       };
+
       efi = {
         efiSysMountPoint = "/boot/efi";
         canTouchEfiVariables = true;
@@ -24,7 +25,9 @@
       "ip_vs_sh"
       "nf_conntrack"
     ];
+
     extraModulePackages = [ ];
+
     kernel.sysctl = {
       "net.bridge-nf-call-ip6tables" = 1;
       "net.bridge-nf-call-iptables" = 1;
@@ -40,6 +43,7 @@
     #
     initrd = {
       preLVMCommands = lib.mkOrder 400 "sleep 1";
+
       luks = {
         forceLuksSupportInInitrd = true;
       };
@@ -47,12 +51,14 @@
       # Enable SSH in initrd. Useful for unlocking LUKS remotely.
       network = {
         enable = true;
+
         ssh = {
           enable = true;
           port = 2222;
           hostKeys = [ "/etc/secrets/initrd/ssh_host_rsa_key" "/etc/secrets/initrd/ssh_host_ed25519_key" ];
           authorizedKeys = config.users.users.boog.openssh.authorizedKeys.keys;
         };
+
         postCommands =
           let
             disk = "/dev/disk/by-uuid/a4296409-c3b8-4984-ab51-17cec9209d32";

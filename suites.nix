@@ -11,21 +11,20 @@ let
     ./modules/cli.nix
     ./modules/secrets.nix
     ./modules/fonts.nix
-    ./modules/console.nix
 
     ./users/boog
-    ./users/louis
     ./users/root
     ./users/darwin
   ];
+
   sharedModules = with nixosModules; [
     cli
     fonts
     secrets
   ];
+
   serverModules = with nixosModules; [
     base-server
-    # console
     i18n
     minimal-docs
     openssh
@@ -33,6 +32,7 @@ let
     tcp-hardening
     tcp-optimization
   ];
+
   userModules = with nixosModules; [
     boog
     louis
@@ -59,6 +59,7 @@ let
       '';
     })
   ];
+
   darwinModules = with nixosModules; [
     darwin
 
