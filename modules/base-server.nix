@@ -5,7 +5,6 @@
       ${pkgs.vim}/bin/vim +PluginInstall +qall
     '';
   };
-  sound.enable = false;
 
   time.timeZone = lib.mkDefault "America/Los_Angeles";
 
