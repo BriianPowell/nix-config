@@ -1,5 +1,5 @@
 { config, ... }: {
   users = {
-    users.root.passwordFile = config.age.secrets."passwords/users/root".path;
+    users.root.hashedPasswordFile = config.age.secrets."passwords/users/root".path;
   };
 }
