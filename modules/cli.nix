@@ -18,6 +18,7 @@
       pyenv # https://github.com/pyenv/pyenv
 
       # Terminal Tools
+      atuin # https://docs.atuin.sh/
       fish # https://fishshell.com/
       eternal-terminal # https://eternalterminal.dev/
       tmux # https://github.com/tmux/tmux
