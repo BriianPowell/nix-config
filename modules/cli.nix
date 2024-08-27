@@ -47,6 +47,7 @@
       pciutils # https://mj.ucw.cz/sw/pciutils/
 
       # k8s
+      argocd # https://argo-cd.readthedocs.io/en/stable/
       fluxcd # https://fluxcd.io/
       kubectl # https://github.com/kubernetes/kubectl
       kubernetes-helm # https://github.com/helm/helm
