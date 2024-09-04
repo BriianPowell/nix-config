@@ -45,6 +45,7 @@
       bind # https://www.isc.org/bind/
       # dig # https://www.isc.org/bind/
       pciutils # https://mj.ucw.cz/sw/pciutils/
+      smartmontools # https://www.smartmontools.org/
 
       # k8s
       argocd # https://argo-cd.readthedocs.io/en/stable/
