@@ -14,6 +14,7 @@
       "qmk/qmk"
     ];
     brews = [
+      "displayplacer"
       "qmk"
       "tfenv"
     ];
@@ -28,10 +29,9 @@
         "1password-cli"
         "1password"
         # "amazon-chime"
-        # "bartender"
+        # "bartender" # Using jordanbaird-ice instead, due to security issues
         "bettertouchtool"
         "dash"
-        # "displayplacer"
         "docker"
         "finicky"
         "firefox"
@@ -42,14 +42,15 @@
         "iterm2"
         "jordanbaird-ice"
         "keka"
-        "logi-options-plus"
+        "logi-options+"
         "microsoft-teams"
         "monitorcontrol"
         "nextcloud"
         "parsec"
-        "podman-desktop"
-        "postico"
-        "postman"
+        "pgadmin4"
+        # "podman-desktop" # Using Docker Desktop for the time being
+        # "postico" # Using pgAdmin4 instead
+        # "postman" # Using Insomnia instead
         "provisionql"
         (noQuarantine "qlcolorcode")
         (noQuarantine "qlimagesize")
@@ -58,11 +59,11 @@
         (noQuarantine "qlvideo")
         (noQuarantine "quicklook-json")
         "rectangle"
-        # "signal" # Blocked firm laptop
+        # "signal" # Blocked on Firm laptop
         "slack"
         "spotify"
         "stay"
-        # "steam" # Blocked on firm laptop
+        # "steam" # Blocked on Firm laptop
         "sublime-text"
         "typora"
         "visual-studio-code"
