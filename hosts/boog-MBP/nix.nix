@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   nix = {
-    package = pkgs.nixFlakes;
+    enable = true;
     gc = {
       automatic = true;
       interval.Day = 7;

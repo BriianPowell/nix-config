@@ -32,7 +32,7 @@
         # "bartender" # Using jordanbaird-ice instead, due to security issues
         "bettertouchtool"
         "dash"
-        "docker"
+        # "docker"
         "finicky"
         "firefox"
         "google-chrome"
@@ -42,13 +42,13 @@
         "iterm2"
         "jordanbaird-ice"
         "keka"
-        "logi-options+"
+        "logi-options+" # Not good software
         "microsoft-teams"
         "monitorcontrol"
         "nextcloud"
         "parsec"
         "pgadmin4"
-        # "podman-desktop" # Using Docker Desktop for the time being
+        "podman-desktop" # Using Docker Desktop for the time being
         # "postico" # Using pgAdmin4 instead
         # "postman" # Using Insomnia instead
         "provisionql"

@@ -12,7 +12,6 @@ in
   environment.systemPackages = with pkgs;
     [
       k3s
-      nvidia-podman
       docker
       runc
 
@@ -24,6 +23,7 @@ in
   virtualisation.docker = {
     enable = true;
     enableNvidia = true;
+    extraOptions = "--default-runtime=nvidia";
   };
 
   services.k3s = {

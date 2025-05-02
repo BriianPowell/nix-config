@@ -2,10 +2,6 @@
 {
   networking.hostName = "boog-MBP";
 
-  services = {
-    nix-daemon.enable = true;
-  };
-
   environment.systemPackages = with pkgs; [
     # OS
     darwin.lsusb

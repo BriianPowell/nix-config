@@ -1,44 +1,50 @@
 {
   description = "BriianPowell's Nix Configurations";
 
-  inputs = {
-    stable.url = "github:nixos/nixpkgs/nixos-23.05";
-    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs.follows = "unstable";
+  inputs =
+    {
+      stable.url = "github:nixos/nixpkgs/nixos-24.11";
+      unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+      nixpkgs.follows = "stable";
 
-    utils = {
-      url = "github:gytis-ivaskevicius/flake-utils-plus";
+      utils = {
+        url = "github:gytis-ivaskevicius/flake-utils-plus/v1.5.1";
+      };
+
+      home-manager = {
+        url = "github:nix-community/home-manager/release-24.11"; # "github:nix-community/home-manager/master";
+        inputs.nixpkgs.follows = "nixpkgs";
+      };
+
+      agenix = {
+        url = "github:ryantm/agenix";
+        inputs.nixpkgs.follows = "nixpkgs";
+      };
+
+      vscode-server = {
+        url = "github:nix-community/nixos-vscode-server";
+      };
+
+      dotfiles = {
+        url = "github:briianpowell/dotfiles";
+        flake = false;
+      };
+
+      nixos-hardware = {
+        url = "github:nixos/nixos-hardware";
+      };
+
+      darwin = {
+        url = "github:lnl7/nix-darwin/nix-darwin-24.11";
+        inputs.nixpkgs.follows = "nixpkgs";
+      };
     };
-
-    home-manager = {
-      url = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    agenix = {
-      url = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    vscode-server = {
-      url = "github:nix-community/nixos-vscode-server";
-    };
-
-    dotfiles = {
-      url = "github:briianpowell/dotfiles";
-      flake = false;
-    };
-
-    nixos-hardware.url = "github:nixos/nixos-hardware";
-
-    darwin = {
-      url = "github:lnl7/nix-darwin";
-    };
-  };
 
   outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, nixos-hardware, darwin }:
     let
-      suites = import ./suites.nix { inherit utils; inherit home-manager; inherit dotfiles; };
+      suites = import ./suites.nix {
+        inherit utils; inherit home-manager; inherit dotfiles;
+      };
     in
     with suites.nixosModules;
     utils.lib.mkFlake {
@@ -68,7 +74,7 @@
       hostDefaults = {
         system = "x86_64-linux";
         modules = [ agenix.nixosModules.default ] ++ suites.sharedModules;
-        channelName = "unstable";
+        channelName = "stable";
       };
 
       hosts = {
@@ -89,7 +95,7 @@
         };
       };
 
-      outputsBuilder = channels: with channels.unstable;
+      outputsBuilder = channels: with channels.stable;
         {
           devShell = mkShell {
             name = "devShell";
