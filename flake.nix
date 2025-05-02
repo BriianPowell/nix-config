@@ -23,6 +23,7 @@
 
       vscode-server = {
         url = "github:nix-community/nixos-vscode-server";
+        inputs.nixpkgs.follows = "nixpkgs";
       };
 
       dotfiles = {
@@ -30,17 +31,22 @@
         flake = false;
       };
 
-      nixos-hardware = {
-        url = "github:nixos/nixos-hardware";
-      };
+      # nixos-hardware = {
+      #   url = "github:nixos/nixos-hardware";
+      # };
 
       darwin = {
         url = "github:lnl7/nix-darwin/nix-darwin-24.11";
         inputs.nixpkgs.follows = "nixpkgs";
       };
+
+      _1password-shell-plugins = {
+        url = "github:1Password/shell-plugins";
+        inputs.nixpkgs.follows = "nixpkgs";
+      };
     };
 
-  outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, nixos-hardware, darwin }:
+  outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, darwin, ... }:
     let
       suites = import ./suites.nix {
         inherit utils; inherit home-manager; inherit dotfiles;
@@ -60,6 +66,11 @@
       channels = {
         stable = {
           input = stable;
+          overlaysBuilder = channels: [
+            (self: super: {
+              nodejs = super.nodejs_22;
+            })
+          ];
         };
         unstable = {
           input = unstable;
