@@ -8,7 +8,7 @@
   ];
 
   home = {
-    stateVersion = "24.05";
+    stateVersion = "24.11";
     activation = {
       vim = lib.hm.dag.entryAfter [ ''writeBoundary'' ] ''
         if ! [ -d $HOME/.vim/pack/themes/start ]; then

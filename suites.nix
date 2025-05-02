@@ -41,8 +41,7 @@ let
       nix.settings.trusted-users = [ "boog" ];
       nix.generateRegistryFromInputs = true;
       nix.linkInputs = true;
-      #nix.generateNixPathFromInputs = true;
-      #utils.nixosModules.saneFlakeDefaults
+      nix.generateNixPathFromInputs = true;
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
       home-manager.extraSpecialArgs = {
@@ -65,7 +64,7 @@ let
     home-manager.darwinModules.home-manager
     {
       nix.settings.trusted-users = [ "boog" ];
-      nix.generateRegistryFromInputs = true;
+      # nix.generateRegistryFromInputs = true;
       nix.linkInputs = true;
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
