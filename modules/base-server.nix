@@ -29,7 +29,7 @@
     enableIPv6 = false;
 
     networkmanager = {
-      enable = true;
+      enable = false;
       dns = "systemd-resolved";
       dhcp = "dhcpcd";
     };
@@ -39,7 +39,7 @@
   # https://nixos.org/manual/nixos/unstable/options.html#opt-services.avahi.enable
   services.resolved = {
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.enable
-    enable = true;
+    enable = false;
 
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.dnssec
     dnssec = "allow-downgrade";
