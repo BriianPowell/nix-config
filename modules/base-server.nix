@@ -11,8 +11,7 @@
   networking = {
     defaultGateway = "10.0.2.1";
     nameservers = [
-      "1.0.0.1"
-      "1.1.1.1"
+      "10.0.2.1"
     ];
     useDHCP = false;
 

@@ -90,11 +90,11 @@
     "dotfiles": {
       "flake": false,
       "locked": {
-        "lastModified": 1730241113,
-        "narHash": "sha256-uEnn/uFo8dx8kmODgvE2FPuHXHhn9DaPCezsH2N7txM=",
+        "lastModified": 1746738194,
+        "narHash": "sha256-86gcKbgaiLYv2ooOTknbSiCORidy9rcmaJQ1vsqc1vk=",
         "owner": "briianpowell",
         "repo": "dotfiles",
-        "rev": "1713cbd73920868fa0fdf6d906cb979a5440bfde",
+        "rev": "6f247ab8774108604621fac013b2b3ffbffbd1d0",
         "type": "github"
       },
       "original": {
@@ -217,11 +217,11 @@
     },
     "stable": {
       "locked": {
-        "lastModified": 1746183838,
-        "narHash": "sha256-kwaaguGkAqTZ1oK0yXeQ3ayYjs8u/W7eEfrFpFfIDFA=",
+        "lastModified": 1746557022,
+        "narHash": "sha256-QkNoyEf6TbaTW5UZYX0OkwIJ/ZMeKSSoOMnSDPQuol0=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "bf3287dac860542719fe7554e21e686108716879",
+        "rev": "1d3aeb5a193b9ff13f63f4d9cc169fb88129f860",
         "type": "github"
       },
       "original": {
@@ -293,11 +293,11 @@
     },
     "unstable": {
       "locked": {
-        "lastModified": 1746141548,
-        "narHash": "sha256-IgBWhX7A2oJmZFIrpRuMnw5RAufVnfvOgHWgIdds+hc=",
+        "lastModified": 1746461020,
+        "narHash": "sha256-7+pG1I9jvxNlmln4YgnlW4o+w0TZX24k688mibiFDUE=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "f02fddb8acef29a8b32f10a335d44828d7825b78",
+        "rev": "3730d8a308f94996a9ba7c7138ede69c1b9ac4ae",
         "type": "github"
       },
       "original": {
