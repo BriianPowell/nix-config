@@ -39,7 +39,7 @@ let
 
     ({ pkgs, lib, config, dotfiles, ... }: {
       nix.settings.trusted-users = [ "boog" ];
-      nix.generateRegistryFromInputs = true;
+      # nix.generateRegistryFromInputs = true;
       nix.linkInputs = true;
       nix.generateNixPathFromInputs = true;
       home-manager.useGlobalPkgs = true;
