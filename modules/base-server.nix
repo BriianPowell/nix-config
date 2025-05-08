@@ -11,7 +11,8 @@
   networking = {
     defaultGateway = "10.0.2.1";
     nameservers = [
-      "10.0.2.1"
+      "1.0.0.1"
+      "1.1.1.1"
     ];
     useDHCP = false;
 
@@ -53,7 +54,7 @@
     '';
 
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.fallbackDns
-    fallbackDns = [ "10.0.0.1" ];
+    fallbackDns = [ "10.0.2.1" ];
   };
 
   services = {
