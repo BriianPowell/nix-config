@@ -23,8 +23,9 @@ in
   virtualisation.docker = {
     enable = true;
     enableNvidia = true;
-    extraOptions = "--default-runtime=nvidia";
   };
+
+  hardware.nvidia-container-toolkit.enable = true;
 
   services.k3s = {
     enable = true;
