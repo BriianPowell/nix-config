@@ -1,4 +1,4 @@
-{ utils, home-manager, dotfiles }:
+{ utils, home-manager, dotfiles, defaultSpecialArgs }:
 let
   nixosModules = utils.lib.exportModules [
     ./modules/base-server.nix
@@ -11,6 +11,7 @@ let
     ./modules/cli.nix
     ./modules/secrets.nix
     ./modules/fonts.nix
+    ./modules/shared-options.nix
 
     ./users/boog
     ./users/root
@@ -21,6 +22,7 @@ let
     cli
     fonts
     secrets
+    shared-options
   ];
 
   serverModules = with nixosModules; [
@@ -33,49 +35,56 @@ let
     tcp-optimization
   ];
 
+  sharedOptions = { dotfiles, config, ... }: {
+    nix.settings = {
+      trusted-users = config.trustedUsers;
+      max-jobs = 4;
+      cores = 0;
+      sandbox = true;
+      substituters = [
+        "https://cache.nixos.org/"
+        "https://nix-community.cachix.org"
+      ];
+      experimental-features = [
+        "nix-command"
+      ];
+      warn-dirty = false;
+      keep-outputs = true;
+      keep-derivations = true;
+      http-connections = 50;
+      log-lines = 50;
+    };
+
+    nix.gc = {
+      automatic = true;
+      interval.Day = 7;
+      options = "--delete-older-than 7d";
+    };
+
+    nix.optimise = {
+      automatic = true;
+      interval.Day = 1;
+    };
+
+    nix.linkInputs = true;
+
+    home-manager = {
+      useGlobalPkgs = true;
+      useUserPackages = true;
+      extraSpecialArgs = defaultSpecialArgs;
+    };
+  };
+
   userModules = with nixosModules; [
     boog
     root
-
-    ({ pkgs, lib, config, dotfiles, ... }: {
-      nix.settings.trusted-users = [ "boog" ];
-      nix.generateRegistryFromInputs = true;
-      nix.linkInputs = true;
-      nix.generateNixPathFromInputs = true;
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.extraSpecialArgs = {
-        inherit dotfiles;
-      };
-      home-manager.users.boog = import ./home;
-      #boot.kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_5_15;
-      #boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
-      nix.extraOptions = ''
-        http-connections = 50
-        log-lines = 50
-        warn-dirty = false
-      '';
-    })
+    sharedOptions
   ];
 
   darwinModules = with nixosModules; [
     darwin
-
     home-manager.darwinModules.home-manager
-    {
-      nix.settings.trusted-users = [ "boog" ];
-      # nix.generateRegistryFromInputs = true;
-      nix.linkInputs = true;
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.extraSpecialArgs = { inherit dotfiles; }; # Pass flake variable
-      home-manager.users.boog = import ./home;
-      nix.extraOptions = ''
-        http-connections = 50
-        log-lines = 50
-        warn-dirty = false
-      '';
-    }
+    sharedOptions
   ];
 in
 {

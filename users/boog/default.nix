@@ -1,4 +1,5 @@
 { pkgs, config, ... }: {
+  home-manager.users.boog = import ../../home;
   users = {
     mutableUsers = false;
     users.boog = {

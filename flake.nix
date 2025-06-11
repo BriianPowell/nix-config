@@ -31,10 +31,6 @@
         flake = false;
       };
 
-      # nixos-hardware = {
-      #   url = "github:nixos/nixos-hardware";
-      # };
-
       darwin = {
         url = "github:lnl7/nix-darwin/nix-darwin-24.11";
         inputs.nixpkgs.follows = "nixpkgs";
@@ -48,8 +44,9 @@
 
   outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, darwin, ... }:
     let
+      defaultSpecialArgs = { inherit dotfiles; };
       suites = import ./suites.nix {
-        inherit utils; inherit home-manager; inherit dotfiles;
+        inherit utils home-manager dotfiles defaultSpecialArgs;
       };
     in
     with suites.nixosModules;
@@ -90,16 +87,16 @@
 
       hosts = {
         sheol = {
-          specialArgs = { inherit dotfiles; };
+          specialArgs = defaultSpecialArgs;
           modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/sheol ] ++ suites.serverModules ++ suites.userModules;
         };
         abaddon = {
-          specialArgs = { inherit dotfiles; };
+          specialArgs = defaultSpecialArgs;
           modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/abaddon ] ++ suites.serverModules ++ suites.userModules;
         };
         boog-MBP = {
           system = "aarch64-darwin";
-          specialArgs = { inherit dotfiles; };
+          specialArgs = defaultSpecialArgs;
           modules = [ ./hosts/boog-MBP ] ++ suites.darwinModules;
           output = "darwinConfigurations";
           builder = darwin.lib.darwinSystem;

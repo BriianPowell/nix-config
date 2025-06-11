@@ -1,4 +1,5 @@
 { pkgs, ... }: {
+  home-manager.users.boog = import ../../home;
   users = {
     users.boog = {
       home = "/Users/boog";
