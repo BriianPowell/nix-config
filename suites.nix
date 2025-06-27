@@ -63,7 +63,7 @@ let
 
     nix.optimise = {
       automatic = true;
-      interval.Day = 1;
+      dates = [ "weekly" ];
     };
 
     nix.linkInputs = true;
