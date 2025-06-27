@@ -57,7 +57,7 @@ let
 
     nix.gc = {
       automatic = true;
-      interval.Day = 7;
+      dates = "weekly";
       options = "--delete-older-than 7d";
     };
 
