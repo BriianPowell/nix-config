@@ -13,10 +13,11 @@
     git-secrets
 
     # DevOps
-    act
     ansible
+    packer
     # terraform - use tfenv instead
     terraform-docs
+    tflint
 
     # Build
     # dotnet-sdk

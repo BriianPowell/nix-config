@@ -57,13 +57,13 @@ let
 
     nix.gc = {
       automatic = true;
-      dates = "weekly";
+      # dates = "weekly";
       options = "--delete-older-than 7d";
     };
 
     nix.optimise = {
       automatic = true;
-      dates = [ "weekly" ];
+      # dates = [ "weekly" ];
     };
 
     nix.linkInputs = true;

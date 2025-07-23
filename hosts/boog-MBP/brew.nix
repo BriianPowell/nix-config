@@ -76,6 +76,7 @@
       "1Password for Safari" = 1569813296;
       "Amphetamine" = 937984704;
       "Xcode" = 497799835;
+      "Windows App" = 1295203466;
     };
   };
 }
