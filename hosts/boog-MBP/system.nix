@@ -11,6 +11,7 @@
     coreutils-full
     eza # https://github.com/ogham/exa
     git-secrets
+    gh # https://cli.github.com/
     trivy
 
     # DevOps
