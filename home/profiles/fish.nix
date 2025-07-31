@@ -59,6 +59,16 @@
             sha256 = "032yfxz10vypywfivggsam77b8zplmgafbc0gqks8cxhfy9hh9cd";
           };
       }
+      {
+        name = "fish-exa";
+        src = pkgs.fetchFromGitHub
+          {
+            owner = "gazorby";
+            repo = "fish-exa";
+            rev = "92e5bcb762f7c08cc4484a2a09d6c176814ef35d";
+            sha256 = "1d298wyccnk0vw9n61m3imc1si04aq2mcp9hp7qrhrdcn7rdvhgp";
+          };
+      }
     ] else [
       {
         name = "pbcopy";
@@ -75,7 +85,16 @@
 
   xdg.configFile = {
     "fish/completions/et.fish".source = "${dotfiles}/home/.config/fish/completions/et.fish";
-    "fish/functions/.kubectl_aliases.fish".source = "${dotfiles}/home/.config/fish/functions/.kubectl_aliases.fish";
+    "fish/conf.d/eza_aliases.fish".source = "${dotfiles}/home/.config/fish/conf.d/eza_aliases.fish";
+    "fish/conf.d/git_aliases.fish".source = "${dotfiles}/home/.config/fish/conf.d/git_aliases.fish";
+    "fish/conf.d/kubectl_aliases.fish".source = "${dotfiles}/home/.config/fish/conf.d/kubectl_aliases.fish";
+    "fish/functions/cl.fish".source = "${dotfiles}/home/.config/fish/functions/cl.fish";
+    "fish/functions/git_current_branch.fish".source = "${dotfiles}/home/.config/fish/functions/git_current_branch.fish";
+    "fish/functions/git_develop_branch.fish".source = "${dotfiles}/home/.config/fish/functions/git_develop_branch.fish";
+    "fish/functions/git_feature_branch.fish".source = "${dotfiles}/home/.config/fish/functions/git_feature_branch.fish";
+    "fish/functions/git_main_branch.fish".source = "${dotfiles}/home/.config/fish/functions/git_main_branch.fish";
+    "fish/functions/gitclcd.fish".source = "${dotfiles}/home/.config/fish/functions/gitclcd.fish";
+    "fish/functions/mkdir.fish".source = "${dotfiles}/home/.config/fish/functions/mkdir.fish";
     "fish/config.fish".source = lib.mkForce "${dotfiles}/home/.config/fish/config.fish";
     "fish/tide.config.fish".source = "${dotfiles}/home/.config/fish/tide.config.fish";
   };

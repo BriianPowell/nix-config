@@ -7,10 +7,11 @@
     darwin.lsusb
 
     # Utils
-    coreutils-full
     awscli2
-    trivy
+    coreutils-full
+    eza # https://github.com/ogham/exa
     git-secrets
+    trivy
 
     # DevOps
     ansible
