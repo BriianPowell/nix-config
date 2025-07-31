@@ -61,13 +61,12 @@
       }
       {
         name = "fish-exa";
-        src = pkgs.fetchFromGitHub
-          {
-            owner = "gazorby";
-            repo = "fish-exa";
-            rev = "92e5bcb762f7c08cc4484a2a09d6c176814ef35d";
-            sha256 = "1d298wyccnk0vw9n61m3imc1si04aq2mcp9hp7qrhrdcn7rdvhgp";
-          };
+        src = pkgs.fetchFromGitHub {
+          owner = "gazorby";
+          repo = "fish-exa";
+          rev = "92e5bcb762f7c08cc4484a2a09d6c176814ef35d";
+          hash = "sha256-kw4XrchvF4SNNoX/6HRw2WPvCxKamwuTVWdHg82Pqac=";
+        };
       }
     ] else [
       {

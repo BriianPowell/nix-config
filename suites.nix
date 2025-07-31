@@ -43,7 +43,7 @@ let
       sandbox = true;
       substituters = [
         "https://cache.nixos.org/"
-        # "https://nix-community.cachix.org"
+        "https://nix-community.cachix.org"
       ];
       experimental-features = [
         "nix-command"
