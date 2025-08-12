@@ -31,6 +31,7 @@
         # "amazon-chime"
         # "bartender" # Using jordanbaird-ice instead, due to security issues
         "bettertouchtool"
+        "cursor"
         "dash"
         # "docker"
         "finicky"
