@@ -2,7 +2,8 @@
 # xattr -r ~/Library/QuickLook
 # xattr -d -r com.apple.quarantine ~/Library/QuickLook
 
-{ ... }: {
+{ ... }:
+{
   homebrew = {
     enable = true;
     onActivation = {
@@ -22,7 +23,9 @@
       let
         noQuarantine = name: {
           inherit name;
-          args = { no_quarantine = true; };
+          args = {
+            no_quarantine = true;
+          };
         };
       in
       [
@@ -31,7 +34,7 @@
         # "amazon-chime"
         # "bartender" # Using jordanbaird-ice instead, due to security issues
         "bettertouchtool"
-        "cursor"
+        # "cursor"
         "dash"
         # "docker"
         "finicky"
@@ -43,7 +46,7 @@
         "iterm2"
         "jordanbaird-ice"
         "keka"
-        "logi-options+" # Not good software
+        # "logi-options+" # Not good software
         "microsoft-teams"
         "monitorcontrol"
         "nextcloud"

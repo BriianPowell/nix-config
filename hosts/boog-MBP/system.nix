@@ -1,6 +1,23 @@
 { pkgs, lib, ... }:
 {
-  networking.hostName = "boog-MBP";
+  nix.enable = false;
+
+  networking = {
+    computerName = "boog-MBP";
+    hostName = "boog-MBP";
+    wakeOnLan.enable = true;
+  };
+
+  power = {
+    restartAfterFreeze = true;
+    # restartAfterPowerFailure = true;
+    sleep = {
+      allowSleepByPowerButton = false;
+      computer = 60;
+      display = 15;
+      harddisk = 120;
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     # OS
@@ -29,6 +46,7 @@
   ];
 
   system = {
+    primaryUser = "boog";
     stateVersion = lib.mkDefault 4;
     defaults = {
       NSGlobalDomain = {
@@ -56,18 +74,40 @@
         NSDocumentSaveNewDocumentsToCloud = false;
         NSNavPanelExpandedStateForSaveMode = true;
         NSNavPanelExpandedStateForSaveMode2 = true;
+        NSUseAnimatedFocusRing = false;
+        NSWindowResizeTime = 0.001;
 
+        PMPrintingExpandedStateForPrint = true;
+        PMPrintingExpandedStateForPrint2 = true;
+
+        "com.apple.trackpad.scaling" = -1.0;
         "com.apple.sound.beep.volume" = 0.472367;
         "com.apple.springing.delay" = 0.5;
         "com.apple.springing.enabled" = true;
       };
+      controlcenter = {
+        AirDrop = false;
+        BatteryShowPercentage = false;
+        Bluetooth = false;
+        Display = false;
+        FocusModes = false;
+        NowPlaying = false;
+        Sound = true;
+      };
       dock = {
         autohide = true;
+        autohide-delay = 0.0;
+        autohide-time-modifier = 0.25;
+
         mineffect = "genie";
         minimize-to-application = true;
         mru-spaces = false;
         orientation = "left";
+
         showhidden = true;
+        show-recents = false;
+        static-only = false;
+
         tilesize = 35;
 
         wvous-bl-corner = 5;
@@ -78,6 +118,12 @@
         AppleShowAllFiles = true;
         FXEnableExtensionChangeWarning = false;
         FXPreferredViewStyle = "Nlsv"; # "icnv" = Icon view, "Nlsv" = List view, "clmv" = Column View, "Flwv" = Gallery View - The default is icnv.
+        FXRemoveOldTrashItems = true;
+        FXDefaultSearchScope = "SCev"; # "SCcf" = Search the current folder, "SCsp" = Search the entire Mac, "SCev" = Use the previous search scope
+
+        ShowPathbar = true;
+        ShowStatusBar = true;
+
         QuitMenuItem = true;
       };
       trackpad = {
@@ -91,7 +137,6 @@
     };
 
     activationScripts.postActivation.text = ''
-      ${pkgs.vim}/bin/vim +PluginInstall +qall
       sudo chsh -s ${pkgs.fish}/bin/fish
     '';
   };

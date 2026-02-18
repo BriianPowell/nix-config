@@ -4,7 +4,7 @@
   };
 
   home.file =
-    if pkgs.system == "aarch64-darwin" then {
+    if pkgs.stdenv.hostPlatform.system == "aarch64-darwin" then {
       ".gitconfig".source = "${dotfiles}/home/darwin.gitconfig";
       ".gitignore".source = "${dotfiles}/home/darwin.gitignore";
       "GitHub/McKinsey/alcon/.gitconfig".source = "${dotfiles}/home/alcon.gitconfig";

@@ -1,4 +1,5 @@
-{ pkgs, inputs, ... }: {
+{ pkgs, inputs, ... }:
+{
   environment = {
     shells = with pkgs; [ fish ];
 
@@ -32,10 +33,13 @@
       nurl # https://github.com/nix-community/nurl
       # httpie # https://httpie.io/
 
-      nixpkgs-fmt # https://github.com/nix-community/nixpkgs-fmt
+      nixfmt # https://github.com/NixOS/nixfmt
       nil # https://github.com/oxalica/nil
       jq # https://stedolan.github.io/jq/
       ripgrep # https://github.com/BurntSushi/ripgrep
+
+      # AI Tools
+      claude-code # https://github.com/anthropics/claude-code
 
       # helix # https://helix-editor.com/
 

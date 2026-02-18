@@ -3,16 +3,17 @@
 
   inputs =
     {
-      stable.url = "github:nixos/nixpkgs/nixos-24.11";
-      unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-      nixpkgs.follows = "stable";
+      pkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
+      pkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
+      pkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+      nixpkgs.follows = "pkgs-stable";
 
       utils = {
         url = "github:gytis-ivaskevicius/flake-utils-plus/v1.5.1";
       };
 
       home-manager = {
-        url = "github:nix-community/home-manager/release-24.11"; # "github:nix-community/home-manager/master";
+        url = "github:nix-community/home-manager/release-25.11"; # "github:nix-community/home-manager/master";
         inputs.nixpkgs.follows = "nixpkgs";
       };
 
@@ -32,8 +33,8 @@
       };
 
       darwin = {
-        url = "github:lnl7/nix-darwin/nix-darwin-24.11";
-        inputs.nixpkgs.follows = "nixpkgs";
+        url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+        inputs.nixpkgs.follows = "pkgs-darwin";
       };
 
       _1password-shell-plugins = {
@@ -42,7 +43,7 @@
       };
     };
 
-  outputs = inputs@{ self, nixpkgs, stable, unstable, utils, home-manager, agenix, vscode-server, dotfiles, darwin, ... }:
+  outputs = inputs@{ self, nixpkgs, pkgs-stable, pkgs-darwin, pkgs-unstable, utils, home-manager, agenix, vscode-server, dotfiles, darwin, ... }:
     let
       defaultSpecialArgs = { inherit dotfiles; };
       suites = import ./suites.nix {
@@ -62,15 +63,23 @@
 
       channels = {
         stable = {
-          input = stable;
+          input = pkgs-stable;
           overlaysBuilder = channels: [
             (self: super: {
               nodejs = super.nodejs_22;
             })
           ];
         };
+        darwin = {
+          input = pkgs-darwin;
+          overlaysBuilder = channels: [
+            (final: prev: {
+              #inherit (channel) stable;
+            })
+          ];
+        };
         unstable = {
-          input = unstable;
+          input = pkgs-unstable;
           overlaysBuilder = channels: [
             (final: prev: {
               #inherit (channel) stable;
@@ -95,6 +104,7 @@
           modules = [ home-manager.nixosModules.home-manager vscode-server.nixosModule ./hosts/abaddon ] ++ suites.serverModules ++ suites.userModules;
         };
         boog-MBP = {
+          channelName = "darwin";
           system = "aarch64-darwin";
           specialArgs = defaultSpecialArgs;
           modules = [ ./hosts/boog-MBP ] ++ suites.darwinModules;

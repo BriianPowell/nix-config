@@ -1,9 +1,7 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, ... }:
+{
   system = {
     stateVersion = "24.11";
-    userActivationScripts.vim = ''
-      ${pkgs.vim}/bin/vim +PluginInstall +qall
-    '';
   };
 
   time.timeZone = lib.mkDefault "America/Los_Angeles";

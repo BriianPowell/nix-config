@@ -55,16 +55,16 @@ let
       log-lines = 50;
     };
 
-    nix.gc = {
-      automatic = true;
-      # dates = "weekly";
-      options = "--delete-older-than 7d";
-    };
+    # nix.gc = {
+    #   automatic = true;
+    #   # dates = "weekly";
+    #   options = "--delete-older-than 7d";
+    # };
 
-    nix.optimise = {
-      automatic = true;
-      # dates = [ "weekly" ];
-    };
+    # nix.optimise = {
+    #   automatic = true;
+    #   # dates = [ "weekly" ];
+    # };
 
     nix.linkInputs = true;
 
