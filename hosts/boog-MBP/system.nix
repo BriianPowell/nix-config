@@ -1,5 +1,7 @@
 { pkgs, lib, ... }:
 {
+  programs.fish.enable = true;
+
   nix.enable = false;
 
   networking = {
@@ -39,7 +41,7 @@
     tflint
 
     # Build
-    # dotnet-sdk
+    dotnet-sdk
     jdk
     google-cloud-sdk
     podman

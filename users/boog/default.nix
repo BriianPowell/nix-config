@@ -1,4 +1,5 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, ... }:
+{
   home-manager.users.boog = import ../../home;
   users = {
     mutableUsers = false;
@@ -12,7 +13,6 @@
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex"
       ];
-      ignoreShellProgramCheck = true;
     };
   };
 }

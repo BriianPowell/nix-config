@@ -1,4 +1,5 @@
-{ dotfiles, ... }: {
+{ dotfiles, ... }:
+{
 
   home.file = {
     ".editorconfig".source = "${dotfiles}/home/.editorconfig";

@@ -12,15 +12,6 @@
         name = "autopair.fish";
         src = pkgs.fishPlugins.autopair.src;
       }
-      # {
-      #   name = "fish-rbenv";
-      #   src = pkgs.fetchFromGitHub {
-      #     owner = "rbenv";
-      #     repo = "fish-rbenv";
-      #     rev = "209203428792db8c3084109b551d23e4e678fb17";
-      #     sha256 = "1cksi1s8pm3r2171h68c5m2ip12j1niv8hhfcab5gjhm37fhvzsm";
-      #   };
-      # }
       {
         name = "nix-env.fish";
         src = pkgs.fetchFromGitHub {
@@ -41,12 +32,7 @@
       }
       {
         name = "nvm.fish";
-        src = pkgs.fetchFromGitHub {
-          owner = "jorgebucaran";
-          repo = "nvm.fish";
-          rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
-          sha256 = "084wvdinas1d7v3da16lim7s8asimh389frmfamr7q70fy44spid";
-        };
+        src = pkgs.fishPlugins.nvm.src;
       }
       {
         name = "tide";
@@ -65,15 +51,6 @@
               sha256 = "032yfxz10vypywfivggsam77b8zplmgafbc0gqks8cxhfy9hh9cd";
             };
           }
-          {
-            name = "fish-exa";
-            src = pkgs.fetchFromGitHub {
-              owner = "gazorby";
-              repo = "fish-exa";
-              rev = "92e5bcb762f7c08cc4484a2a09d6c176814ef35d";
-              hash = "sha256-kw4XrchvF4SNNoX/6HRw2WPvCxKamwuTVWdHg82Pqac=";
-            };
-          }
         ]
       else
         [
@@ -88,7 +65,6 @@
           }
         ]
     );
-    shellInit = ''. $HOME/.config/fish/config.fish'';
   };
 
   xdg.configFile = {

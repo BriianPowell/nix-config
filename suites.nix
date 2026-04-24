@@ -1,4 +1,9 @@
-{ utils, home-manager, dotfiles, defaultSpecialArgs }:
+{
+  utils,
+  home-manager,
+  dotfiles,
+  defaultSpecialArgs,
+}:
 let
   nixosModules = utils.lib.exportModules [
     ./modules/base-server.nix
@@ -35,45 +40,47 @@ let
     tcp-optimization
   ];
 
-  sharedOptions = { dotfiles, config, ... }: {
-    nix.settings = {
-      trusted-users = config.trustedUsers;
-      max-jobs = 4;
-      cores = 0;
-      sandbox = true;
-      substituters = [
-        "https://cache.nixos.org/"
-        "https://nix-community.cachix.org"
-      ];
-      experimental-features = [
-        "nix-command"
-      ];
-      warn-dirty = false;
-      keep-outputs = true;
-      keep-derivations = true;
-      http-connections = 50;
-      log-lines = 50;
+  sharedOptions =
+    { dotfiles, config, ... }:
+    {
+      nix.settings = {
+        trusted-users = config.trustedUsers;
+        max-jobs = 4;
+        cores = 0;
+        sandbox = true;
+        substituters = [
+          "https://cache.nixos.org/"
+          "https://nix-community.cachix.org"
+        ];
+        experimental-features = [
+          "nix-command"
+        ];
+        warn-dirty = false;
+        keep-outputs = true;
+        keep-derivations = true;
+        http-connections = 50;
+        log-lines = 50;
+      };
+
+      # nix.gc = {
+      #   automatic = true;
+      #   # dates = "weekly";
+      #   options = "--delete-older-than 7d";
+      # };
+
+      # nix.optimise = {
+      #   automatic = true;
+      #   # dates = [ "weekly" ];
+      # };
+
+      nix.linkInputs = true;
+
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        extraSpecialArgs = defaultSpecialArgs;
+      };
     };
-
-    # nix.gc = {
-    #   automatic = true;
-    #   # dates = "weekly";
-    #   options = "--delete-older-than 7d";
-    # };
-
-    # nix.optimise = {
-    #   automatic = true;
-    #   # dates = [ "weekly" ];
-    # };
-
-    nix.linkInputs = true;
-
-    home-manager = {
-      useGlobalPkgs = true;
-      useUserPackages = true;
-      extraSpecialArgs = defaultSpecialArgs;
-    };
-  };
 
   userModules = with nixosModules; [
     boog
@@ -88,5 +95,11 @@ let
   ];
 in
 {
-  inherit nixosModules sharedModules serverModules userModules darwinModules;
+  inherit
+    nixosModules
+    sharedModules
+    serverModules
+    userModules
+    darwinModules
+    ;
 }

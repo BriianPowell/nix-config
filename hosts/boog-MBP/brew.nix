@@ -60,7 +60,7 @@
         (noQuarantine "qlimagesize")
         (noQuarantine "qlmarkdown")
         (noQuarantine "qlstephen")
-        (noQuarantine "qlvideo")
+        (noQuarantine "quicklook-video")
         (noQuarantine "quicklook-json")
         "rectangle"
         # "signal" # Blocked on Firm laptop
