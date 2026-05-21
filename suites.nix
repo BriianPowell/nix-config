@@ -40,6 +40,15 @@ let
     tcp-optimization
   ];
 
+  # WSL manages its own networking, firewall and init; we only pull in the
+  # locale/docs/ssh/security modules that make sense inside a WSL distro.
+  wslModules = with nixosModules; [
+    i18n
+    minimal-docs
+    openssh
+    security
+  ];
+
   sharedOptions =
     { dotfiles, config, ... }:
     {
@@ -99,6 +108,7 @@ in
     nixosModules
     sharedModules
     serverModules
+    wslModules
     userModules
     darwinModules
     ;

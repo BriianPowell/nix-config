@@ -5,6 +5,7 @@
     ./kubernetes.nix
     ./nvidia.nix
     ./system.nix
+    ./unpack-media.nix
     ./zfs.nix
   ];
 }

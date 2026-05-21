@@ -164,6 +164,49 @@ normal                  # Enter normal mode and display the GRUB menu.
 - `nixos-rebuild switch --flake .#abaddon`
 - `nixos-rebuild dry-activate --flake .#abaddon`
 
+### Gehenna (WSL)
+
+Built on top of [nix-community/NixOS-WSL](https://github.com/nix-community/NixOS-WSL).
+
+**First-time install (from Windows PowerShell):**
+
+1. Enable WSL if you haven't already (requires WSL ≥ 2.4.4):
+
+    ```powershell
+    wsl --install --no-distribution
+    ```
+
+2. Download the latest `nixos.wsl` from the [NixOS-WSL releases](https://github.com/nix-community/NixOS-WSL/releases) and import it as `gehenna`:
+
+    ```powershell
+    wsl --install --from-file .\nixos.wsl --name gehenna
+    wsl -d gehenna
+    ```
+
+3. Inside the new distro, clone this repo and switch to the `gehenna` host:
+
+    ```bash
+    sudo nix --experimental-features 'nix-command flakes' run \
+      nixpkgs#git -- clone https://github.com/briianpowell/nix-config /etc/nixos
+    cd /etc/nixos
+    sudo nixos-rebuild switch --flake .#gehenna
+    ```
+
+4. **agenix secrets**: this host overrides `hashedPasswordFile` to `null` so first-boot doesn't depend on decrypting secrets. To enable the rest of the agenix secrets on `gehenna`, copy its SSH host key into `secrets/secrets.nix` and re-encrypt:
+
+    ```bash
+    # On gehenna:
+    cat /etc/ssh/ssh_host_ed25519_key.pub
+    # On a machine with your agenix identity, add the key to `hosts` in
+    # secrets/secrets.nix, then:
+    cd secrets && agenix -r
+    ```
+
+**Day-to-day rebuilds (from inside the WSL distro):**
+
+- `sudo nixos-rebuild switch --flake .#gehenna`
+- `sudo nixos-rebuild dry-activate --flake .#gehenna`
+
 ### Darwin
 
 **First Time Installation:**

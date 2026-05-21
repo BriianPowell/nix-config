@@ -36,6 +36,11 @@
       inputs.nixpkgs.follows = "pkgs-darwin";
     };
 
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     _1password-shell-plugins = {
       url = "github:1Password/shell-plugins";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -55,6 +60,7 @@
       vscode-server,
       dotfiles,
       darwin,
+      nixos-wsl,
       ...
     }:
     let
@@ -134,6 +140,17 @@
             ./hosts/abaddon
           ]
           ++ suites.serverModules
+          ++ suites.userModules;
+        };
+        gehenna = {
+          specialArgs = defaultSpecialArgs;
+          modules = [
+            home-manager.nixosModules.home-manager
+            vscode-server.nixosModule
+            nixos-wsl.nixosModules.default
+            ./hosts/gehenna
+          ]
+          ++ suites.wslModules
           ++ suites.userModules;
         };
         boog-MBP = {
