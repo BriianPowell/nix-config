@@ -12,7 +12,7 @@
 
     systemPackages = with pkgs; [
       # Secrets Management
-      inputs.agenix.packages."${system}".default
+      inputs.agenix.packages."${pkgs.stdenv.hostPlatform.system}".default
 
       # Build Tools
       # deno # https://deno.land/

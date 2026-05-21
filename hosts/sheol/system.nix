@@ -1,4 +1,4 @@
-{ pkgs, config, ... }: {
+{ pkgs,  ... }: {
   networking.hostName = "sheol";
   networking.hostId = "aeab81c5"; # head -c 8 /etc/machine-id
 
@@ -8,7 +8,6 @@
 
   environment.systemPackages = with pkgs; [
     zfs
-    # cudaPackages.cudatoolkit # TODO: we might not need this
   ];
 
   services.xserver.videoDrivers = [ "nvidia" ];
