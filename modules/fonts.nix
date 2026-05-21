@@ -1,17 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
-  fonts = {
-    packages =
-      with pkgs;
-      (lib.optionals pkgs.stdenv.isDarwin [
-        # macOS uses nerd-fonts directly
-        nerd-fonts.jetbrains-mono
-      ])
-      ++ (lib.optionals pkgs.stdenv.isLinux [
-        # NixOS uses override to save space
-        (nerdfonts.override {
-          fonts = [ "JetBrainsMono" ];
-        })
-      ]);
-  };
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
 }
