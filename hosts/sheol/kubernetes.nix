@@ -9,9 +9,8 @@
 { pkgs, lib, ... }:
 let
   toolkitTools = pkgs.nvidia-container-toolkit.tools;
-  # CDI mode in config.toml requires the full runtime wrapper, not .legacy (see nvidia.nix).
-  nvidiaContainerRuntime = "${toolkitTools}/bin/nvidia-container-runtime";
-  nvidiaContainerRuntimeCdi = "${toolkitTools}/bin/nvidia-container-runtime.cdi";
+  # CDI mode in nvidia-container-runtime config.toml (see nvidia.nix).
+  nvidiaContainerRuntime = "${toolkitTools}/bin/nvidia-container-runtime.cdi";
 
   # Cannot add [plugins."io.containerd.grpc.v1.cri"] here — base template already defines it
   # and TOML rejects duplicate tables (containerd exit 1). Use drop-in below.
@@ -31,15 +30,6 @@ let
 
     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
       BinaryName = "${nvidiaContainerRuntime}"
-
-    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia-cdi]
-      privileged_without_host_devices = false
-      runtime_engine = ""
-      runtime_root = ""
-      runtime_type = "io.containerd.runc.v2"
-
-    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia-cdi.options]
-      BinaryName = "${nvidiaContainerRuntimeCdi}"
   '';
 
   containerdTemplate = pkgs.writeText "config.toml.tmpl" containerdConfigTemplate;
