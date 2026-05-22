@@ -48,7 +48,7 @@
   ];
 
   system = {
-    primaryUser = "boog";
+    primaryUser = "Brian_Powell";
     stateVersion = lib.mkDefault 4;
     defaults = {
       NSGlobalDomain = {

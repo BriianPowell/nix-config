@@ -1,8 +1,8 @@
 { pkgs, ... }:
 {
-  home-manager.users.boog = import ../../home;
+  home-manager.users.Brian_Powell = import ../../home;
   users = {
-    users.boog = {
+    users.Brian_Powell = {
       home = "/Users/Brian_Powell";
       # name = "boog";
       # description = "Brian Powell";
