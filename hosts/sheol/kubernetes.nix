@@ -6,8 +6,9 @@
 
 { config, pkgs, lib, ... }:
 let
-  # Hardcoding /run/current-system/sw/bin/ breaks when the toolkit path changes.
-  nvidiaContainerRuntime = "${pkgs.nvidia-container-toolkit}/bin/nvidia-container-runtime";
+  # Use the store path from the toolkit package (not /run/current-system/sw/bin).
+  nvidiaContainerRuntime =
+    "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime.cdi";
   containerdTemplate = pkgs.writeText "config.toml.tmpl" (
     lib.replaceStrings
       [ "/run/current-system/sw/bin/nvidia-container-runtime" ]
@@ -33,7 +34,11 @@ in
     enableNvidia = true;
   };
 
-  hardware.nvidia-container-toolkit.enable = true;
+  hardware.nvidia-container-toolkit = {
+    enable = true;
+    # Required so GPU libs/devices are visible inside containers on NixOS.
+    mount-nvidia-executables = true;
+  };
 
   services.k3s = {
     enable = true;
