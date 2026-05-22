@@ -8,7 +8,8 @@
 
 { pkgs, lib, ... }:
 let
-  nvidiaContainerRuntime = "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime.cdi";
+  # CDI runtime needs /var/run/cdi specs; use legacy runtime with device-plugin envvar strategy.
+  nvidiaContainerRuntime = "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime";
 
   containerdConfigTemplate = ''
     {{ template "base" . }}
