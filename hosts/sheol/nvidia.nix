@@ -55,7 +55,7 @@ in
   };
 
   # OCI hooks and nvidia-container-runtime expect FHS paths and a discoverable runc.
-  system.activationScripts.nvidiaContainerFhsCompat = lib.stringAfter [ "usr" ] ''
+  system.activationScripts.nvidiaContainerFhsCompat = lib.stringAfter [ "var" ] ''
     mkdir -p /usr/bin
     ln -sfn ${toolkit}/bin/nvidia-ctk /usr/bin/nvidia-ctk
     ln -sfn ${tools}/bin/nvidia-container-runtime-hook /usr/bin/nvidia-container-runtime-hook
