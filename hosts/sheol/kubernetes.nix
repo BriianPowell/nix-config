@@ -2,43 +2,43 @@
 # Resources
 # https://github.com/NixOS/nixpkgs/issues/181790
 # https://github.com/moduon/nixpkgs/blob/60e0d3d73670ef8ddca24aa546a40283e3838e69/nixos/modules/services/cluster/k3s/default.nix
+# https://docs.k3s.io/advanced#configuring-containerd
+# https://github.com/k3s-io/k3s/issues/6518
 #
 
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 let
-  # Use the store path from the toolkit package (not /run/current-system/sw/bin).
-  nvidiaContainerRuntime =
-    "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime.cdi";
-  containerdTemplate = pkgs.writeText "config.toml.tmpl" (
-    lib.replaceStrings
-      [ "/run/current-system/sw/bin/nvidia-container-runtime" ]
-      [ nvidiaContainerRuntime ]
-      (lib.readFile ./config.toml.tmpl)
-  );
+  nvidiaContainerRuntime = "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime.cdi";
+
+  containerdConfigTemplate = ''
+    {{ template "base" . }}
+
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
+      privileged_without_host_devices = false
+      runtime_engine = ""
+      runtime_root = ""
+      runtime_type = "io.containerd.runc.v2"
+
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
+      BinaryName = "${nvidiaContainerRuntime}"
+  '';
+
+  containerdTemplate = pkgs.writeText "config.toml.tmpl" containerdConfigTemplate;
 in
 {
-  environment.systemPackages = with pkgs;
-    [
-      k3s
-      docker
-      runc
-      nvidia-container-toolkit
+  environment.systemPackages = with pkgs; [
+    k3s
+    docker
+    runc
 
-      (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
-      (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (builtins.readFile ../../scripts/k3s-remove-unused-rs))
-    ];
+    (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
+    (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (
+      builtins.readFile ../../scripts/k3s-remove-unused-rs
+    ))
+  ];
 
-  # Enable Docker daemon.
-  virtualisation.docker = {
-    enable = true;
-    enableNvidia = true;
-  };
-
-  hardware.nvidia-container-toolkit = {
-    enable = true;
-    # Required so GPU libs/devices are visible inside containers on NixOS.
-    mount-nvidia-executables = true;
-  };
+  # GPU in Docker: use CDI, e.g. docker run --device nvidia.com/gpu=all ...
+  virtualisation.docker.enable = true;
 
   services.k3s = {
     enable = true;
@@ -59,11 +59,10 @@ in
     ];
   };
 
-  # The tmpl needs the full path to the container-shim
-  # https://github.com/k3s-io/k3s/issues/6518
-  system.activationScripts.writeContainerdConfigTemplate = lib.mkIf (builtins.elem config.networking.hostName [ "sheol" ]) (lib.stringAfter [ "var" ] ''
+  system.activationScripts.writeContainerdConfigTemplate = lib.stringAfter [ "var" ] ''
+    mkdir -p /var/lib/rancher/k3s/agent/etc/containerd
     cp ${containerdTemplate} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
-  '');
+  '';
 
   networking.firewall = {
     allowedTCPPorts = [
