@@ -88,7 +88,7 @@ in
     mounts = lib.mkForce toolkitMounts;
   };
 
-  # Same paths as the module's Docker integration; legacy mode for k3s + device-plugin envvar.
+  # Paths for toolkit hooks. mode=cdi for Docker (see wiki); k3s uses nvidia-container-runtime.legacy directly.
   environment.etc."nvidia-container-runtime/config.toml".text = ''
     disable-require = true
     supported-driver-capabilities = "compat32,compute,display,graphics,ngx,utility,video"
@@ -101,7 +101,7 @@ in
     path = "${lib.getExe' pkgs.libnvidia-container "nvidia-container-cli"}"
 
     [nvidia-container-runtime]
-    mode = "legacy"
+    mode = "cdi"
     runtimes = [ "runc", "crun" ]
 
     [nvidia-container-runtime-hook]

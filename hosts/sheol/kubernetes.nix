@@ -8,8 +8,9 @@
 
 { pkgs, lib, ... }:
 let
-  # CDI runtime needs /var/run/cdi specs; use legacy runtime with device-plugin envvar strategy.
-  nvidiaContainerRuntime = "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime";
+  # k3s: legacy binary + envvar device-plugin (not CDI). Docker uses CDI via daemon settings below.
+  nvidiaContainerRuntime =
+    "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime.legacy";
 
   containerdConfigTemplate = ''
     {{ template "base" . }}
@@ -38,8 +39,11 @@ in
     ))
   ];
 
-  # GPU in Docker: use CDI, e.g. docker run --device nvidia.com/gpu=all ...
-  virtualisation.docker.enable = true;
+  # https://nixos.wiki/wiki/Nvidia#NVIDIA_Docker_not_Working
+  virtualisation.docker = {
+    enable = true;
+    daemon.settings.features.cdi = true;
+  };
 
   services.k3s = {
     enable = true;
