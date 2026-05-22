@@ -35,7 +35,7 @@
 
     # DevOps
     ansible
-    packer
+    # packer
     # terraform - use tfenv instead
     terraform-docs
     tflint
