@@ -7,4 +7,5 @@
   runtime_type = "io.containerd.runc.v2"
 
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
+  # Replaced at build time in kubernetes.nix with the nix store path.
   BinaryName = "/run/current-system/sw/bin/nvidia-container-runtime"

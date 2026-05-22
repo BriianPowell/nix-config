@@ -6,7 +6,14 @@
 
 { config, pkgs, lib, ... }:
 let
-  containerdTemplate = pkgs.writeText "config.toml.tmpl" (lib.readFile ./config.toml.tmpl);
+  # Hardcoding /run/current-system/sw/bin/ breaks when the toolkit path changes.
+  nvidiaContainerRuntime = "${pkgs.nvidia-container-toolkit}/bin/nvidia-container-runtime";
+  containerdTemplate = pkgs.writeText "config.toml.tmpl" (
+    lib.replaceStrings
+      [ "/run/current-system/sw/bin/nvidia-container-runtime" ]
+      [ nvidiaContainerRuntime ]
+      (lib.readFile ./config.toml.tmpl)
+  );
 in
 {
   environment.systemPackages = with pkgs;
@@ -14,6 +21,7 @@ in
       k3s
       docker
       runc
+      nvidia-container-toolkit
 
       (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
       (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (builtins.readFile ../../scripts/k3s-remove-unused-rs))

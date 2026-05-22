@@ -11,6 +11,9 @@
     };
 
     systemPackages = with pkgs; [
+      # Cursor / VS Code remote server fallback (bundled Node often fails on NixOS)
+      nodejs
+
       # Secrets Management
       inputs.agenix.packages."${pkgs.stdenv.hostPlatform.system}".default
 
