@@ -8,12 +8,16 @@
 
 { pkgs, lib, ... }:
 let
-  # k3s: legacy binary + envvar device-plugin (not CDI). Docker uses CDI via daemon settings below.
-  nvidiaContainerRuntime =
-    "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime.legacy";
+  toolkitTools = pkgs.nvidia-container-toolkit.tools;
+  # CDI mode in config.toml requires the full runtime wrapper, not .legacy (see nvidia.nix).
+  nvidiaContainerRuntime = "${toolkitTools}/bin/nvidia-container-runtime";
+  nvidiaContainerRuntimeCdi = "${toolkitTools}/bin/nvidia-container-runtime.cdi";
 
   containerdConfigTemplate = ''
     {{ template "base" . }}
+
+    [plugins."io.containerd.grpc.v1.cri"]
+      enable_cdi = true
 
     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
       privileged_without_host_devices = false
@@ -23,6 +27,15 @@ let
 
     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
       BinaryName = "${nvidiaContainerRuntime}"
+
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia-cdi]
+      privileged_without_host_devices = false
+      runtime_engine = ""
+      runtime_root = ""
+      runtime_type = "io.containerd.runc.v2"
+
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia-cdi.options]
+      BinaryName = "${nvidiaContainerRuntimeCdi}"
   '';
 
   containerdTemplate = pkgs.writeText "config.toml.tmpl" containerdConfigTemplate;
