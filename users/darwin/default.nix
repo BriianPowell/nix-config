@@ -3,7 +3,7 @@
   home-manager.users.boog = import ../../home;
   users = {
     users.boog = {
-      home = "/Users/boog";
+      home = "/Users/Brian_Powell";
       # name = "boog";
       # description = "Brian Powell";
       shell = pkgs.fish;
