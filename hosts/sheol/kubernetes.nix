@@ -13,11 +13,15 @@ let
   nvidiaContainerRuntime = "${toolkitTools}/bin/nvidia-container-runtime";
   nvidiaContainerRuntimeCdi = "${toolkitTools}/bin/nvidia-container-runtime.cdi";
 
-  containerdConfigTemplate = ''
-    {{ template "base" . }}
-
+  # Cannot add [plugins."io.containerd.grpc.v1.cri"] here — base template already defines it
+  # and TOML rejects duplicate tables (containerd exit 1). Use drop-in below.
+  cdiDropin = pkgs.writeText "cdi.toml" ''
     [plugins."io.containerd.grpc.v1.cri"]
       enable_cdi = true
+  '';
+
+  containerdConfigTemplate = ''
+    {{ template "base" . }}
 
     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
       privileged_without_host_devices = false
@@ -80,6 +84,8 @@ in
   system.activationScripts.writeContainerdConfigTemplate = lib.stringAfter [ "var" ] ''
     mkdir -p /var/lib/rancher/k3s/agent/etc/containerd
     cp ${containerdTemplate} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+    mkdir -p /var/lib/rancher/k3s/agent/etc/containerd/config.toml.d
+    cp ${cdiDropin} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.d/99-cdi.toml
   '';
 
   networking.firewall = {

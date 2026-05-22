@@ -120,7 +120,7 @@ in
     ln -sfn ${runcWrapper}/bin/runc /usr/bin/runc
   '';
 
-  systemd.services.k3s.serviceConfig.path = lib.mkAfter [
+  systemd.services.k3s.path = lib.mkAfter [
     "/usr/bin"
     "${pkgs.runc}/bin"
     "${toolkit}/bin"
