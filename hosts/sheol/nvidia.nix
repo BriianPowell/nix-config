@@ -88,7 +88,9 @@ in
     mounts = lib.mkForce toolkitMounts;
   };
 
-  # Paths for toolkit hooks. mode=cdi for Docker (see wiki); k3s uses nvidia-container-runtime.legacy directly.
+  # k3s containerd uses nvidia-container-runtime.legacy (kubernetes.nix). That binary requires
+  # mode=legacy here; mode=cdi makes the prestart hook reject direct invocation and breaks all
+  # runtimeClassName: nvidia pods (device-plugin, Plex). Docker CDI is separate (daemon cdi feature).
   environment.etc."nvidia-container-runtime/config.toml".text = ''
     disable-require = true
     supported-driver-capabilities = "compat32,compute,display,graphics,ngx,utility,video"
@@ -101,7 +103,7 @@ in
     path = "${lib.getExe' pkgs.libnvidia-container "nvidia-container-cli"}"
 
     [nvidia-container-runtime]
-    mode = "cdi"
+    mode = "legacy"
     runtimes = [ "runc", "crun" ]
 
     [nvidia-container-runtime-hook]
