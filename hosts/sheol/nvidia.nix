@@ -1,4 +1,20 @@
-{ config, ... }:
+{ config, pkgs, lib, ... }:
+let
+  toolkit = pkgs.nvidia-container-toolkit;
+  tools = toolkit.tools;
+
+  # nvidia-container-runtime looks for runc in PATH; k3s bundles its own under /var/lib/rancher/k3s/data.
+  runcWrapper = pkgs.writeShellScriptBin "runc" ''
+    #!${pkgs.bash}/bin/bash
+    set -euo pipefail
+    for candidate in /var/lib/rancher/k3s/data/*/bin/runc; do
+      if [ -x "''${candidate}" ]; then
+        exec "''${candidate}" "$@"
+      fi
+    done
+    exec ${lib.getExe pkgs.runc} "$@"
+  '';
+in
 {
   hardware.graphics = {
     enable = true;
@@ -32,4 +48,22 @@
     enable = true;
     mount-nvidia-executables = true;
   };
+
+  # OCI hooks and nvidia-container-runtime expect FHS paths and a discoverable runc.
+  system.activationScripts.nvidiaContainerFhsCompat = lib.stringAfter [ "paths" ] ''
+    mkdir -p /usr/bin
+    ln -sfn ${toolkit}/bin/nvidia-ctk /usr/bin/nvidia-ctk
+    ln -sfn ${tools}/bin/nvidia-container-runtime-hook /usr/bin/nvidia-container-runtime-hook
+    ln -sfn ${pkgs.libnvidia-container}/bin/nvidia-container-cli /usr/bin/nvidia-container-cli
+
+    ln -sfn ${runcWrapper}/bin/runc /usr/bin/runc
+  '';
+
+  systemd.services.k3s.serviceConfig.path = lib.mkAfter [
+    "/usr/bin"
+    "${pkgs.runc}/bin"
+    "${toolkit}/bin"
+    "${tools}/bin"
+    "${pkgs.libnvidia-container}/bin"
+  ];
 }
