@@ -1,0 +1,5 @@
+{
+  "alternateDefaultShortcuts": { "bool": true },
+  "launchOnLogin": { "bool": true },
+  "subsequentExecutionMode": { "int": 1 }
+}

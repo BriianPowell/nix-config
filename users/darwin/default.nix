@@ -1,6 +1,12 @@
 { pkgs, ... }:
 {
-  home-manager.users.Brian_Powell = import ../../home;
+  home-manager.users.Brian_Powell = {
+    imports = [
+      import ../../home
+      ./rectangle.nix
+      ./iterm2.nix
+    ];
+  };
   users = {
     users.Brian_Powell = {
       home = "/Users/Brian_Powell";
