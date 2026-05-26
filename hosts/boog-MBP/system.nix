@@ -1,6 +1,11 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 {
   programs.fish.enable = true;
+
+  environment.shells = [
+    "/opt/homebrew/bin/fish"
+    "/Users/${config.system.primaryUser}/.local/bin/fish"
+  ];
 
   nix.enable = false;
 
@@ -139,7 +144,22 @@
     };
 
     activationScripts.postActivation.text = ''
-      sudo chsh -s ${pkgs.fish}/bin/fish
+      user="${config.system.primaryUser}"
+      home="/Users/$user"
+
+      # Nix fish is SIGKILL'd on Apple Silicon (invalid code signature). Prefer Homebrew fish.
+      if [ -x /opt/homebrew/bin/fish ]; then
+        fishShell="/opt/homebrew/bin/fish"
+      else
+        fishShell="$home/.local/bin/fish"
+        mkdir -p "$(dirname "$fishShell")"
+        cp /run/current-system/sw/bin/fish "$fishShell"
+        chown "$user" "$fishShell"
+        chmod u+w "$fishShell"
+        sudo -u "$user" codesign -s - -f "$fishShell"
+      fi
+
+      dscl . -create /Users/"$user" UserShell "$fishShell"
     '';
   };
 }

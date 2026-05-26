@@ -101,7 +101,9 @@
           input = pkgs-darwin;
           overlaysBuilder = channels: [
             (final: prev: {
-              #inherit (channel) stable;
+              # Homebrew brew bundle uses `mas get`; nixpkgs-25.11-darwin still ships mas 2.2.2.
+              # https://github.com/nix-darwin/nix-darwin/issues/1722
+              mas = channels.unstable.mas;
             })
           ];
         };

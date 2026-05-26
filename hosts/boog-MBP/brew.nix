@@ -1,8 +1,7 @@
-# Remove Quarantine Attribute:
-# xattr -r ~/Library/QuickLook
-# xattr -d -r com.apple.quarantine ~/Library/QuickLook
+# Quick Look plugins need quarantine cleared; Homebrew no longer supports --no-quarantine.
+# See system.activationScripts.quickLookQuarantine below.
 
-{ ... }:
+{ config, lib, ... }:
 {
   homebrew = {
     enable = true;
@@ -13,26 +12,18 @@
     };
     taps = [
       "qmk/qmk"
+      "osx-cross/arm"
     ];
     brews = [
       "displayplacer"
-      "qmk"
+      "fish" # nixpkgs fish 4.2.1 has a broken Mach-O signature on aarch64-darwin (Killed: 9)
+      # "qmk"
       "tfenv"
     ];
-    casks =
-      let
-        noQuarantine = name: {
-          inherit name;
-          args = {
-            no_quarantine = true;
-          };
-        };
-      in
-      [
+    casks = [
         "1password-cli"
         "1password"
         # "amazon-chime"
-        # "bartender" # Using jordanbaird-ice instead, due to security issues
         "bettertouchtool"
         "cursor"
         "dash"
@@ -47,8 +38,7 @@
         "jordanbaird-ice"
         "keka"
         # "logi-options+" # Not good software
-        "microsoft-teams"
-        "monitorcontrol"
+        # "microsoft-teams"
         "nextcloud"
         "parsec"
         "pgadmin4"
@@ -56,12 +46,10 @@
         # "postico" # Using pgAdmin4 instead
         # "postman" # Using Insomnia instead
         "provisionql"
-        (noQuarantine "qlcolorcode")
-        (noQuarantine "qlimagesize")
-        (noQuarantine "qlmarkdown")
-        (noQuarantine "qlstephen")
-        (noQuarantine "quicklook-video")
-        (noQuarantine "quicklook-json")
+        "qlcolorcode"
+        "qlmarkdown"
+        "qlstephen"
+        "quicklook-video"
         "rectangle"
         # "signal" # Blocked on Firm laptop
         "slack"
@@ -71,7 +59,6 @@
         "sublime-text"
         "typora"
         "visual-studio-code"
-        "webex-meetings"
         "webull"
         "workman"
         "zoom"
@@ -83,4 +70,12 @@
       "Windows App" = 1295203466;
     };
   };
+
+  system.activationScripts.quickLookQuarantine = lib.stringAfter [ "homebrew" ] ''
+    quickLookDir="/Users/${config.system.primaryUser}/Library/QuickLook"
+    if [ -d "$quickLookDir" ]; then
+      echo "Removing quarantine from Quick Look plugins..."
+      xattr -dr com.apple.quarantine "$quickLookDir" 2>/dev/null || true
+    fi
+  '';
 }

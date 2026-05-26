@@ -4,9 +4,19 @@
   dotfiles,
   ...
 }:
+let
+  nixPathInit = ''
+    fish_add_path /etc/profiles/per-user/$USER/bin /run/current-system/sw/bin /nix/var/nix/profiles/default/bin
+  '';
+in
 {
+  home.packages = [ pkgs.kubectl ];
+
   programs.fish = {
     enable = true;
+    # fish 4.2+ completion path change; avoids broken generated completions on startup
+    generateCompletions = false;
+    # Dotfiles init: conf.d/01-dotfiles.fish (sources tide). Nix paths: conf.d/00-nix-path.fish on darwin.
     plugins = [
       {
         name = "autopair.fish";
@@ -68,6 +78,7 @@
   };
 
   xdg.configFile = {
+    "fish/conf.d/01-dotfiles.fish".source = "${dotfiles}/home/.config/fish/config.fish";
     "fish/completions/et.fish".source = "${dotfiles}/home/.config/fish/completions/et.fish";
     "fish/conf.d/eza_aliases.fish".source = "${dotfiles}/home/.config/fish/conf.d/eza_aliases.fish";
     "fish/conf.d/git_aliases.fish".source = "${dotfiles}/home/.config/fish/conf.d/git_aliases.fish";
@@ -84,7 +95,9 @@
       "${dotfiles}/home/.config/fish/functions/git_main_branch.fish";
     "fish/functions/gitclcd.fish".source = "${dotfiles}/home/.config/fish/functions/gitclcd.fish";
     "fish/functions/mkdir.fish".source = "${dotfiles}/home/.config/fish/functions/mkdir.fish";
-    "fish/config.fish".source = lib.mkForce "${dotfiles}/home/.config/fish/config.fish";
     "fish/tide.config.fish".source = "${dotfiles}/home/.config/fish/tide.config.fish";
+  }
+  // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+    "fish/conf.d/00-nix-path.fish".text = nixPathInit;
   };
 }
