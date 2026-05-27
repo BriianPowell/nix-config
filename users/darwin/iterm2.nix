@@ -14,6 +14,11 @@
       # PostScript name for JetBrainsMonoNerdFontMono-Regular.ttf (terminal mono).
       "Normal Font" = "JetBrainsMonoNFM-Regular 12";
       "Non Ascii Font" = "JetBrainsMonoNFM-Regular 12";
+      "Minimum Contrast" = 0;
+      "Unlimited Scrollback" = true;
+      "Disable Window Resizing" = false;
+      # 0 = underline, 1 = vertical bar, 2 = block
+      "Cursor Type" = 2;
     };
   };
 }

@@ -3,6 +3,9 @@ abbr -a l ls -lha
 abbr -a lblk lsblk --output NAME,SIZE,RM,FSTYPE,FSUSE%,SERIAL,MOUNTPOINT
 
 set -U fish_greeting
+
+# Autosuggestions (fish "predictive" ghost text); independent of iTerm ANSI 8.
+set -U fish_color_autosuggestion brblack --dim
 set -Ux EDITOR vim
 set -Ux PYENV_ROOT $HOME/.pyenv
 

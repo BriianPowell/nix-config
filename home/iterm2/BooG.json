@@ -44,11 +44,11 @@
     "Green Component" : 0.29803922772407532
   },
   "Ansi 8 Color (Dark)" : {
-    "Red Component" : 0.31372550129890442,
-    "Color Space" : "P3",
+    "Red Component" : 0.4745098039215686,
+    "Color Space" : "sRGB",
     "Alpha Component" : 1,
-    "Blue Component" : 0.40392157435417175,
-    "Green Component" : 0.29803922772407532
+    "Blue Component" : 0.6627450980392157,
+    "Green Component" : 0.4392156862745098
   },
   "Background Color" : {
     "Red Component" : 0.97999999999999998,
@@ -88,7 +88,7 @@
     "Blue Component" : 0.7607843279838562,
     "Green Component" : 0.7764706015586853
   },
-  "Cursor Type" : 1,
+  "Cursor Type" : 2,
   "Keyboard Map" : {
 
   },
@@ -239,7 +239,7 @@
     "Green Component" : 0
   },
   "Vertical Spacing" : 1,
-  "Disable Window Resizing" : true,
+  "Disable Window Resizing" : false,
   "Close Sessions On End" : true,
   "Selection Color (Dark)" : {
     "Red Component" : 0.27058824896812439,
@@ -538,14 +538,14 @@
     "Green Component" : 0.7607843279838562
   },
   "Ansi 8 Color (Light)" : {
-    "Red Component" : 1,
-    "Color Space" : "P3",
+    "Red Component" : 0.4745098039215686,
+    "Color Space" : "sRGB",
     "Alpha Component" : 1,
-    "Blue Component" : 1,
-    "Green Component" : 1
+    "Blue Component" : 0.6627450980392157,
+    "Green Component" : 0.4392156862745098
   },
   "Normal Font" : "JetBrainsMonoNFM-Regular 12",
-  "Unlimited Scrollback" : false,
+  "Unlimited Scrollback" : true,
   "Ansi 10 Color (Dark)" : {
     "Red Component" : 0.63529413938522339,
     "Color Space" : "P3",
@@ -575,6 +575,7 @@
     "Green Component" : 0.364705890417099
   },
   "Blur" : false,
+  "Minimum Contrast" : 0,
   "Use Separate Colors for Light and Dark Mode" : true,
   "Background Color (Light)" : {
     "Red Component" : 0.96078431606292725,
