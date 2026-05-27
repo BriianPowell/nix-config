@@ -83,6 +83,7 @@ in
     };
 
     xdg.configFile = {
+      "fish/conf.d/00-colors.fish".source = "${fishDir}/conf.d/00-colors.fish";
       "fish/conf.d/01-dotfiles.fish".source = "${fishDir}/config.fish";
       "fish/completions/et.fish".source = "${fishDir}/completions/et.fish";
       "fish/conf.d/eza_aliases.fish".source = "${fishDir}/conf.d/eza_aliases.fish";
