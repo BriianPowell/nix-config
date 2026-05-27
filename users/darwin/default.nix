@@ -4,7 +4,7 @@
     ./machine.nix
   ];
 
-  home-manager.users.boog = {
+  home-manager.users.Brian_Powell = {
     imports = [
       ../../home
       ./git.nix
@@ -15,11 +15,12 @@
       ./displayplacer.nix
     ];
   };
+
   users = {
-    users.boog = {
-      home = "/Users/boog";
-      # name = "boog";
-      # description = "Brian Powell";
+    users.Brian_Powell = {
+      home = "/Users/Brian_Powell";
+      # name = "Brian Powell";
+      # description = "";
       shell = pkgs.fish;
       # openssh.authorizedKeys.keys = [
       #  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex"

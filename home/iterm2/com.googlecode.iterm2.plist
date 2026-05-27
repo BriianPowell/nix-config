@@ -2501,7 +2501,7 @@
         <key>Window Type</key>
         <integer>0</integer>
         <key>Working Directory</key>
-        <string>/Users/boog</string>
+        <string>/Users/Brian_Powell</string>
       </dict>
       <dict>
         <key>ASCII Anti Aliased</key>
@@ -3789,7 +3789,7 @@
         <key>Window Type</key>
         <integer>0</integer>
         <key>Working Directory</key>
-        <string>/Users/boog</string>
+        <string>/Users/Brian_Powell</string>
       </dict>
       <dict>
         <key>ASCII Anti Aliased</key>
@@ -4099,7 +4099,7 @@
         <key>Draw Powerline Glyphs</key>
         <false/>
         <key>Dynamic Profile Filename</key>
-        <string>/Users/boog/Library/Application Support/iTerm2/DynamicProfiles/BooG.json</string>
+        <string>/Users/Brian_Powell/Library/Application Support/iTerm2/DynamicProfiles/BooG.json</string>
         <key>Flashing Bell</key>
         <false/>
         <key>Foreground Color</key>
@@ -5061,7 +5061,7 @@
         <key>Window Type</key>
         <integer>0</integer>
         <key>Working Directory</key>
-        <string>/Users/boog</string>
+        <string>/Users/Brian_Powell</string>
       </dict>
     </array>
     <key>OnlyWhenMoreTabs</key>
