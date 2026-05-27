@@ -33,7 +33,10 @@ Shared behavior lives in the module; per-user differences live under `users/`.
 | Module | Options | Files | Per-user config |
 |--------|---------|-------|-----------------|
 | Git | `git.*` | (Nix only) | `users/*/git.nix` |
-| Tooling | `tooling.*` | `home/config/` | `users/*/home.nix` |
+| Tooling | `tooling.*` | `home/config/` (editorconfig, prettier, 1Password SSH) | `users/*/home.nix` |
+| Tmux | `tmux.*` | `home/config/tmux/` | `users/*/home.nix` |
+| Finicky | `finicky.*` | `home/config/.finicky.js` | `users/darwin/home.nix` |
+| displayplacer | `displayplacer.*` | `home/displayplacer/` | `users/darwin/displayplacer.nix` |
 | Fish | `fish.*` | `home/fish/` | `users/*/home.nix` |
 | SSH | `ssh.*` | `home/ssh/` | `users/*/home.nix` |
 | Vim | `vim.*` | `home/vim/` | `users/*/home.nix` |
@@ -55,6 +58,16 @@ home-manager.users.newuser = {
 ```
 
 macOS-only: also import `rectangle.nix`, `iterm2.nix`, `bettertouchtool.nix` as needed.
+
+## nix-darwin (machine) vs Home Manager (user)
+
+| Layer | Path | Example |
+|-------|------|---------|
+| Machine | `hosts/boog-MBP/` | Dock, Homebrew base lists, `system.primaryUser` |
+| Machine overrides | `users/darwin/machine.nix` | `machine.username`, `machine.homebrew.omitCasks` |
+| User dotfiles | `users/darwin/*.nix`, `home/modules/` | git, fish, iTerm, BTT |
+
+`machine.username` must be `boog` (matches `/Users/boog` and `home-manager.users.boog`).
 
 ## Rebuild
 

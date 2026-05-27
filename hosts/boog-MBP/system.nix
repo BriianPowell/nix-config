@@ -58,7 +58,7 @@
   ];
 
   system = {
-    primaryUser = "Boog";
+    primaryUser = config.machine.username;
     stateVersion = lib.mkDefault 4;
     defaults = {
       NSGlobalDomain = {

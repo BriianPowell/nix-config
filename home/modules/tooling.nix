@@ -1,4 +1,4 @@
-# Editor/tooling dotfiles: editorconfig, prettier, tmux, finicky (macOS), 1Password SSH agent.
+# Shared editor dotfiles: editorconfig, prettier, gemrc, 1Password SSH agent (macOS).
 #
 # Per user: tooling.enable = true;
 #
@@ -10,7 +10,7 @@ let
 in
 {
   options.tooling = {
-    enable = lib.mkEnableOption "shared editor and tooling configuration files";
+    enable = lib.mkEnableOption "shared editor configuration files";
   };
 
   config = lib.mkIf cfg.enable {
@@ -18,15 +18,9 @@ in
       ".editorconfig".source = "${dir}/.editorconfig";
       ".gemrc".source = "${dir}/.gemrc";
       ".prettierrc.js".source = "${dir}/.prettierrc.js";
-    }
-    // lib.optionalAttrs isDarwin {
-      ".finicky.js".source = "${dir}/.finicky.js";
     };
 
-    xdg.configFile = {
-      "tmux/tmux.conf".source = "${dir}/tmux/tmux.conf";
-    }
-    // lib.optionalAttrs isDarwin {
+    xdg.configFile = lib.optionalAttrs isDarwin {
       "1Password/ssh/agent.toml".source = "${dir}/1Password/ssh/agent.toml";
     };
   };

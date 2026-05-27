@@ -1,5 +1,9 @@
 { pkgs, ... }:
 {
+  imports = [
+    ./machine.nix
+  ];
+
   home-manager.users.boog = {
     imports = [
       ../../home
@@ -8,6 +12,7 @@
       ./rectangle.nix
       ./iterm2.nix
       ./bettertouchtool.nix
+      ./displayplacer.nix
     ];
   };
   users = {
