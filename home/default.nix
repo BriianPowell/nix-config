@@ -7,6 +7,7 @@
     ./modules/bettertouchtool.nix
     ./modules/displayplacer.nix
     ./modules/finicky.nix
+    ./modules/fonts.nix
     ./modules/fish.nix
     ./modules/git.nix
     ./modules/iterm2.nix

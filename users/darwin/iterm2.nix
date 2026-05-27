@@ -9,7 +9,11 @@
     ];
     extraSettings = {
       "Custom Command" = "Yes";
-      Command = "${pkgs.fish}/bin/fish";
+      # Homebrew fish; nixpkgs fish is broken on aarch64-darwin (invalid signature).
+      Command = "/opt/homebrew/bin/fish";
+      # PostScript name for JetBrainsMonoNerdFontMono-Regular.ttf (terminal mono).
+      "Normal Font" = "JetBrainsMonoNFM-Regular 12";
+      "Non Ascii Font" = "JetBrainsMonoNFM-Regular 12";
     };
   };
 }

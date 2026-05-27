@@ -28,6 +28,8 @@ In iTerm → **Settings → Profiles → [your profile] → Other Actions → Sa
 
 That export is a single profile object. The module wraps it as `{ "Profiles": [ … ] }` automatically.
 
+**Font name:** iTerm uses the font’s **PostScript name**, not the `.ttf` filename. For `nerd-fonts.jetbrains-mono` on macOS that is usually `JetBrainsMonoNFM-Regular` (mono) or `JetBrainsMonoNF-Regular` (non-mono). Names like `JetBrainsMonoNerdFont-Regular` are not registered and iTerm falls back to Menlo at 11pt.
+
 ```bash
 cp ~/Library/Application\ Support/iTerm2/DynamicProfiles/BooG.json \
    home/iterm2/BooG.json
@@ -38,12 +40,13 @@ Add the path to `dynamicProfiles` in `users/darwin/iterm2.nix`, then re-export t
 Verify after rebuild:
 
 ```bash
-ls -la ~/.config/iterm2/dynamic-profiles/
 ls -la ~/Library/Application\ Support/iTerm2/DynamicProfiles/
-# BooG.json should symlink into ~/.config/iterm2/dynamic-profiles/
+# BooG.json should be a Home Manager symlink into the nix store
 ```
 
 ## Export main plist
+
+Preferences are applied with `defaults import` on each rebuild (not only the plist symlink). Quit iTerm2 first if changes do not show up.
 
 Quit iTerm2, then:
 

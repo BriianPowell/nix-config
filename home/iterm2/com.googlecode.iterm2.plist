@@ -2021,11 +2021,11 @@
         <key>Name</key>
         <string>Default</string>
         <key>Non Ascii Font</key>
-        <string>Menlo-Regular 11</string>
+        <string>JetBrainsMonoNFM-Regular 12</string>
         <key>Non-ASCII Anti Aliased</key>
         <true/>
         <key>Normal Font</key>
-        <string>FiraCodeNerdFontCompleteM-Regular 11</string>
+        <string>JetBrainsMonoNFM-Regular 12</string>
         <key>Only The Default BG Color Uses Transparency</key>
         <false/>
         <key>Option Key Sends</key>
@@ -3330,11 +3330,11 @@
         <key>Name</key>
         <string>tmux</string>
         <key>Non Ascii Font</key>
-        <string>Menlo-Regular 11</string>
+        <string>JetBrainsMonoNFM-Regular 12</string>
         <key>Non-ASCII Anti Aliased</key>
         <true/>
         <key>Normal Font</key>
-        <string>FiraCode-Regular 11</string>
+        <string>JetBrainsMonoNFM-Regular 12</string>
         <key>Only The Default BG Color Uses Transparency</key>
         <false/>
         <key>Option Key Sends</key>
@@ -4582,11 +4582,11 @@
         <key>Name</key>
         <string>Community Material Theme (synchronized with VSCode)</string>
         <key>Non Ascii Font</key>
-        <string>Menlo-Regular 11</string>
+        <string>JetBrainsMonoNFM-Regular 12</string>
         <key>Non-ASCII Anti Aliased</key>
         <true/>
         <key>Normal Font</key>
-        <string>FiraCodeNerdFontCompleteM-Regular 11</string>
+        <string>JetBrainsMonoNFM-Regular 12</string>
         <key>Only The Default BG Color Uses Transparency</key>
         <false/>
         <key>Option Key Sends</key>

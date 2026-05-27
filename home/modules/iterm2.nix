@@ -19,36 +19,41 @@ let
 
   # iTerm expects { "Profiles": [ { ... } ] }. Exports from "Save Profile as JSON"
   # are often a single profile object; wrap automatically.
+  # iTerm stores PostScript names. Nerd Fonts v3 registers NF/NFM, not "NerdFont" filenames.
+  fixFontName =
+    value:
+    if builtins.isString value then
+      lib.pipe value [
+        (lib.replaceStrings [ "JetBrainsMonoNerdFontMono" ] [ "JetBrainsMonoNFM" ])
+        (lib.replaceStrings [ "JetBrainsMonoNerdFont" ] [ "JetBrainsMonoNF" ])
+      ]
+    else
+      value;
+
+  normalizeProfile =
+    p:
+    lib.mapAttrs (k: v: if lib.hasSuffix " Font" k then fixFontName v else v) p;
+
   wrapDynamicProfile =
     path:
     let
       raw = builtins.fromJSON (builtins.readFile path);
       base = if raw ? Profiles then raw else { Profiles = [ raw ]; };
-      profiles = map (p: p // cfg.extraSettings) base.Profiles;
+      profiles = map (p: normalizeProfile p // cfg.extraSettings) base.Profiles;
       wrapped = {
         Profiles = profiles;
       };
     in
     pkgs.writeText "iterm2-${builtins.baseNameOf path}" (builtins.toJSON wrapped);
 
-  dynamicProfileStaged = lib.listToAttrs (
+  dynamicProfileFiles = lib.listToAttrs (
     map (path: {
-      name = ".config/iterm2/dynamic-profiles/${builtins.baseNameOf path}";
+      name = "${dynamicProfilesDir}/${builtins.baseNameOf path}";
       value = {
         source = wrapDynamicProfile path;
       };
     }) cfg.dynamicProfiles
   );
-
-  dynamicProfileLinks = lib.concatMapStringsSep "\n" (
-    path:
-    let
-      fileName = builtins.baseNameOf path;
-    in
-    ''
-      $DRY_RUN_CMD ln -sfn "$HOME/.config/iterm2/dynamic-profiles/${fileName}" "$HOME/${dynamicProfilesDir}/${fileName}"
-    ''
-  ) cfg.dynamicProfiles;
 in
 {
   options.iterm2 = {
@@ -60,7 +65,8 @@ in
       example = "${config.home.homeDirectory}/.config/iterm2.plist";
       description = ''
         Full preferences plist (com.googlecode.iterm2).
-        Linked into ~/Library/Preferences/. Restart iTerm2 after changes.
+        Imported with defaults(1) on each activation. Quit iTerm2 before rebuilding
+        if settings do not appear.
       '';
     };
 
@@ -79,7 +85,6 @@ in
       default = { };
       description = ''
         Keys merged into each dynamic profile (e.g. Command, Custom Command).
-        Does not use defaults(1); safe with the read-only HM-managed plist symlink.
       '';
     };
   };
@@ -92,14 +97,18 @@ in
           force = true;
         };
       })
-      dynamicProfileStaged
+      dynamicProfileFiles
     ];
 
-    # Symlink into Application Support (avoids fragile home.file keys with spaces).
-    home.activation.iterm2DynamicProfiles = lib.mkIf (cfg.dynamicProfiles != [ ]) (
-      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD mkdir -p "$HOME/${dynamicProfilesDir}"
-        ${dynamicProfileLinks}
+    home.activation.iterm2ImportPrefs = lib.mkIf (cfg.plistFile != null) (
+      lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+        PLIST="$HOME/Library/Preferences/com.googlecode.iterm2.plist"
+        if [ -e "$PLIST" ]; then
+          $DRY_RUN_CMD /usr/bin/defaults import com.googlecode.iterm2 "$PLIST"
+          $DRY_RUN_CMD killall cfprefsd 2>/dev/null || true
+        else
+          echo "iTerm2: skipping defaults import (plist missing)"
+        fi
       ''
     );
   };
