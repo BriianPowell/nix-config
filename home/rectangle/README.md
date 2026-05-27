@@ -6,7 +6,7 @@ Rectangle is managed by the Home Manager module `home/modules/rectangle.nix`.
 
 Each macOS account with Home Manager gets its own `programs.rectangle` block.
 
-**Example** — `users/darwin/rectangle.nix` (Brian_Powell):
+**Example** — `users/darwin/rectangle.nix` (Boog):
 
 ```nix
 programs.rectangle = {

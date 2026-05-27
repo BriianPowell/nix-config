@@ -87,22 +87,6 @@
         "type": "github"
       }
     },
-    "dotfiles": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1777485130,
-        "narHash": "sha256-5SRYpSlZAPgz/U1EFd2obRxV6Dh7sI3Cn0WsNM/woHg=",
-        "owner": "briianpowell",
-        "repo": "dotfiles",
-        "rev": "6761fc52deb9ab7bc2e086fb6b1a6ee836e11405",
-        "type": "github"
-      },
-      "original": {
-        "owner": "briianpowell",
-        "repo": "dotfiles",
-        "type": "github"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -122,24 +106,6 @@
     "flake-utils": {
       "inputs": {
         "systems": "systems_3"
-      },
-      "locked": {
-        "lastModified": 1694529238,
-        "narHash": "sha256-zsNZZGTGnMOf9YpHKJqMSsa0dXbfmxeoJ7xHlrt+xmY=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "ff7b65b44d01cf9ba6a71320833626af21126384",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "flake-utils_2": {
-      "inputs": {
-        "systems": "systems_4"
       },
       "locked": {
         "lastModified": 1681202837,
@@ -272,7 +238,6 @@
         "_1password-shell-plugins": "_1password-shell-plugins",
         "agenix": "agenix",
         "darwin": "darwin_2",
-        "dotfiles": "dotfiles",
         "home-manager": "home-manager_2",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": [
@@ -281,7 +246,6 @@
         "pkgs-darwin": "pkgs-darwin",
         "pkgs-stable": "pkgs-stable",
         "pkgs-unstable": "pkgs-unstable",
-        "utils": "utils",
         "vscode-server": "vscode-server"
       }
     },
@@ -330,43 +294,9 @@
         "type": "github"
       }
     },
-    "systems_4": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "utils": {
-      "inputs": {
-        "flake-utils": "flake-utils"
-      },
-      "locked": {
-        "lastModified": 1719955819,
-        "narHash": "sha256-QrvC5YG+EDr7kIM5KWPMc/mZeGEcxxrkjkaTDIigkgI=",
-        "owner": "gytis-ivaskevicius",
-        "repo": "flake-utils-plus",
-        "rev": "e5f2a9feedc43834d80486e2ba8f6fd31a3a4f1f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "gytis-ivaskevicius",
-        "ref": "v1.5.1",
-        "repo": "flake-utils-plus",
-        "type": "github"
-      }
-    },
     "vscode-server": {
       "inputs": {
-        "flake-utils": "flake-utils_2",
+        "flake-utils": "flake-utils",
         "nixpkgs": [
           "nixpkgs"
         ]

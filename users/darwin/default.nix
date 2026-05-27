@@ -1,15 +1,18 @@
 { pkgs, ... }:
 {
-  home-manager.users.Brian_Powell = {
+  home-manager.users.boog = {
     imports = [
-      import ../../home
+      ../../home
+      ./git.nix
+      ./home.nix
       ./rectangle.nix
       ./iterm2.nix
+      ./bettertouchtool.nix
     ];
   };
   users = {
-    users.Brian_Powell = {
-      home = "/Users/Brian_Powell";
+    users.boog = {
+      home = "/Users/boog";
       # name = "boog";
       # description = "Brian Powell";
       shell = pkgs.fish;

@@ -148,7 +148,6 @@ normal                  # Enter normal mode and display the GRUB menu.
 ## Nix Flake Packages
 
 - [Home Manager](https://github.com/nix-community/home-manager)
-- [Flake Utils Plus](https://github.com/gytis-ivaskevicius/flake-utils-plus/tree/master)
 - [VSCode Server](https://github.com/msteen/nixos-vscode-server)
 - [Nix Darwin](https://github.com/LnL7/nix-darwin)
 

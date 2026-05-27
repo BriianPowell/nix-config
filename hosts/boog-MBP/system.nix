@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   programs.fish.enable = true;
 
@@ -53,7 +58,7 @@
   ];
 
   system = {
-    primaryUser = "Brian_Powell";
+    primaryUser = "Boog";
     stateVersion = lib.mkDefault 4;
     defaults = {
       NSGlobalDomain = {

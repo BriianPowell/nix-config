@@ -1,6 +1,4 @@
-# Rectangle settings for Brian_Powell (macOS).
-# Add another file like this for each darwin home-manager user.
-#
+# Rectangle settings for boog (macOS).
 { ... }:
 {
   programs.rectangle = {
@@ -24,6 +22,5 @@
 
     bootstrapJson = false;
     jsonConfig = null;
-    # jsonConfig = ../../home/rectangle/RectangleConfig.json;
   };
 }

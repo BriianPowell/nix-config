@@ -1,6 +1,12 @@
 { pkgs, config, ... }:
 {
-  home-manager.users.boog = import ../../home;
+  home-manager.users.boog = {
+    imports = [
+      ../../home
+      ./git.nix
+      ./home.nix
+    ];
+  };
   users = {
     mutableUsers = false;
     users.boog = {

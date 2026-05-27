@@ -1,27 +1,23 @@
-{
-  utils,
-  home-manager,
-  dotfiles,
-  defaultSpecialArgs,
-}:
+# Shared module sets for NixOS and nix-darwin hosts.
+{ home-manager, defaultSpecialArgs }:
 let
-  nixosModules = utils.lib.exportModules [
-    ./modules/base-server.nix
-    ./modules/i18n.nix
-    ./modules/minimal-docs.nix
-    ./modules/openssh.nix
-    ./modules/security.nix
-    ./modules/tcp-hardening.nix
-    ./modules/tcp-optimization.nix
-    ./modules/cli.nix
-    ./modules/secrets.nix
-    ./modules/fonts.nix
-    ./modules/shared-options.nix
+  nixosModules = {
+    base-server = import ./modules/base-server.nix;
+    i18n = import ./modules/i18n.nix;
+    minimal-docs = import ./modules/minimal-docs.nix;
+    openssh = import ./modules/openssh.nix;
+    security = import ./modules/security.nix;
+    tcp-hardening = import ./modules/tcp-hardening.nix;
+    tcp-optimization = import ./modules/tcp-optimization.nix;
+    cli = import ./modules/cli.nix;
+    secrets = import ./modules/secrets.nix;
+    fonts = import ./modules/fonts.nix;
+    shared-options = import ./modules/shared-options.nix;
 
-    ./users/boog
-    ./users/root
-    ./users/darwin
-  ];
+    boog = import ./users/boog;
+    root = import ./users/root;
+    darwin = import ./users/darwin;
+  };
 
   sharedModules = with nixosModules; [
     cli
@@ -50,7 +46,7 @@ let
   ];
 
   sharedOptions =
-    { dotfiles, config, ... }:
+    { config, ... }:
     {
       nix.settings = {
         trusted-users = config.trustedUsers;
@@ -70,19 +66,6 @@ let
         http-connections = 50;
         log-lines = 50;
       };
-
-      # nix.gc = {
-      #   automatic = true;
-      #   # dates = "weekly";
-      #   options = "--delete-older-than 7d";
-      # };
-
-      # nix.optimise = {
-      #   automatic = true;
-      #   # dates = [ "weekly" ];
-      # };
-
-      nix.linkInputs = true;
 
       home-manager = {
         useGlobalPkgs = true;

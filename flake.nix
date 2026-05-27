@@ -7,12 +7,8 @@
     pkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.follows = "pkgs-stable";
 
-    utils = {
-      url = "github:gytis-ivaskevicius/flake-utils-plus/v1.5.1";
-    };
-
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11"; # "github:nix-community/home-manager/master";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -24,11 +20,6 @@
     vscode-server = {
       url = "github:nix-community/nixos-vscode-server";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    dotfiles = {
-      url = "github:briianpowell/dotfiles";
-      flake = false;
     };
 
     darwin = {
@@ -50,130 +41,133 @@
   outputs =
     inputs@{
       self,
-      nixpkgs,
       pkgs-stable,
       pkgs-darwin,
       pkgs-unstable,
-      utils,
       home-manager,
       agenix,
       vscode-server,
-      dotfiles,
       darwin,
       nixos-wsl,
       ...
     }:
     let
-      defaultSpecialArgs = { inherit dotfiles; };
+      defaultSpecialArgs = {
+        inherit inputs;
+      };
+
       suites = import ./suites.nix {
-        inherit
-          utils
-          home-manager
-          dotfiles
-          defaultSpecialArgs
-          ;
+        inherit home-manager defaultSpecialArgs;
       };
+
+      linuxNixpkgsConfig = {
+        nixpkgs.config.allowUnfree = true;
+        nixpkgs.config.allowBroken = false;
+        nixpkgs.overlays = [
+          (_: prev: {
+            nodejs = prev.nodejs_22;
+          })
+        ];
+      };
+
+      darwinNixpkgsConfig = {
+        nixpkgs.config.allowUnfree = true;
+        nixpkgs.config.allowBroken = false;
+        nixpkgs.overlays = [
+          (final: prev: {
+            mas =
+              (import pkgs-unstable {
+                inherit (prev) system;
+                config = prev.config;
+              }).mas;
+          })
+        ];
+      };
+
+      linuxModules = [
+        linuxNixpkgsConfig
+        agenix.nixosModules.default
+      ]
+      ++ suites.sharedModules;
+
+      mkLinuxHost =
+        name: extraModules:
+        pkgs-stable.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = defaultSpecialArgs;
+          modules =
+            linuxModules
+            ++ extraModules
+            ++ [
+              ./hosts/${name}
+            ];
+        };
+
+      mkDevShell =
+        pkgs:
+        pkgs.mkShell {
+          name = "devShell";
+          packages = with pkgs; [
+            git
+            transcrypt
+          ];
+        };
     in
-    with suites.nixosModules;
-    utils.lib.mkFlake {
-      inherit self inputs;
-      inherit (suites) nixosModules;
-
-      supportedSystems = [
-        "x86_64-linux"
-        "aarch64-darwin"
-      ];
-      channelsConfig = {
-        allowUnfree = true;
-        allowBroken = false;
-      };
-
-      channels = {
-        stable = {
-          input = pkgs-stable;
-          overlaysBuilder = channels: [
-            (self: super: {
-              nodejs = super.nodejs_22;
-            })
-          ];
-        };
-        darwin = {
-          input = pkgs-darwin;
-          overlaysBuilder = channels: [
-            (final: prev: {
-              # Homebrew brew bundle uses `mas get`; nixpkgs-25.11-darwin still ships mas 2.2.2.
-              # https://github.com/nix-darwin/nix-darwin/issues/1722
-              mas = channels.unstable.mas;
-            })
-          ];
-        };
-        unstable = {
-          input = pkgs-unstable;
-          overlaysBuilder = channels: [
-            (final: prev: {
-              #inherit (channel) stable;
-            })
-          ];
-        };
-      };
-
-      hostDefaults = {
-        system = "x86_64-linux";
-        modules = [ agenix.nixosModules.default ] ++ suites.sharedModules;
-        channelName = "stable";
-      };
-
-      hosts = {
-        sheol = {
-          specialArgs = defaultSpecialArgs;
-          modules = [
+    {
+      nixosConfigurations = {
+        sheol = mkLinuxHost "sheol" (
+          [
             home-manager.nixosModules.home-manager
             vscode-server.nixosModule
-            ./hosts/sheol
           ]
           ++ suites.serverModules
-          ++ suites.userModules;
-        };
-        abaddon = {
-          specialArgs = defaultSpecialArgs;
-          modules = [
+          ++ suites.userModules
+        );
+
+        abaddon = mkLinuxHost "abaddon" (
+          [
             home-manager.nixosModules.home-manager
             vscode-server.nixosModule
-            ./hosts/abaddon
           ]
           ++ suites.serverModules
-          ++ suites.userModules;
-        };
-        gehenna = {
-          specialArgs = defaultSpecialArgs;
-          modules = [
+          ++ suites.userModules
+        );
+
+        gehenna = mkLinuxHost "gehenna" (
+          [
             home-manager.nixosModules.home-manager
             vscode-server.nixosModule
             nixos-wsl.nixosModules.default
-            ./hosts/gehenna
           ]
           ++ suites.wslModules
-          ++ suites.userModules;
-        };
-        boog-MBP = {
-          channelName = "darwin";
-          system = "aarch64-darwin";
-          specialArgs = defaultSpecialArgs;
-          modules = [ ./hosts/boog-MBP ] ++ suites.darwinModules;
-          output = "darwinConfigurations";
-          builder = darwin.lib.darwinSystem;
-        };
+          ++ suites.userModules
+        );
       };
 
-      outputsBuilder =
-        channels: with channels.stable; {
-          devShell = mkShell {
-            name = "devShell";
-            buildInputs = [
-              git
-              transcrypt
-            ];
-          };
-        };
+      darwinConfigurations.boog-MBP = darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        specialArgs = defaultSpecialArgs;
+        modules = [
+          darwinNixpkgsConfig
+          ./hosts/boog-MBP
+        ]
+        ++ suites.darwinModules;
+      };
+
+      devShells.x86_64-linux.default = mkDevShell (
+        import pkgs-stable {
+          system = "x86_64-linux";
+          config.allowUnfree = true;
+          overlays = linuxNixpkgsConfig.nixpkgs.overlays;
+        }
+      );
+
+      devShells.aarch64-darwin.default = mkDevShell (
+        import pkgs-darwin {
+          system = "aarch64-darwin";
+          config.allowUnfree = true;
+          overlays = darwinNixpkgsConfig.nixpkgs.overlays;
+        }
+      );
     };
 }
