@@ -15,7 +15,7 @@
       nodejs
 
       # Secrets Management
-      inputs.agenix.packages."${pkgs.stdenv.hostPlatform.system}".default
+      inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Build Tools
       # deno # https://deno.land/

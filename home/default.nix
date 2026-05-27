@@ -3,6 +3,7 @@
 }:
 {
   imports = [
+    ./modules/atuin.nix
     ./modules/bettertouchtool.nix
     ./modules/fish.nix
     ./modules/git.nix

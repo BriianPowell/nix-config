@@ -1,19 +1,21 @@
 # Home Manager module: declarative Rectangle (macOS) preferences.
 #
 # Per user:
-#   home-manager.users.<name>.programs.rectangle.settings = { ... };
+#   rectangle.settings = { ... };
 #
 # See home/rectangle/README.md and users/darwin/rectangle.nix for examples.
 #
 { config, lib, pkgs, ... }:
 let
-  cfg = config.programs.rectangle;
+  cfg = config.rectangle;
 
   plistFile =
-    pkgs.writeText "com.knollsoft.Rectangle.plist" (lib.generators.toPlist { } cfg.settings);
+    pkgs.writeText "com.knollsoft.Rectangle.plist" (
+      lib.generators.toPlist { escape = true; } cfg.settings
+    );
 in
 {
-  options.programs.rectangle = {
+  options.rectangle = {
     enable = lib.mkEnableOption "manage Rectangle preferences via defaults import";
 
     settings = lib.mkOption {
@@ -50,7 +52,7 @@ in
       lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         RECT_DIR="$HOME/Library/Application Support/Rectangle"
         $DRY_RUN_CMD mkdir -p "$RECT_DIR"
-        $DRY_RUN_CMD cp -- ${cfg.jsonConfig} "$RECT_DIR/RectangleConfig.json"
+        $DRY_RUN_CMD cp -- ${lib.escapeShellArg cfg.jsonConfig} "$RECT_DIR/RectangleConfig.json"
       ''
     );
   };

@@ -18,7 +18,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ pkgs.kubectl ];
+    home.packages = with pkgs; [
+      kubectl
+      pyenv
+    ];
 
     programs.fish = {
       enable = true;

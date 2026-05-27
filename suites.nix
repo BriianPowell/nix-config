@@ -71,6 +71,8 @@ let
         useGlobalPkgs = true;
         useUserPackages = true;
         extraSpecialArgs = defaultSpecialArgs;
+        # Back up existing files before HM replaces them (e.g. iterm2 plist, git ignore).
+        backupFileExtension = "backup";
       };
     };
 

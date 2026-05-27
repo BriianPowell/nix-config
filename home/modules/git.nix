@@ -81,5 +81,8 @@ in
         signer = cfg.signing.signer;
       };
     };
+
+    # Git may recreate this file; force keeps the HM-managed ignore in place.
+    xdg.configFile."git/ignore".force = lib.mkIf (cfg.ignores != [ ]) true;
   };
 }

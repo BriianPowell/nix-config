@@ -7,7 +7,7 @@ Managed by `home/modules/iterm2.nix`.
 ```nix
 # users/darwin/iterm2.nix
 { pkgs, ... }: {
-  programs.iterm2 = {
+  iterm2 = {
     enable = true;
     plistFile = ../../home/iterm2/com.googlecode.iterm2.plist;
     extraSettings.Command = "${pkgs.fish}/bin/fish";
@@ -17,13 +17,12 @@ Managed by `home/modules/iterm2.nix`.
 
 ## Export main plist
 
+Quit iTerm2, then:
+
 ```bash
-# Quit iTerm2 first
 cp ~/Library/Preferences/com.googlecode.iterm2.plist \
    home/iterm2/com.googlecode.iterm2.plist
 ```
-
-Review for secrets before committing.
 
 ## Apply
 

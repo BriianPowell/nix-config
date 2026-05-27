@@ -1,19 +1,46 @@
-# Dotfiles → nix-config migration
+# Home Manager layout
 
-Config formerly in the [dotfiles](https://github.com/briianpowell/dotfiles) repo now lives in this flake.
+## How configuration flows
 
-## Layout
+```text
+home/modules/*.nix     →  defines options + defaults (the “module manager”)
+users/<host>/home.nix  →  enables modules (git.enable, fish.enable, …)
+users/<host>/git.nix   →  per-user values (git.userName, signing, …)
+users/darwin/*.nix     →  macOS-only apps (rectangle, iterm2, …)
+```
 
-| Module | Option | Files | Per-user enable |
-|--------|--------|-------|-----------------|
-| Git | `git.*` | (Nix only) | `users/{boog,darwin}/git.nix` |
-| Tooling | `tooling.enable` | `home/config/` | `users/*/home.nix` |
-| Fish | `fish.enable` | `home/fish/` | `users/*/home.nix` |
-| SSH | `ssh.enable` | `home/ssh/` | `users/*/home.nix` |
-| Vim | `vim.enable` | `home/vim/` | `users/*/home.nix` |
-| Rectangle | `programs.rectangle` | Nix + optional JSON | `users/darwin/rectangle.nix` |
-| iTerm2 | `programs.iterm2` | `home/iterm2/*.plist` | `users/darwin/iterm2.nix` |
-| BetterTouchTool | `programs.bettertouchtool` | `home/bettertouchtool/*.json` | `users/darwin/bettertouchtool.nix` |
+Each user’s Home Manager imports `../../home` (all modules), then sets options in their own files. Modules read `config.<name>` and implement `home.file`, `programs.*`, activations.
+
+**Convention:** one top-level option namespace per app (`git`, `fish`, `rectangle`, …). User modules set `enable` and overrides there—not `programs.<app>` (Home Manager’s built-in `programs.git` etc. stay internal to our modules).
+
+**Examples**
+
+```nix
+# users/boog/home.nix — turn modules on
+{ git.enable = true; fish.enable = true; }
+
+# users/boog/git.nix — identity and overrides
+{ git.userName = "…"; git.userEmail = "…"; }
+
+# users/darwin/rectangle.nix — app-specific options
+{ rectangle.settings = { launchOnLogin = true; }; }
+```
+
+Shared behavior lives in the module; per-user differences live under `users/`.
+
+## File layout
+
+| Module | Options | Files | Per-user config |
+|--------|---------|-------|-----------------|
+| Git | `git.*` | (Nix only) | `users/*/git.nix` |
+| Tooling | `tooling.*` | `home/config/` | `users/*/home.nix` |
+| Fish | `fish.*` | `home/fish/` | `users/*/home.nix` |
+| SSH | `ssh.*` | `home/ssh/` | `users/*/home.nix` |
+| Vim | `vim.*` | `home/vim/` | `users/*/home.nix` |
+| Atuin | `atuin.*` | Nix (`config.toml`) | `users/*/home.nix` |
+| Rectangle | `rectangle.*` | Nix + optional JSON | `users/darwin/rectangle.nix` |
+| iTerm2 | `iterm2.*` | `home/iterm2/*.plist` | `users/darwin/iterm2.nix` |
+| BetterTouchTool | `bettertouchtool.*` | `home/bettertouchtool/*.json` | `users/darwin/bettertouchtool.nix` |
 
 ## Adding a Home Manager user
 
@@ -21,13 +48,13 @@ Config formerly in the [dotfiles](https://github.com/briianpowell/dotfiles) repo
 home-manager.users.newuser = {
   imports = [
     ../../home
-    ../boog/git.nix      # or copy with new identity
-    ../boog/home.nix     # enable fish, ssh, vim, tooling
+    ./git.nix
+    ./home.nix
   ];
 };
 ```
 
-macOS-only apps: import `users/darwin/rectangle.nix`, `iterm2.nix`, `bettertouchtool.nix` as needed.
+macOS-only: also import `rectangle.nix`, `iterm2.nix`, `bettertouchtool.nix` as needed.
 
 ## Rebuild
 

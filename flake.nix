@@ -77,7 +77,7 @@
           (final: prev: {
             mas =
               (import pkgs-unstable {
-                inherit (prev) system;
+                system = prev.stdenv.hostPlatform.system;
                 config = prev.config;
               }).mas;
           })

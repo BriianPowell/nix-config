@@ -1,7 +1,7 @@
 # Rectangle settings for boog (macOS).
 { ... }:
 {
-  programs.rectangle = {
+  rectangle = {
     enable = true;
 
     settings = {

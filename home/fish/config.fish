@@ -8,7 +8,6 @@ set -Ux PYENV_ROOT $HOME/.pyenv
 
 command -q pyenv; and pyenv init - fish | source
 command -q kubectl; and kubectl completion fish | source
-command -q atuin; and atuin init fish | source
 
 fish_add_path /usr/local/bin
 fish_add_path /usr/local/sbin

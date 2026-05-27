@@ -1,14 +1,14 @@
 # Home Manager module: declarative iTerm2 (macOS) preferences.
 #
 # Per user:
-#   programs.iterm2.plistFile = /path/to/com.googlecode.iterm2.plist;
-#   programs.iterm2.dynamicProfiles = [ ./profiles.json ];
+#   iterm2.plistFile = /path/to/com.googlecode.iterm2.plist;
+#   iterm2.dynamicProfiles = [ ./profiles.json ];
 #
 # See home/iterm2/README.md
 #
 { config, lib, pkgs, ... }:
 let
-  cfg = config.programs.iterm2;
+  cfg = config.iterm2;
 
   dynamicProfileFiles = lib.listToAttrs (
     map (path: {
@@ -22,12 +22,12 @@ let
   extraSettingsPlist =
     lib.optional (cfg.extraSettings != { }) (
       pkgs.writeText "com.googlecode.iterm2-extra.plist" (
-        lib.generators.toPlist { } cfg.extraSettings
+        lib.generators.toPlist { escape = true; } cfg.extraSettings
       )
     );
 in
 {
-  options.programs.iterm2 = {
+  options.iterm2 = {
     enable = lib.mkEnableOption "manage iTerm2 preferences";
 
     plistFile = lib.mkOption {
@@ -62,7 +62,10 @@ in
   config = lib.mkIf cfg.enable {
     home.file = lib.mkMerge [
       (lib.mkIf (cfg.plistFile != null) {
-        "Library/Preferences/com.googlecode.iterm2.plist".source = cfg.plistFile;
+        "Library/Preferences/com.googlecode.iterm2.plist" = {
+          source = cfg.plistFile;
+          force = true;
+        };
       })
       dynamicProfileFiles
     ];
