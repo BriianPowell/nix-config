@@ -6,7 +6,7 @@
 { ... }:
 {
   machine = {
-    username = "boog";
+    username = "Brian_Powell";
 
     homebrew = {
       extraTaps = [ ];
