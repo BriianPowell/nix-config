@@ -5,14 +5,18 @@
 #
 # See home/rectangle/README.md and users/darwin/rectangle.nix for examples.
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.rectangle;
 
-  plistFile =
-    pkgs.writeText "com.knollsoft.Rectangle.plist" (
-      lib.generators.toPlist { escape = true; } cfg.settings
-    );
+  plistFile = pkgs.writeText "com.knollsoft.Rectangle.plist" (
+    lib.generators.toPlist { escape = true; } cfg.settings
+  );
 in
 {
   options.rectangle = {

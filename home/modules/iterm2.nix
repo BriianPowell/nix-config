@@ -6,7 +6,12 @@
 #
 # See home/iterm2/README.md
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.iterm2;
 
@@ -19,12 +24,11 @@ let
     }) cfg.dynamicProfiles
   );
 
-  extraSettingsPlist =
-    lib.optional (cfg.extraSettings != { }) (
-      pkgs.writeText "com.googlecode.iterm2-extra.plist" (
-        lib.generators.toPlist { escape = true; } cfg.extraSettings
-      )
-    );
+  extraSettingsPlist = lib.optional (cfg.extraSettings != { }) (
+    pkgs.writeText "com.googlecode.iterm2-extra.plist" (
+      lib.generators.toPlist { escape = true; } cfg.extraSettings
+    )
+  );
 in
 {
   options.iterm2 = {

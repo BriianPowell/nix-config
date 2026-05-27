@@ -206,22 +206,67 @@ Built on top of [nix-community/NixOS-WSL](https://github.com/nix-community/NixOS
 - `sudo nixos-rebuild switch --flake .#gehenna`
 - `sudo nixos-rebuild dry-activate --flake .#gehenna`
 
-### Darwin
+### Darwin (boog-MBP)
 
-**First Time Installation:**
+Mac configuration via [nix-darwin](https://github.com/LnL7/nix-darwin). Home Manager user config lives under `users/darwin/`. Dotfiles are a flake input (`github:briianpowell/dotfiles`) used for fish, SSH, iTerm2 plist, and Rectangle.
+
+**First-time installation:**
 
 ```bash
 nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
 ./result/bin/darwin-installer
 ```
 
-- `nix build .#darwinConfigurations.boog-MBP.system` use nix build to create the initial installion
-- `./result/sw/bin/darwin-rebuild switch --flake .#boog-MBP` use nix-darwin to use the configuration
+Then build and switch:
 
-**then:**
+```bash
+nix build .#darwinConfigurations.boog-MBP.system
+./result/sw/bin/darwin-rebuild switch --flake .#boog-MBP
+```
 
-- `darwin-rebuild switch --flake .#boog-MBP`
-- `darwin-rebuild check --flake .#boog-MBP`
+**Day-to-day rebuilds:**
+
+```bash
+darwin-rebuild switch --flake .#boog-MBP
+darwin-rebuild check --flake .#boog-MBP
+```
+
+After changing [dotfiles](https://github.com/briianpowell/dotfiles):
+
+```bash
+nix flake update dotfiles
+darwin-rebuild switch --flake .#boog-MBP
+```
+
+Use `--impure` if the flake eval fails on an uncommitted git tree.
+
+**Display layout (`displayplacer`):**
+
+Installed via Homebrew in `hosts/boog-MBP/brew.nix`. Persistent display IDs **change** when you unplug monitors, swap cables, or rearrange the desk. If a command fails with `Unable to find screen …`, the README/script is stale—regenerate it:
+
+```bash
+displayplacer list
+# Copy the full `displayplacer "id:…" "id:…" …` line printed at the bottom.
+```
+
+Apply the current four-monitor layout (or run `scripts/display-desk.sh`):
+
+```bash
+./scripts/display-desk.sh
+```
+
+Equivalent one-liner:
+
+```bash
+displayplacer "id:37D8832A-2D66-02CA-B9F7-8F30A301B230 res:2056x1329 hz:120 color_depth:8 enabled:true scaling:on origin:(0,0) degree:0" "id:EA121D52-37E7-494B-846B-E4883A08C049 res:2560x1440 hz:60 color_depth:8 enabled:true scaling:off origin:(5496,0) degree:0" "id:22572CD6-50D0-4A20-947F-3DDEB101C6ED res:3440x1440 hz:100 color_depth:8 enabled:true scaling:off origin:(2056,0) degree:0" "id:BAF3A479-B2BD-4ECF-8359-F6673EC3BF89 res:2560x1440 hz:60 color_depth:8 enabled:true scaling:off origin:(8056,0) degree:0"
+```
+
+| Display ID | Role (approx.) |
+| --- | --- |
+| `37D8832A-2D66-02CA-B9F7-8F30A301B230` | MacBook built-in (2056×1329, 120 Hz) |
+| `22572CD6-50D0-4A20-947F-3DDEB101C6ED` | Ultrawide center (3440×1440, 100 Hz) |
+| `EA121D52-37E7-494B-846B-E4883A08C049` | 27″ external right (2560×1440) |
+| `BAF3A479-B2BD-4ECF-8359-F6673EC3BF89` | 27″ external far right (2560×1440) |
 
 ### Revert Generations
 
@@ -232,4 +277,4 @@ sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
 
 ## Attribution
 
-Inspiration and adoptation from [@DudeofAwesome](https://github.com/dudeofawesome/nix-server). The guy who usually sends me down these rabbit holes. Hoping to turn this repo into a central deployment configuration for my RPi's and other devices.
+Inspiration and adoption from [@DudeofAwesome](https://github.com/dudeofawesome/nix-server). The guy who usually sends me down these rabbit holes. Hoping to turn this repo into a central deployment configuration for my RPi's and other devices.
