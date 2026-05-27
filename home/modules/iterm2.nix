@@ -15,20 +15,40 @@
 let
   cfg = config.iterm2;
 
-  dynamicProfileFiles = lib.listToAttrs (
+  dynamicProfilesDir = "Library/Application Support/iTerm2/DynamicProfiles";
+
+  # iTerm expects { "Profiles": [ { ... } ] }. Exports from "Save Profile as JSON"
+  # are often a single profile object; wrap automatically.
+  wrapDynamicProfile =
+    path:
+    let
+      raw = builtins.fromJSON (builtins.readFile path);
+      base = if raw ? Profiles then raw else { Profiles = [ raw ]; };
+      profiles = map (p: p // cfg.extraSettings) base.Profiles;
+      wrapped = {
+        Profiles = profiles;
+      };
+    in
+    pkgs.writeText "iterm2-${builtins.baseNameOf path}" (builtins.toJSON wrapped);
+
+  dynamicProfileStaged = lib.listToAttrs (
     map (path: {
-      name = "Library/Application Support/iTerm2/DynamicProfiles/${builtins.baseNameOf path}";
+      name = ".config/iterm2/dynamic-profiles/${builtins.baseNameOf path}";
       value = {
-        source = path;
+        source = wrapDynamicProfile path;
       };
     }) cfg.dynamicProfiles
   );
 
-  extraSettingsPlist = lib.optional (cfg.extraSettings != { }) (
-    pkgs.writeText "com.googlecode.iterm2-extra.plist" (
-      lib.generators.toPlist { escape = true; } cfg.extraSettings
-    )
-  );
+  dynamicProfileLinks = lib.concatMapStringsSep "\n" (
+    path:
+    let
+      fileName = builtins.baseNameOf path;
+    in
+    ''
+      $DRY_RUN_CMD ln -sfn "$HOME/.config/iterm2/dynamic-profiles/${fileName}" "$HOME/${dynamicProfilesDir}/${fileName}"
+    ''
+  ) cfg.dynamicProfiles;
 in
 {
   options.iterm2 = {
@@ -48,8 +68,9 @@ in
       type = lib.types.listOf lib.types.path;
       default = [ ];
       description = ''
-        JSON files installed under
+        JSON profile files installed under
         ~/Library/Application Support/iTerm2/DynamicProfiles/.
+        Single-profile exports are wrapped in a Profiles array automatically.
       '';
     };
 
@@ -57,8 +78,8 @@ in
       type = lib.types.attrs;
       default = { };
       description = ''
-        Top-level plist keys merged via defaults import after the main plist.
-        Use for small per-user overrides; nested keys need a full plistFile.
+        Keys merged into each dynamic profile (e.g. Command, Custom Command).
+        Does not use defaults(1); safe with the read-only HM-managed plist symlink.
       '';
     };
   };
@@ -71,12 +92,14 @@ in
           force = true;
         };
       })
-      dynamicProfileFiles
+      dynamicProfileStaged
     ];
 
-    home.activation.iterm2ExtraSettings = lib.mkIf (cfg.extraSettings != { }) (
+    # Symlink into Application Support (avoids fragile home.file keys with spaces).
+    home.activation.iterm2DynamicProfiles = lib.mkIf (cfg.dynamicProfiles != [ ]) (
       lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD /usr/bin/defaults import com.googlecode.iterm2 ${lib.escapeShellArg (builtins.head extraSettingsPlist)}
+        $DRY_RUN_CMD mkdir -p "$HOME/${dynamicProfilesDir}"
+        ${dynamicProfileLinks}
       ''
     );
   };

@@ -24,7 +24,9 @@ The main plist must reference the profile you want as default (see `Default Book
 
 ## Export dynamic profile
 
-After editing a profile in iTerm → Profiles, or when adding a new JSON file:
+In iTerm → **Settings → Profiles → [your profile] → Other Actions → Save Profile as JSON**.
+
+That export is a single profile object. The module wraps it as `{ "Profiles": [ … ] }` automatically.
 
 ```bash
 cp ~/Library/Application\ Support/iTerm2/DynamicProfiles/BooG.json \
@@ -32,6 +34,14 @@ cp ~/Library/Application\ Support/iTerm2/DynamicProfiles/BooG.json \
 ```
 
 Add the path to `dynamicProfiles` in `users/darwin/iterm2.nix`, then re-export the main plist if you changed the default profile.
+
+Verify after rebuild:
+
+```bash
+ls -la ~/.config/iterm2/dynamic-profiles/
+ls -la ~/Library/Application\ Support/iTerm2/DynamicProfiles/
+# BooG.json should symlink into ~/.config/iterm2/dynamic-profiles/
+```
 
 ## Export main plist
 

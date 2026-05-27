@@ -3,6 +3,7 @@
 {
   bettertouchtool = {
     enable = true;
-    presetFile = ../../home/bettertouchtool/bttdata.json;
+    presetFile = ../../home/bettertouchtool/BooG.bttpreset;
+    forceImport = true; # one rebuild after switching presets; set false afterward
   };
 }

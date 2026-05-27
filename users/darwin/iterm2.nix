@@ -7,6 +7,9 @@
     dynamicProfiles = [
       ../../home/iterm2/BooG.json
     ];
-    extraSettings.Command = "${pkgs.fish}/bin/fish";
+    extraSettings = {
+      "Custom Command" = "Yes";
+      Command = "${pkgs.fish}/bin/fish";
+    };
   };
 }
