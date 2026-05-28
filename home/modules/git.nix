@@ -72,8 +72,6 @@ in
       }
       // cfg.settings;
 
-      ignores = cfg.ignores;
-
       signing = lib.mkIf cfg.signing.enable {
         key = cfg.signing.key;
         format = "ssh";
@@ -82,7 +80,10 @@ in
       };
     };
 
-    # Git may recreate this file; force keeps the HM-managed ignore in place.
-    xdg.configFile."git/ignore".force = lib.mkIf (cfg.ignores != [ ]) true;
+    # Managed here (not programs.git.ignores) so text + force are defined together.
+    xdg.configFile."git/ignore" = lib.mkIf (cfg.ignores != [ ]) {
+      text = lib.concatStringsSep "\n" cfg.ignores + "\n";
+      force = true;
+    };
   };
 }

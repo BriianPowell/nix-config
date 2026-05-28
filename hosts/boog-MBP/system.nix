@@ -38,6 +38,7 @@
     # Utils
     awscli2
     coreutils-full
+    eternal-terminal # et client — servers: services.eternal-terminal on sheol/abaddon
     eza # https://github.com/ogham/exa
     git-secrets
     gh # https://cli.github.com/
