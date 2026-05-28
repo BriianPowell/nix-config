@@ -1,5 +1,7 @@
 { pkgs, config, ... }:
 {
+  imports = [ ./authorized-keys.nix ];
+
   home-manager.users.boog = {
     imports = [
       ../../home
@@ -16,9 +18,7 @@
       shell = pkgs.fish;
       extraGroups = [ "wheel" ];
       hashedPasswordFile = config.age.secrets."passwords/users/boog".path;
-      openssh.authorizedKeys.keyFiles = [
-        config.age.secrets."ssh/authorized_keys/boog".path
-      ];
+      # Keys come from agenix → activationScripts.boogAuthorizedKeys (not keys/keyFiles here).
     };
   };
 }

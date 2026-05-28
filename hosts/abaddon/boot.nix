@@ -56,7 +56,7 @@
           enable = true;
           port = 2222;
           hostKeys = [ "/etc/secrets/initrd/ssh_host_rsa_key" "/etc/secrets/initrd/ssh_host_ed25519_key" ];
-          authorizedKeyFiles = config.users.users.boog.openssh.authorizedKeys.keyFiles;
+          authorizedKeys = import ../../secrets/ssh/initrd-login.nix;
         };
 
         postCommands =

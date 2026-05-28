@@ -1,18 +1,17 @@
 # https://developer.1password.com/docs/ssh/agent/config
 #
-# Order matters: keys are offered top-to-bottom. Put NixOS Admin first so
-# `ssh sheol` / `ssh abaddon` prefer it over Personal (git signing / other use).
-
-[[ssh-keys]]
-item = "NixOS Admin"
-vault = "Tech Stack"
+# Order matters: keys are offered top-to-bottom.
 
 [[ssh-keys]]
 item = "Personal"
 vault = "Tech Stack"
 
-# Server GitHub deploy keys live on the hosts (agenix), not needed for Mac SSH login.
-# Uncomment only if you keep copies in 1Password for other workflows.
+[[ssh-keys]]
+item = "NixOS Admin"
+vault = "Tech Stack"
+
+# After sheol/abaddon rebuild, put NixOS Admin first for server login.
+# Server GitHub deploy keys live on the hosts (agenix), not needed on Mac.
 # [[ssh-keys]]
 # item = "Sheol"
 # vault = "Tech Stack"

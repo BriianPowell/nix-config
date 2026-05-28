@@ -1,38 +1,23 @@
-# SSH login keys for user `boog` (agenix)
+# Login keys for user `boog`
 
-Servers read `ssh/authorized_keys/boog.age` via `users/boog/default.nix` (`openssh.authorizedKeys.keyFiles`).
+## Running system (sheol / abaddon)
 
-## Which key goes in the secret?
+Public keys live in **`boog.age`** only. At activation, agenix decrypts to `/run/agenix/…` and `users/boog/authorized-keys.nix` copies them to `/home/boog/.ssh/authorized_keys`.
 
-| Key | Where it lives | Used for |
-|-----|----------------|----------|
-| **1Password "NixOS Admin"** | Tech Stack vault | SSH from Mac → sheol/abaddon |
-| **`~/.ssh/github_deploy` on server** | agenix per host | `git@github.com` from sheol/abaddon only |
-| **Git signing key** | `users/darwin/git.nix` | Signed commits on Mac, not server login |
+No `boog.pub` in git.
 
-Mac SSH (`home/ssh/darwin.config`) uses the 1Password agent with `IdentitiesOnly yes` for NixOS hosts. The agenix secret must contain the **NixOS Admin** public key.
+## Update keys
 
-You do **not** need `~/.ssh/id_ed25519` on your Mac to create or deploy this secret.
+1. Edit `boog.plain` (one public key per line).
+2. `./encrypt.sh` → updates `boog.age`.
+3. If the key changed, mirror the same line(s) in `../initrd-login.nix` (initrd cannot use agenix at build time).
+4. Commit `boog.age` (+ `initrd-login.nix` if it changed).
+5. `nixos-rebuild switch` on each host.
 
-## Create `boog.age` (no private key on Mac)
+## Initrd (port 2222)
 
-1. Copy the **NixOS Admin** public key from 1Password into `boog.plain` (see `secrets/ssh/README.md`).
-2. From the repo:
+`secrets/ssh/initrd-login.nix` is the only build-time copy of the login pubkey(s). That is a NixOS limitation for LUKS SSH in initrd—not a second agenix mount.
 
-   ```bash
-   ./secrets/ssh/authorized_keys/encrypt.sh
-   ```
+## Mac
 
-   This encrypts using every public key listed in `secrets/secrets.nix` (hosts + `agenixRecipients`). No local `~/.ssh` private key is required.
-
-3. Commit `boog.age`, rebuild sheol/abaddon:
-
-   ```bash
-   nixos-rebuild switch --flake .#sheol
-   ```
-
-4. **Initrd / LUKS unlock (port 2222):** the key file is written to `/etc/ssh/authorized_keys/boog`. After the first successful switch, run **one more** rebuild so initrd picks up that file.
-
-## Optional: add Personal pubkey to `secrets.nix`
-
-If you want to edit this secret later with `agenix -e` using a key you control, add your Personal **public** key to `agenixRecipients` in `secrets/secrets.nix` and run `agenix -r`. That still does not require storing the private key in `~/.ssh` (1Password keeps it).
+1Password **NixOS Admin** must match the key inside `boog.age` / `initrd-login.nix`.

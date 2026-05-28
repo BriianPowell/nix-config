@@ -37,3 +37,4 @@ nix run --accept-flake-config nixpkgs#age -- \
 
 rm -f "${recipients_file}.age"
 echo "Wrote $OUT_FILE"
+echo "If login keys changed, update secrets/ssh/initrd-login.nix to match (initrd LUKS SSH)."

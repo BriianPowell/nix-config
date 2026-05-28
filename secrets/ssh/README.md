@@ -7,11 +7,11 @@
 
 ## Admin login (Mac → sheol / abaddon)
 
-1. Use the **NixOS Admin** SSH item in 1Password (Tech Stack). Mac SSH uses the 1Password agent (`home/ssh/darwin.config`, `home/config/1Password/ssh/agent.toml`).
+1. Use the **NixOS Admin** SSH item in 1Password (Tech Stack). Mac SSH uses the 1Password agent (`home/ssh/darwin.config`, `home/config/1Password/ssh/agent.toml`). Key order is controlled in `agent.toml` (not `IdentitiesOnly` — that breaks agent auth without `IdentityFile`).
 
-2. Add that item’s **public** key to `authorized_keys/boog.plain`, run `./authorized_keys/encrypt.sh`, commit `boog.age`.
+2. Add that item’s **public** key to `authorized_keys/boog.plain`, run `./authorized_keys/encrypt.sh`, commit `boog.age`. If the key changed, update `initrd-login.nix` too.
 
-3. Optional: set the same pubkey as `nixosAdmin` in `secrets/secrets.nix` to edit agenix secrets from a machine with that key.
+3. Keep `nixosAdmin` in `secrets/secrets.nix` in sync (agenix recipients + same key material).
 
 4. Rebuild sheol and abaddon.
 
