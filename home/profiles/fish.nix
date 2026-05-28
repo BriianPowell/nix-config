@@ -16,7 +16,7 @@ in
     enable = true;
     # fish 4.2+ completion path change; avoids broken generated completions on startup
     generateCompletions = false;
-    # Dotfiles init: conf.d/01-dotfiles.fish. Tide vars: conf.d/tide-config.fish (after plugin-*).
+    # Dotfiles init: conf.d/01-dotfiles.fish. Tide: 00-tide-config.fish, reload z-tide-reload.fish.
     plugins = [
       {
         name = "autopair.fish";
@@ -95,8 +95,8 @@ in
       "${dotfiles}/home/.config/fish/functions/git_main_branch.fish";
     "fish/functions/gitclcd.fish".source = "${dotfiles}/home/.config/fish/functions/gitclcd.fish";
     "fish/functions/mkdir.fish".source = "${dotfiles}/home/.config/fish/functions/mkdir.fish";
-    # Must sort after plugin-tide.fish (99-* runs before plugin-* in conf.d)
-    "fish/conf.d/tide-config.fish".source = "${dotfiles}/home/.config/fish/tide.config.fish";
+    "fish/conf.d/00-tide-config.fish".source = "${dotfiles}/home/.config/fish/conf.d/00-tide-config.fish";
+    "fish/conf.d/z-tide-reload.fish".source = "${dotfiles}/home/.config/fish/conf.d/z-tide-reload.fish";
   }
   // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
     "fish/conf.d/00-nix-path.fish".text = nixPathInit;

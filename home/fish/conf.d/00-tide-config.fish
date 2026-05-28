@@ -1,3 +1,6 @@
+# Tide v6 prompt settings. Loaded before plugin-tide.fish.
+# OS icon + prompt refresh: conf.d/z-tide-reload.fish
+
 set -U tide_character_bg_color normal
 set -U tide_character_color 5FD700
 set -U tide_character_color_failure FF0000
@@ -34,6 +37,8 @@ set -U tide_git_color_stash 5FD700
 set -U tide_git_color_untracked 00AFFF
 set -U tide_git_color_upstream 5FD700
 set -U tide_git_icon \uf1d3
+set -U tide_git_truncation_length 24
+set -Ue tide_git_truncation_strategy
 
 set -U tide_go_bg_color 444444
 set -U tide_go_color 00ACD7
@@ -42,13 +47,14 @@ set -U tide_go_icon \ue627
 set -U tide_jobs_bg_color 444444
 set -U tide_jobs_color 5FAF00
 set -U tide_jobs_icon \uf013
+set -U tide_jobs_number_threshold 1000
 
 set -U tide_kubectl_bg_color 444444
 set -U tide_kubectl_color 326CE5
 set -U tide_kubectl_icon \u2388
 
 set -U tide_left_prompt_frame_enabled false
-set -U tide_left_prompt_items os\x1epwd\x1egit
+set -U tide_left_prompt_items os pwd git
 set -U tide_left_prompt_prefix \ue0ba
 set -U tide_left_prompt_separator_diff_color \ue0b0
 set -U tide_left_prompt_separator_same_color \u2571
@@ -60,7 +66,6 @@ set -U tide_node_icon \u2b22
 
 set -U tide_os_bg_color 444444
 set -U tide_os_color EEEEEE
-set -U tide_os_icon (_tide_detect_os | head -n 1)
 
 set -U tide_php_bg_color 44444
 set -U tide_php_color 617CBE
@@ -72,6 +77,7 @@ set -U tide_prompt_color_separator_same_color 949494
 set -U tide_prompt_icon_connection \x20
 set -U tide_prompt_min_cols 26
 set -U tide_prompt_pad_items true
+set -U tide_prompt_transient_enabled false
 
 set -U tide_pwd_bg_color 444444
 set -U tide_pwd_color_anchors 00AFFF
@@ -80,10 +86,10 @@ set -U tide_pwd_color_truncated_dirs 8787AF
 set -U tide_pwd_icon \uf07c
 set -U tide_pwd_icon_home \uf015
 set -U tide_pwd_icon_unwritable \uf023
-set -U tide_pwd_markers \x2ebzr\x1e\x2ecitc\x1e\x2egit\x1e\x2ehg\x1e\x2enode\x2dversion\x1e\x2epython\x2dversion\x1e\x2eruby\x2dversion\x1e\x2eshorten_folder_marker\x1e\x2esvn\x1e\x2eterraform\x1eCargo\x2etoml\x1ecomposer\x2ejson\x1eCVS\x1ego\x2emod\x1epackage\x2ejson
+set -U tide_pwd_markers .bzr .citc .git .hg .node-version .python-version .ruby-version .shorten_folder_marker .svn .terraform Cargo.toml composer.json CVS go.mod package.json
 
 set -U tide_right_prompt_frame_enabled false
-set -U tide_right_prompt_items status\x1ecmd_duration\x1econtext\x1ejobs\x1enix_shell\x1ekubectl\x1enode\x1epython\x1eterraform\x1evi_mode\x1etime
+set -U tide_right_prompt_items status cmd_duration context jobs nix_shell kubectl node python terraform vi_mode time
 set -U tide_right_prompt_prefix \ue0b2
 set -U tide_right_prompt_separator_diff_color \ue0b2
 set -U tide_right_prompt_separator_same_color \u2571

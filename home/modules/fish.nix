@@ -96,7 +96,8 @@ in
       "fish/functions/git_main_branch.fish".source = "${fishDir}/functions/git_main_branch.fish";
       "fish/functions/gitclcd.fish".source = "${fishDir}/functions/gitclcd.fish";
       "fish/functions/mkdir.fish".source = "${fishDir}/functions/mkdir.fish";
-      "fish/tide.config.fish".source = "${fishDir}/tide.config.fish";
+      "fish/conf.d/00-tide-config.fish".source = "${fishDir}/conf.d/00-tide-config.fish";
+      "fish/conf.d/z-tide-reload.fish".source = "${fishDir}/conf.d/z-tide-reload.fish";
     }
     // lib.optionalAttrs isDarwin {
       "fish/conf.d/00-nix-path.fish".text = nixPathInit;

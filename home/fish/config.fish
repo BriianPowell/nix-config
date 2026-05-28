@@ -1,4 +1,4 @@
-abbr -a reload source ~/.config/fish/conf.d/01-dotfiles.fish
+abbr -a reload 'source ~/.config/fish/conf.d/00-tide-config.fish; source ~/.config/fish/conf.d/01-dotfiles.fish; source ~/.config/fish/conf.d/z-tide-reload.fish; or true'
 abbr -a l ls -lha
 abbr -a lblk lsblk --output NAME,SIZE,RM,FSTYPE,FSUSE%,SERIAL,MOUNTPOINT
 

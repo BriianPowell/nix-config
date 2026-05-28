@@ -432,7 +432,7 @@
     "Blue Component" : 1,
     "Green Component" : 0.84313726425170898
   },
-  "Use Non-ASCII Font" : false,
+  "Use Non-ASCII Font" : true,
   "Badge Color (Light)" : {
     "Red Component" : 0.91916567087173462,
     "Color Space" : "P3",
