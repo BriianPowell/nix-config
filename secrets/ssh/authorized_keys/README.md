@@ -21,3 +21,21 @@ No `boog.pub` in git.
 ## Mac
 
 1Password **NixOS Admin** must match the key inside `boog.age` / `initrd-login.nix`.
+
+## `no identity matched any of the recipients` on rebuild
+
+Password `.age` files decrypt but new `ssh/*.age` files fail → those files were encrypted for the wrong public keys (often before `secrets.nix` had the correct host key).
+
+On **sheol**:
+
+```bash
+cat /etc/ssh/ssh_host_ed25519_key.pub
+```
+
+Must match the `sheol = "ssh-ed25519 …"` line in `secrets/secrets.nix`. If not, fix `secrets.nix`, then on your **Mac** (from repo root):
+
+```bash
+./secrets/ssh/rekey-ssh-secrets.sh
+```
+
+Commit the updated `.age` files, pull on sheol, `sudo nixos-rebuild switch` again.
