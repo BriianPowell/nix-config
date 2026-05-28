@@ -24,18 +24,21 @@ No `boog.pub` in git.
 
 ## `no identity matched any of the recipients` on rebuild
 
-Password `.age` files decrypt but new `ssh/*.age` files fail → those files were encrypted for the wrong public keys (often before `secrets.nix` had the correct host key).
+Password `.age` files decrypt but new `ssh/*.age` files fail → usually encrypted with **`ssh-to-age`** recipients. **agenix 0.15** uses raw `ssh-ed25519 AAAA…` lines with `age -r` instead.
 
-On **sheol**:
-
-```bash
-cat /etc/ssh/ssh_host_ed25519_key.pub
-```
-
-Must match the `sheol = "ssh-ed25519 …"` line in `secrets/secrets.nix`. If not, fix `secrets.nix`, then on your **Mac** (from repo root):
+**Fix on your Mac** (re-encrypt with updated `encrypt.sh`):
 
 ```bash
 ./secrets/ssh/rekey-ssh-secrets.sh
 ```
 
-Commit the updated `.age` files, pull on sheol, `sudo nixos-rebuild switch` again.
+Or in **iTerm** (interactive `agenix -e`):
+
+```bash
+./secrets/ssh/agenix-edit.sh ssh/authorized_keys/boog.age ssh/authorized_keys/boog.plain
+./secrets/ssh/agenix-edit.sh ssh/github/sheol.age ssh/github/sheol.plain
+```
+
+Commit the new `.age` files, pull on sheol, `sudo nixos-rebuild switch` again.
+
+Host key must still match `secrets/secrets.nix` (`ssh-keyscan` / `cat /etc/ssh/ssh_host_ed25519_key.pub`).

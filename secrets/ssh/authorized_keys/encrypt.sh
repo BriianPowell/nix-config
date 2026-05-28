@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# Encrypt boog authorized_keys for agenix (public recipients only; no local SSH private key).
+# Encrypt boog authorized_keys the same way as `agenix -e` (age -r <ssh-pubkey>).
 set -euo pipefail
-cd "$(dirname "$0")/../.."
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=../_tools.sh
+source "$SCRIPT_DIR/../_tools.sh"
+cd "$SCRIPT_DIR/../.."
 
 PLAIN_FILE="ssh/authorized_keys/boog.plain"
 OUT_FILE="ssh/authorized_keys/boog.age"
@@ -12,29 +15,17 @@ if [[ ! -f "$PLAIN_FILE" ]]; then
 fi
 
 recipients_file="$(mktemp)"
-trap 'rm -f "$recipients_file"' EXIT
-
-nix eval --raw --impure --file ./ssh/authorized_keys/recipients.nix >"$recipients_file"
-
-: >"${recipients_file}.age"
-while IFS= read -r ssh_key; do
-  [[ -z "$ssh_key" ]] && continue
-  nix run --accept-flake-config nixpkgs#ssh-to-age -- "$ssh_key" >>"${recipients_file}.age"
-done <"$recipients_file"
-
 filtered="$(mktemp)"
 trap 'rm -f "$recipients_file" "$filtered"' EXIT
+
+nix eval --raw --impure --file ./ssh/authorized_keys/recipients.nix >"$recipients_file"
 grep -v '^[[:space:]]*#' "$PLAIN_FILE" | grep -v '^[[:space:]]*$' >"$filtered"
 if [[ ! -s "$filtered" ]]; then
-  echo "No keys in $PLAIN_FILE — paste your 1Password NixOS Admin public key (see README.md)." >&2
+  echo "No keys in $PLAIN_FILE." >&2
   exit 1
 fi
 
-nix run --accept-flake-config nixpkgs#age -- \
-  -e -R "${recipients_file}.age" \
-  -o "$OUT_FILE" \
-  <"$filtered"
+age_encrypt_ssh_recipients "$recipients_file" "$filtered" "$OUT_FILE"
 
-rm -f "${recipients_file}.age"
 echo "Wrote $OUT_FILE"
-echo "If login keys changed, update secrets/ssh/initrd-login.nix to match (initrd LUKS SSH)."
+echo "If login keys changed, update secrets/ssh/initrd-login.nix to match."

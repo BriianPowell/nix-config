@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Encrypt a host GitHub deploy private key (public recipients only).
+# Encrypt GitHub deploy key the same way as `agenix -e` (age -r <ssh-pubkey>).
 # Usage: ./encrypt.sh sheol|abaddon
 set -euo pipefail
 
@@ -9,17 +9,22 @@ if [[ "$host" != "sheol" && "$host" != "abaddon" ]]; then
   exit 1
 fi
 
-cd "$(dirname "$0")/../.."
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=../_tools.sh
+source "$SCRIPT_DIR/../_tools.sh"
+cd "$SCRIPT_DIR/../.."
+
 PLAIN="ssh/github/${host}.plain"
 OUT="ssh/github/${host}.age"
 
 if [[ ! -f "$PLAIN" ]]; then
-  echo "Missing $PLAIN — generate a deploy key and paste the private key (see README.md)." >&2
+  echo "Missing $PLAIN." >&2
   exit 1
 fi
 
 recipients="$(mktemp)"
-trap 'rm -f "$recipients" "${recipients}.age"' EXIT
+filtered="$(mktemp)"
+trap 'rm -f "$recipients" "$filtered"' EXIT
 
 nix eval --raw --impure --expr "
   let
@@ -29,23 +34,12 @@ nix eval --raw --impure --expr "
   in builtins.concatStringsSep \"\n\" keys
 " >"$recipients"
 
-: >"${recipients}.age"
-while IFS= read -r ssh_key; do
-  [[ -z "$ssh_key" ]] && continue
-  nix run --accept-flake-config nixpkgs#ssh-to-age -- "$ssh_key" >>"${recipients}.age"
-done <"$recipients"
-
-filtered="$(mktemp)"
-trap 'rm -f "$recipients" "${recipients}.age" "$filtered"' EXIT
 grep -v '^[[:space:]]*#' "$PLAIN" | grep -v '^[[:space:]]*$' >"$filtered"
 if [[ ! -s "$filtered" ]]; then
   echo "No key material in $PLAIN." >&2
   exit 1
 fi
 
-nix run --accept-flake-config nixpkgs#age -- \
-  -e -R "${recipients}.age" \
-  -o "$OUT" \
-  <"$filtered"
+age_encrypt_ssh_recipients "$recipients" "$filtered" "$OUT"
 
 echo "Wrote $OUT"

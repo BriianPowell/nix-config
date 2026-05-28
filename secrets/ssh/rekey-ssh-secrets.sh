@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+  #!/usr/bin/env bash
 # Re-encrypt SSH agenix secrets so sheol/abaddon host keys can decrypt them.
 set -euo pipefail
 cd "$(dirname "$0")/.."
