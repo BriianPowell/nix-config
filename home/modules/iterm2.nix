@@ -90,24 +90,21 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.file = lib.mkMerge [
-      (lib.mkIf (cfg.plistFile != null) {
-        "Library/Preferences/com.googlecode.iterm2.plist" = {
-          source = cfg.plistFile;
-          force = true;
-        };
-      })
-      dynamicProfileFiles
-    ];
+    # Dynamic profiles only; main prefs are copied + imported in activation.
+    # Do not symlink com.googlecode.iterm2.plist into ~/Library/Preferences:
+    # cfprefsd ignores defaults import when the destination is a nix-store symlink.
+    home.file = dynamicProfileFiles;
 
     home.activation.iterm2ImportPrefs = lib.mkIf (cfg.plistFile != null) (
       lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        PLIST="$HOME/Library/Preferences/com.googlecode.iterm2.plist"
+        PLIST="${cfg.plistFile}"
+        DEST="$HOME/Library/Preferences/com.googlecode.iterm2.plist"
         if [ -e "$PLIST" ]; then
-          $DRY_RUN_CMD /usr/bin/defaults import com.googlecode.iterm2 "$PLIST"
+          $DRY_RUN_CMD /bin/cp -f "$PLIST" "$DEST"
+          $DRY_RUN_CMD /usr/bin/defaults import com.googlecode.iterm2 "$DEST"
           $DRY_RUN_CMD killall cfprefsd 2>/dev/null || true
         else
-          echo "iTerm2: skipping defaults import (plist missing)"
+          echo "iTerm2: skipping defaults import (plist missing: $PLIST)"
         fi
       ''
     );

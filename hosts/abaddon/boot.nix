@@ -59,14 +59,32 @@
           authorizedKeys = [
             (import ../../secrets/keys.nix).nixosAdmin
           ];
+          # .profile + exit does not reliably end the SSH session in initrd ash.
+          extraConfig = ''
+            ForceCommand /bin/initrd-unlock
+          '';
         };
 
         postCommands =
           let
             disk = "/dev/disk/by-uuid/a4296409-c3b8-4984-ab51-17cec9209d32";
+            unlockScript = ''
+              #!/bin/ash
+              set -e
+              disk="${disk}"
+              if [ ! -e /dev/mapper/root ]; then
+                cryptsetup luksOpen "$disk" root
+              fi
+              while [ ! -p /tmp/continue ]; do sleep 0.2; done
+              echo > /tmp/continue
+              exit 0
+            '';
           in
           ''
-            echo 'if [ ! -e /dev/mapper/root ]; then cryptsetup luksOpen ${disk} root || exit 1; fi; echo > /tmp/continue; exit' >> /root/.profile
+            cat > /bin/initrd-unlock <<EOF
+            ${unlockScript}
+            EOF
+            chmod +x /bin/initrd-unlock
             echo 'starting sshd...'
           '';
       };

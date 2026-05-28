@@ -54,13 +54,30 @@
           authorizedKeys = [
             (import ../../secrets/keys.nix).nixosAdmin
           ];
+          extraConfig = ''
+            ForceCommand /bin/initrd-unlock
+          '';
         };
         postCommands =
           let
             disk = "/dev/disk/by-uuid/32155fc1-0d72-4cf5-a22b-280b8bf6896b";
+            unlockScript = ''
+              #!/bin/ash
+              set -e
+              disk="${disk}"
+              if [ ! -e /dev/mapper/root ]; then
+                cryptsetup luksOpen "$disk" root
+              fi
+              while [ ! -p /tmp/continue ]; do sleep 0.2; done
+              echo > /tmp/continue
+              exit 0
+            '';
           in
           ''
-            echo 'if [ ! -e /dev/mapper/root ]; then cryptsetup luksOpen ${disk} root || exit 1; fi; echo > /tmp/continue; exit' >> /root/.profile
+            cat > /bin/initrd-unlock <<EOF
+            ${unlockScript}
+            EOF
+            chmod +x /bin/initrd-unlock
             echo 'starting sshd...'
           '';
       };
