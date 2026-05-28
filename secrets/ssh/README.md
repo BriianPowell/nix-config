@@ -1,20 +1,78 @@
 # SSH secrets (agenix)
 
-| Path | Purpose |
-|------|---------|
-| [authorized_keys/](authorized_keys/) | **Your** login public key(s) → server `authorized_keys` for user `boog` |
-| [github/](github/) | **Per-host** GitHub deploy **private** keys → `~/.ssh/github_deploy` on sheol/abaddon |
+| Secret | Plaintext input | On host |
+|--------|-----------------|---------|
+| `authorized_keys/boog.age` | `authorized_keys/boog.plain` (public keys, one per line) | `/home/boog/.ssh/authorized_keys` via activation |
+| `github/sheol.age` | `github/sheol.plain` (private deploy key) | `/home/boog/.ssh/github` |
+| `github/abaddon.age` | `github/abaddon.plain` (private deploy key) | `/home/boog/.ssh/github` |
 
-## Admin login (Mac → sheol / abaddon)
+Plaintext `*.plain` files are gitignored. Commit only `*.age` files.
 
-1. Use the **NixOS Admin** SSH item in 1Password (Tech Stack). Mac SSH uses the 1Password agent (`home/ssh/darwin.config`, `home/config/1Password/ssh/agent.toml`). Key order is controlled in `agent.toml` (not `IdentitiesOnly` — that breaks agent auth without `IdentityFile`).
+Encryption uses the same format as **agenix 0.15**: `age -r "ssh-ed25519 AAAA…"` (not `ssh-to-age`). Use the provided `encrypt.sh` scripts.
 
-2. Add that item’s **public** key to `authorized_keys/boog.plain`, run `./authorized_keys/encrypt.sh`, commit `boog.age`. If the key changed, update `initrd-login.nix` too.
+## Mac login (sheol / abaddon)
 
-3. Keep `nixosAdmin` in `secrets/secrets.nix` in sync (agenix recipients + same key material).
+- **1Password** item **NixOS Admin** (Tech Stack) — see `home/ssh/darwin.config` and `home/config/1Password/ssh/agent.toml`.
+- Do not use `IdentitiesOnly yes` without `IdentityFile` (that skips the 1Password agent).
+- **Git signing** stays on the separate key in `users/darwin/git.nix`.
 
-4. Rebuild sheol and abaddon.
+### Update login keys
 
-## Git signing (Mac)
+1. Put the NixOS Admin **public** key in `authorized_keys/boog.plain`.
+2. From repo root:
 
-Keep using a **separate** key in `users/darwin/git.nix` — do not use `nixos_admin` for commit signing.
+   ```bash
+   ./secrets/ssh/authorized_keys/encrypt.sh
+   ```
+
+3. If the key changed, update `initrd-login.nix` with the same line(s).
+4. Commit `boog.age` (and `initrd-login.nix` if changed). Keep `nixosAdmin` in `secrets/secrets.nix` in sync.
+5. `nixos-rebuild switch` on sheol and abaddon.
+
+### Initrd / LUKS (port 2222)
+
+Initrd is built before agenix runs, so it reads `initrd-login.nix` at eval time—not `boog.age`.
+
+## GitHub deploy keys (per host)
+
+1. Generate (once per host):
+
+   ```bash
+   ssh-keygen -t ed25519 -f ./sheol-github -N "" -C "sheol-github-deploy"
+   ```
+
+2. Add `sheol-github.pub` on GitHub → repo → **Settings → Deploy keys**.
+
+3. Encrypt:
+
+   ```bash
+   cp sheol-github secrets/ssh/github/sheol.plain
+   ./secrets/ssh/github/encrypt.sh sheol
+   rm -f sheol-github sheol-github.pub secrets/ssh/github/sheol.plain
+   ```
+
+4. Repeat for abaddon. Commit `sheol.age` / `abaddon.age`, rebuild each host.
+
+5. Test on the server: `ssh -T git@github.com` (uses `~/.ssh/github` per `home/ssh/default.config`).
+
+## Host keys in `secrets.nix`
+
+Each host must decrypt its own secrets. Compare live keys to `secrets/secrets.nix`:
+
+```bash
+ssh sheol 'awk "{print \$1, \$2}" /etc/ssh/ssh_host_ed25519_key.pub'
+ssh abaddon 'awk "{print \$1, \$2}" /etc/ssh/ssh_host_ed25519_key.pub'
+```
+
+If a host key rotated, update `secrets.nix`, re-run the `encrypt.sh` scripts, commit, and rebuild.
+
+## Alternative: `agenix -e` (interactive)
+
+From `secrets/` in iTerm:
+
+```bash
+export RULES=$PWD/secrets.nix
+nix run github:ryantm/agenix#agenix -- -e ssh/authorized_keys/boog.age
+```
+
+Paste the same content as `boog.plain` when the editor opens.
