@@ -1,5 +1,7 @@
 # Git identity for boog (macOS).
-{ ... }:
+let
+  keys = import ../../secrets/ssh/keys.nix;
+in
 {
   git = {
     enable = true;
@@ -8,7 +10,7 @@
     ignores = [ ".DS_Store" ];
     signing = {
       enable = true;
-      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex";
+      key = keys.gitSigning;
     };
   };
 }
