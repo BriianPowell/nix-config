@@ -60,7 +60,7 @@
             disk = "/dev/disk/by-uuid/32155fc1-0d72-4cf5-a22b-280b8bf6896b";
           in
           ''
-            echo 'cryptsetup luksOpen ${disk} root && echo > /tmp/continue' >> /root/.profile
+            echo 'if [ ! -e /dev/mapper/root ]; then cryptsetup luksOpen ${disk} root || exit 1; fi; echo > /tmp/continue; exit' >> /root/.profile
             echo 'starting sshd...'
           '';
       };
