@@ -16,8 +16,8 @@
       shell = pkgs.fish;
       extraGroups = [ "wheel" ];
       hashedPasswordFile = config.age.secrets."passwords/users/boog".path;
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex"
+      openssh.authorizedKeys.keyFiles = [
+        config.age.secrets."ssh/authorized_keys/boog".path
       ];
     };
   };

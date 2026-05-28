@@ -1,37 +1,22 @@
-# This is the 1Password SSH agent config file, which allows you to customize the
-# behavior of the SSH agent running on this machine.
+# https://developer.1password.com/docs/ssh/agent/config
 #
-# You can use it to:
-# * Enable keys from other vaults than the Private vault
-# * Control the order in which keys are offered to SSH servers
-#
-# EXAMPLE
-#
-# By default, all keys in your Private vault(s) are enabled:
-#
-#  [[ssh-keys]]
-#  vault = "Private"
-#
-# You can enable more keys by adding more `[[ssh-keys]]` entries.
-# For example, to first enable item "My SSH Key" from "My Custom Vault":
-#
-#  [[ssh-keys]]
-#  item = "My SSH Key"
-#  vault = "My Custom Vault"
-#
-#  [[ssh-keys]]
-#  vault = "Private"
-#
-# You can test the result by running:
-#
-#  SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ssh-add -l
-#
-# More examples can be found here:
-#  https://developer.1password.com/docs/ssh/agent/config
+# Order matters: keys are offered top-to-bottom. Put NixOS Admin first so
+# `ssh sheol` / `ssh abaddon` prefer it over Personal (git signing / other use).
+
+[[ssh-keys]]
+item = "NixOS Admin"
+vault = "Tech Stack"
+
 [[ssh-keys]]
 item = "Personal"
 vault = "Tech Stack"
 
-[[ssh-keys]]
-item = "Servers"
-vault = "Tech Stack"
+# Server GitHub deploy keys live on the hosts (agenix), not needed for Mac SSH login.
+# Uncomment only if you keep copies in 1Password for other workflows.
+# [[ssh-keys]]
+# item = "Sheol"
+# vault = "Tech Stack"
+#
+# [[ssh-keys]]
+# item = "Abaddon"
+# vault = "Tech Stack"

@@ -19,12 +19,7 @@
   users = {
     users.Brian_Powell = {
       home = "/Users/Brian_Powell";
-      # name = "Brian Powell";
-      # description = "";
       shell = pkgs.fish;
-      # openssh.authorizedKeys.keys = [
-      #  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKXvyAnsaJWov91AOHE+dzxKNXbBOSDWBnDEHa13gex"
-      # ];
     };
   };
 }

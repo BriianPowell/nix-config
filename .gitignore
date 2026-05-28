@@ -2,6 +2,8 @@
 *.bin
 *.key
 *passwd*
+secrets/ssh/**/*.plain
+!secrets/ssh/**/*.plain.example
 
 
 result
