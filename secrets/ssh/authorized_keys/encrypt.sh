@@ -28,4 +28,4 @@ fi
 age_encrypt_ssh_recipients "$recipients_file" "$filtered" "$OUT_FILE"
 
 echo "Wrote $OUT_FILE"
-echo "If login keys changed, update secrets/ssh/keys.nix (nixosAdmin) to match."
+echo "If login keys changed, update secrets/keys.nix (nixosAdmin) to match."

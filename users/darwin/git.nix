@@ -1,6 +1,6 @@
 # Git identity for boog (macOS).
 let
-  keys = import ../../secrets/ssh/keys.nix;
+  keys = import ../../secrets/keys.nix;
 in
 {
   git = {

@@ -14,7 +14,7 @@ Encryption uses the same format as **agenix 0.15**: `age -r "ssh-ed25519 AAAA…
 
 - **1Password** item **NixOS Admin** (Tech Stack) — see `home/ssh/darwin.config` and `home/config/1Password/ssh/agent.toml`.
 - Do not use `IdentitiesOnly yes` without `IdentityFile` (that skips the 1Password agent).
-- **Git signing** uses `keys.gitSigning` in `ssh/keys.nix` (imported by `users/darwin/git.nix`). Keep **Personal** in `agent.toml`, not NixOS Admin.
+- **Git signing** uses `keys.gitSigning` in `secrets/keys.nix` (imported by `users/darwin/git.nix`). Keep **Personal** in `agent.toml`, not NixOS Admin.
 
 ### Update login keys
 
@@ -25,13 +25,13 @@ Encryption uses the same format as **agenix 0.15**: `age -r "ssh-ed25519 AAAA…
    ./secrets/ssh/authorized_keys/encrypt.sh
    ```
 
-3. If the key changed, update `ssh/keys.nix` (`nixosAdmin`).
-4. Commit `boog.age` (and `ssh/keys.nix` if changed).
+3. If the key changed, update `secrets/keys.nix` (`nixosAdmin`).
+4. Commit `boog.age` (and `secrets/keys.nix` if changed).
 5. `nixos-rebuild switch` on sheol and abaddon.
 
 ### Initrd / LUKS (port 2222)
 
-Initrd uses `secrets/ssh/keys.nix` directly (`nixosAdmin`) at eval time—not `boog.age`.
+Initrd uses `secrets/keys.nix` directly (`nixosAdmin`) at eval time—not `boog.age`.
 
 ## GitHub deploy keys (per host)
 
