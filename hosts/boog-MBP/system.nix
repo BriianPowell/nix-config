@@ -42,6 +42,7 @@
     eza # https://github.com/ogham/exa
     git-secrets
     gh # https://cli.github.com/
+    pre-commit
     trivy
 
     # DevOps
@@ -53,6 +54,7 @@
 
     # Build
     dotnet-sdk
+    # go - use goenv instead
     jdk
     google-cloud-sdk
     podman

@@ -15,6 +15,7 @@ let
   baseBrews = [
     "displayplacer"
     "fish" # nixpkgs fish 4.2.1 has a broken Mach-O signature on aarch64-darwin (Killed: 9)
+    "goenv"
     # "qmk"
     "tfenv"
   ];
