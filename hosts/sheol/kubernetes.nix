@@ -93,7 +93,29 @@ in
     mkdir -p /var/lib/rancher/k3s/server/logs
     chmod 700 /var/lib/rancher/k3s/server/logs
     install -m 600 ${./k3s/audit.yaml} /var/lib/rancher/k3s/server/audit.yaml
+    if [ -d /var/lib/rancher/k3s/server/tls ]; then
+      chmod 700 /var/lib/rancher/k3s/server/tls
+      find /var/lib/rancher/k3s/server/tls -type f \( -name '*.crt' -o -name '*.key' -o -name '*.pem' \) -exec chmod 600 {} \;
+    fi
   '';
+
+  # k3s may recreate certs with looser modes; re-apply after the server is up.
+  systemd.services.k3s-pki-permissions = {
+    description = "Restrict k3s server TLS key/cert permissions (CIS)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "k3s.service" ];
+    requires = [ "k3s.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      tls=/var/lib/rancher/k3s/server/tls
+      [ -d "$tls" ] || exit 0
+      chmod 700 "$tls"
+      find "$tls" -type f \( -name '*.crt' -o -name '*.key' -o -name '*.pem' \) -exec chmod 600 {} \;
+    '';
+  };
 
   networking.firewall = {
     allowedTCPPorts = [
