@@ -32,6 +32,11 @@
       "net.ipv6.conf.all.forwarding" = 1; #enable for k3s
       "fs.inotify.max_user_instances" = 8192; # Fix for 'Too many open files error'
       "fs.inotify.max_user_watches" = 524288; # Fix for 'Too many open files error'
+      # https://docs.k3s.io/security/hardening-guide#ensure-protect-kernel-defaults-is-set
+      "vm.panic_on_oom" = 0;
+      "vm.overcommit_memory" = 1;
+      "kernel.panic" = 10;
+      "kernel.panic_on_oops" = 1;
     };
 
     #

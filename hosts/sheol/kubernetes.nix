@@ -68,6 +68,17 @@ in
       "--kube-controller-manager-arg --bind-address=0.0.0.0" # Required for prometheus monitoring of kube-controller-manager
       "--kube-scheduler-arg --bind-address=0.0.0.0" # Required for prometheus monitoring of kube-scheduler
       "--data-dir /var/lib/rancher/k3s"
+      # CIS-oriented server hardening: https://docs.k3s.io/security/hardening-guide
+      "--secrets-encryption"
+      "--protect-kernel-defaults"
+      "--kube-apiserver-arg=audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log"
+      "--kube-apiserver-arg=audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml"
+      "--kube-apiserver-arg=audit-log-maxage=30"
+      "--kube-apiserver-arg=audit-log-maxbackup=10"
+      "--kube-apiserver-arg=audit-log-maxsize=100"
+      "--kube-apiserver-arg=service-account-extend-token-expiration=false"
+      "--kubelet-arg=streaming-connection-idle-timeout=5m"
+      "--kubelet-arg=tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
     ];
   };
 
@@ -76,6 +87,12 @@ in
     cp ${containerdTemplate} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
     mkdir -p /var/lib/rancher/k3s/agent/etc/containerd/config.toml.d
     cp ${cdiDropin} /var/lib/rancher/k3s/agent/etc/containerd/config.toml.d/99-cdi.toml
+  '';
+
+  system.activationScripts.k3sServerHardening = lib.stringAfter [ "var" ] ''
+    mkdir -p /var/lib/rancher/k3s/server/logs
+    chmod 700 /var/lib/rancher/k3s/server/logs
+    install -m 600 ${./k3s/audit.yaml} /var/lib/rancher/k3s/server/audit.yaml
   '';
 
   networking.firewall = {
