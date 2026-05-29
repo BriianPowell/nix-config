@@ -13,6 +13,7 @@ set -Ux GOENV_ROOT $HOME/.goenv
 command -q pyenv; and pyenv init - fish | source
 command -q goenv; and goenv init - fish | source
 command -q kubectl; and kubectl completion fish | source
+command -q flux; and flux completion fish | source
 
 fish_add_path /usr/local/bin
 fish_add_path /usr/local/sbin

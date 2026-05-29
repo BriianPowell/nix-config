@@ -47,6 +47,7 @@
 
     # DevOps
     ansible
+    fluxcd
     # packer
     # terraform - use tfenv instead
     terraform-docs
