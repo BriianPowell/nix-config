@@ -99,6 +99,7 @@ in
     allowedTCPPorts = [
       2379 # HA with embedded etcd
       2380 # HA with embedded etcd
+      2381 # etcd metrics (--etcd-expose-metrics)
       6443 # k8s API server
       10250 # Kubelet Metrics
       21063 # Home Assistant on k3s
