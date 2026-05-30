@@ -58,6 +58,7 @@
     # go - use goenv instead
     jdk
     google-cloud-sdk
+    platformio
     podman
   ];
 
