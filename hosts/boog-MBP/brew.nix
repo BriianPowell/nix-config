@@ -8,8 +8,8 @@ let
   hb = config.machine.homebrew;
 
   baseTaps = [
-    "qmk/qmk"
-    "osx-cross/arm"
+    # "qmk/qmk"
+    # "osx-cross/arm"
   ];
 
   baseBrews = [

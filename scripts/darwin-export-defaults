@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Dump macOS defaults domains that nix-darwin manages.
+# Use the output to diff/update hosts/boog-MBP/defaults.nix (not auto-written).
+#
+# Domains: https://github.com/nix-darwin/nix-darwin/blob/nix-darwin-25.11/modules/system/defaults-write.nix
+
+set -euo pipefail
+
+domains=(
+  "-g:NSGlobalDomain"
+  "com.apple.dock:dock"
+  "com.apple.finder:finder"
+  "com.apple.AppleMultitouchTrackpad:trackpad"
+  "com.apple.WindowManager:WindowManager"
+)
+
+skip_re='^(last-|mod-count|GUID|tile-|book |file-bookmark|persistent-|recent-|analytics|History|SpacesDisplay|Management |"NSStatusItem|"LastHeartbeat|ControlCenterDisplayable|LiveActivity|HasAttempted|missionControlTooltip|Primary|Secondary|Age|tokenRemoval)'
+
+echo "# darwin-export-defaults — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "# Compare with hosts/boog-MBP/defaults.nix and the nix-darwin manual."
+echo
+
+for entry in "${domains[@]}"; do
+  plist="${entry%%:*}"
+  label="${entry##*:}"
+  echo "## system.defaults.${label}"
+  echo
+  if [[ "$plist" == "-g" ]]; then
+    defaults read -g 2>/dev/null | grep -Ev "$skip_re" || true
+  else
+    defaults read "$plist" 2>/dev/null | grep -Ev "$skip_re" || true
+  fi
+  echo
+done
+
+echo "## pmset (maps to power.sleep in system.nix — AC profile)"
+pmset -g custom 2>/dev/null || true
+echo
+echo "## controlcenter (ByHost; nix-darwin uses bool → show/hide in menu bar)"
+cc=$(ls "$HOME/Library/Preferences/ByHost"/com.apple.controlcenter.*.plist 2>/dev/null | head -1)
+if [[ -n "${cc:-}" ]]; then
+  defaults read "$cc" 2>/dev/null | grep -E '^(    )?(AirDrop|Battery|Bluetooth|Display|Focus|NowPlaying|Sound)' || defaults read "$cc" 2>/dev/null | head -20
+else
+  echo "(no ByHost controlcenter plist found)"
+fi
