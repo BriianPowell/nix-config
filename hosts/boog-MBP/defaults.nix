@@ -43,6 +43,7 @@
       "com.apple.sound.beep.volume" = 0.472367;
       "com.apple.springing.delay" = 0.5;
       "com.apple.springing.enabled" = true;
+      "com.apple.swipescrolldirection" = true;
     };
 
     # true = show control in menu bar; false = hide (nix-darwin maps to ByHost plist values).
@@ -113,10 +114,12 @@
     WindowManager = {
       AppWindowGroupingBehavior = true;
       AutoHide = false;
+      EnableStandardClickToShowDesktop = true;
       EnableTiledWindowMargins = false;
       EnableTilingByEdgeDrag = false;
       EnableTilingOptionAccelerator = false;
       EnableTopTilingByEdgeDrag = false;
+      GloballyEnabled = false;
       HideDesktop = true;
       StageManagerHideWidgets = false;
       StandardHideWidgets = false;
