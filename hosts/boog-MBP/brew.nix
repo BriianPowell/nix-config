@@ -25,6 +25,7 @@ let
     "1password"
     # "amazon-chime"
     "bettertouchtool"
+    "claude"
     "cursor"
     "dash"
     # "docker"

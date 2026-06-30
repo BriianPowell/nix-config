@@ -43,6 +43,7 @@
     git-secrets
     gh # https://cli.github.com/
     pre-commit
+    ripgrep # https://github.com/BurntSushi/ripgrep
     trivy
 
     # DevOps
