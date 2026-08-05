@@ -79,7 +79,7 @@
             '';
           in
           ''
-            cat > /bin/initrd-unlock <<EOF
+            cat > /bin/initrd-unlock <<'EOF'
             ${unlockScript}
             EOF
             chmod +x /bin/initrd-unlock
