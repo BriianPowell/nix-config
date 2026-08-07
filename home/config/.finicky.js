@@ -14,6 +14,11 @@ module.exports = {
       browser: 'Safari',
     },
     {
+      // Open SharePoint tenant links in Safari
+      match: finicky.matchHostnames(['sharepoint.com', '*.sharepoint.com']),
+      browser: 'Safari',
+    },
+    {
       match: finicky.matchHostnames('meet.google.com'),
       browser: 'Google Chrome',
     },
