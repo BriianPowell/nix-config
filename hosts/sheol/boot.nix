@@ -40,23 +40,23 @@
     };
 
     #
-    # Utilizing:
-    # https://mth.st/blog/nixos-initrd-ssh/
+    # Remote LUKS unlock over SSH, using the systemd stage 1 initrd (the default
+    # since 26.05; the scripted initrd is removed in 26.11). Unlock with:
+    #   ssh -o RequestTTY=force abaddonInitrd
+    # The forced `systemctl default` waits for the root device, and systemctl
+    # starts the password agent, which prompts for the passphrase.
+    # Based on:
+    # https://nixos.wiki/wiki/Remote_LUKS_Unlocking
     #
     initrd = {
-      # 26.05 enables systemd stage 1 by default, which has no equivalent of the
-      # scripted-initrd hooks below (remote LUKS unlock over SSH). Stay on the
-      # scripted initrd until that unlock is ported to boot.initrd.systemd.services.
-      systemd.enable = false;
+      # DHCP comes from networking.interfaces.<nic>.useDHCP, which the initrd reuses.
+      systemd.enable = true;
 
-      preLVMCommands = lib.mkOrder 400 "sleep 1";
-      luks = {
-        forceLuksSupportInInitrd = true;
-      };
+      luks.devices.root.device = "/dev/disk/by-uuid/32155fc1-0d72-4cf5-a22b-280b8bf6896b";
 
-      # Enable SSH in initrd. Useful for unlocking LUKS remotely.
       network = {
         enable = true;
+
         ssh = {
           enable = true;
           port = 2222;
@@ -65,42 +65,10 @@
             "/etc/secrets/initrd/ssh_host_ed25519_key"
           ];
           authorizedKeys = [
-            (import ../../secrets/keys.nix).nixosAdmin
+            ''command="systemctl default",no-port-forwarding,no-agent-forwarding,no-X11-forwarding ${(import ../../secrets/keys.nix).nixosAdmin}''
           ];
-          extraConfig = ''
-            ForceCommand /bin/initrd-unlock
-          '';
         };
-        postCommands =
-          let
-            disk = "/dev/disk/by-uuid/32155fc1-0d72-4cf5-a22b-280b8bf6896b";
-            unlockScript = ''
-              #!/bin/ash
-              set -e
-              disk="${disk}"
-              if [ ! -e /dev/mapper/root ]; then
-                cryptsetup luksOpen "$disk" root
-              fi
-              while [ ! -p /tmp/continue ]; do sleep 0.2; done
-              echo > /tmp/continue
-              exit 0
-            '';
-          in
-          ''
-            cat > /bin/initrd-unlock <<'EOF'
-            ${unlockScript}
-            EOF
-            chmod +x /bin/initrd-unlock
-            echo 'starting sshd...'
-          '';
       };
-
-      # Block the boot process until /tmp/continue is written to
-      postDeviceCommands = ''
-        echo 'waiting for root device to be opened...'
-        mkfifo /tmp/continue
-        cat /tmp/continue
-      '';
 
       kernelModules = [
         "r8169"
@@ -117,8 +85,11 @@
         "usb_storage"
         "usbhid"
         "sd_mod"
-        # TODO: add a NIC module
       ];
     };
   };
+
+  # The root device only appears once the LUKS passphrase is entered. systemd's
+  # default 90s device timeout would drop a slow remote unlock into emergency mode.
+  fileSystems."/".options = [ "x-systemd.device-timeout=infinity" ];
 }
