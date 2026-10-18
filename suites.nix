@@ -9,6 +9,9 @@ let
     security = import ./modules/security.nix;
     tcp-hardening = import ./modules/tcp-hardening.nix;
     tcp-optimization = import ./modules/tcp-optimization.nix;
+    k3s-node = import ./modules/k3s-node.nix;
+    server-boot = import ./modules/server-boot.nix;
+    server-hardware = import ./modules/server-hardware.nix;
     cli = import ./modules/cli.nix;
     secrets = import ./modules/secrets.nix;
     fonts = import ./modules/fonts.nix;
@@ -28,10 +31,13 @@ let
 
   serverModules = with nixosModules; [
     base-server
+    k3s-node
     i18n
     minimal-docs
     openssh
     security
+    server-boot
+    server-hardware
     tcp-hardening
     tcp-optimization
   ];
