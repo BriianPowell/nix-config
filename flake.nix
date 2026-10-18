@@ -168,5 +168,11 @@
           overlays = darwinNixpkgsConfig.nixpkgs.overlays;
         }
       );
+
+      # `nixos-rebuild` for deploying to sheol/abaddon from the Mac (see the
+      # `nixos_remote` fish function). Pinned here so it matches the flake's nixpkgs
+      # rather than whatever the `nixpkgs` registry entry points to.
+      packages.aarch64-darwin.nixos-rebuild = pkgs-darwin.legacyPackages.aarch64-darwin.nixos-rebuild-ng;
+      packages.x86_64-linux.nixos-rebuild = pkgs-stable.legacyPackages.x86_64-linux.nixos-rebuild-ng;
     };
 }
