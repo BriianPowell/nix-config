@@ -1,8 +1,4 @@
-{ pkgs, config, ... }: {
+_: {
   networking.hostName = "abaddon";
   networking.interfaces.enp0s31f6.useDHCP = true;
-
-  networking = {
-    nameservers = [ "10.0.2.11" ];
-  };
 }

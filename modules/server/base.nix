@@ -1,9 +1,8 @@
-_: {
+{ config, ... }:
+{
   networking = {
-    defaultGateway = "10.0.2.1";
-    nameservers = [
-      "10.0.2.1"
-    ];
+    defaultGateway = config.site.gateway;
+    nameservers = config.site.dns;
     useDHCP = false;
     enableIPv6 = false;
 
@@ -25,7 +24,7 @@ _: {
     LLMNR = "false";
     DNSOverTLS = "opportunistic";
     MulticastDNS = "yes";
-    FallbackDNS = [ "10.0.2.1" ];
+    FallbackDNS = config.site.dns;
   };
 
   services.eternal-terminal.enable = true;

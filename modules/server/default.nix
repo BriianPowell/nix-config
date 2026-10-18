@@ -5,6 +5,7 @@
     ../minimal-docs.nix
     ../openssh.nix
     ../security.nix
+    ../site.nix
     ./base.nix
     ./boot.nix
     ./hardware.nix
