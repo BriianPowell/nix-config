@@ -249,12 +249,11 @@ Phases S1 and S2 can run any time, including before phase 1.
   discovered or applied implicitly.
 - **`root` stays a base user on every host.** It holds nothing personal.
 - **`users/darwin` is renamed later**, in its own small PR, not in phase 1.
+- **One site file per location** (`sites/home.nix`); a host imports the one that
+  applies.
 - **The fork acceptance example host lives only in flake `checks`**, not as a real
   directory under `hosts/`.
 
 ## Open questions
 
-- Site layer layout: one file per site (for example `sites/home.nix`), or one file
-  with named sites? Recommendation: one file per site; revisit only if there are
-  two separate networks.
 - Do the optional module exports belong in this plan, or in a follow-up?

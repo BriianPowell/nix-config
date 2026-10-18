@@ -1,5 +1,6 @@
 { ... }: {
   imports = [
+    ../../sites/home.nix
     ./boot.nix
     ./hardware.nix
     ./kubernetes.nix
