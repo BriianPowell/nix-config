@@ -38,20 +38,17 @@
     # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.enable
     enable = false;
 
-    # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.dnssec
-    dnssec = "allow-downgrade";
-
-    # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.llmnr
-    llmnr = "false";
-
-    # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.extraConfig
-    extraConfig = ''
-      DNSOverTLS=oppurtunistic
-      MulticastDNS=yes
-    '';
-
-    # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.fallbackDns
-    fallbackDns = [ "10.0.2.1" ];
+    # https://nixos.org/manual/nixos/unstable/options.html#opt-services.resolved.settings
+    # 26.05 removed `extraConfig` and renamed the dnssec/llmnr/dnsovertls/fallbackDns
+    # options into `settings.Resolve`. The old DNSOverTLS value was misspelled
+    # ("oppurtunistic").
+    settings.Resolve = {
+      DNSSEC = "allow-downgrade";
+      LLMNR = "false";
+      DNSOverTLS = "opportunistic";
+      MulticastDNS = "yes";
+      FallbackDNS = [ "10.0.2.1" ];
+    };
   };
 
   services = {

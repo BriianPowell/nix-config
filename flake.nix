@@ -2,13 +2,13 @@
   description = "BriianPowell's Nix Configurations";
 
   inputs = {
-    pkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
-    pkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
+    pkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
+    pkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-26.05-darwin";
     pkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.follows = "pkgs-stable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -19,11 +19,10 @@
 
     vscode-server = {
       url = "github:nix-community/nixos-vscode-server";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "pkgs-darwin";
     };
 
