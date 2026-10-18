@@ -9,6 +9,8 @@
       ./home.nix
     ];
   };
+  nix.settings.trusted-users = [ "boog" ];
+
   users = {
     mutableUsers = false;
     users.boog = {

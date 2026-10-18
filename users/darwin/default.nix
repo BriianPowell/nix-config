@@ -17,6 +17,8 @@
     ];
   };
 
+  nix.settings.trusted-users = [ "Brian_Powell" ];
+
   users = {
     users.Brian_Powell = {
       home = "/Users/Brian_Powell";
