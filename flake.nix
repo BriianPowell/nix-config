@@ -57,13 +57,11 @@
       ...
     }:
     let
-      defaultSpecialArgs = {
-        inherit inputs;
-      };
+      specialArgs = { inherit inputs; };
 
-      suites = import ./suites.nix {
-        inherit home-manager defaultSpecialArgs;
-      };
+      # A host names its accounts explicitly (`users = [ "boog" ]`); each name is a
+      # folder under users/. Linux hosts also always get root.
+      userModules = names: map (name: ./users/${name}) names;
 
       # Per-platform nixpkgs flavour. Everything per-system (nixpkgs config,
       # devShells, checks, formatter, packages) is derived from this table.
@@ -103,30 +101,32 @@
         nixpkgs.overlays = systems.${system}.overlays;
       };
 
-      # Roles supply the host-class modules (servers or WSL); everything the
-      # linux hosts share lives here so a host is a one-liner below.
+      # Roles (modules/server, modules/wsl) supply the host-class modules; what
+      # every linux host shares is in modules/linux-common.nix.
       mkLinuxHost =
         name:
         {
-          roleModules,
+          role,
+          users,
           extraModules ? [ ],
         }:
         pkgs-stable.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = defaultSpecialArgs;
+          inherit specialArgs;
           modules = [
             (mkNixpkgsConfig "x86_64-linux")
             agenix.nixosModules.default
           ]
-          ++ suites.sharedModules
           ++ [
+            ./modules/linux-common.nix
             home-manager.nixosModules.home-manager
             vscode-server.nixosModule
           ]
           ++ extraModules
-          ++ roleModules
-          ++ suites.userModules
+          ++ [ role ]
+          ++ userModules users
           ++ [
+            ./users/root
             ./hosts/${name}
           ];
         };
@@ -189,22 +189,33 @@
     in
     {
       nixosConfigurations = {
-        sheol = mkLinuxHost "sheol" { roleModules = suites.serverModules; };
-        abaddon = mkLinuxHost "abaddon" { roleModules = suites.serverModules; };
+        sheol = mkLinuxHost "sheol" {
+          role = ./modules/server;
+          users = [ "boog" ];
+        };
+        abaddon = mkLinuxHost "abaddon" {
+          role = ./modules/server;
+          users = [ "boog" ];
+        };
         gehenna = mkLinuxHost "gehenna" {
+          users = [ "boog" ];
           extraModules = [ nixos-wsl.nixosModules.default ];
-          roleModules = suites.wslModules;
+          role = ./modules/wsl;
         };
       };
 
       darwinConfigurations.boog-MBP = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
-        specialArgs = defaultSpecialArgs;
+        inherit specialArgs;
         modules = [
           (mkNixpkgsConfig "aarch64-darwin")
           ./hosts/boog-MBP
         ]
-        ++ suites.darwinModules;
+        ++ userModules [ "darwin" ]
+        ++ [
+          home-manager.darwinModules.home-manager
+          ./modules/nix-settings.nix
+        ];
       };
 
       devShells = forEachSystem (

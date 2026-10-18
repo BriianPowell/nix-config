@@ -43,14 +43,14 @@ Borrowed, in its smallest form:
 
 Not adopted, because the current repo is simpler and better here:
 
-- Machine classes and an `owner` field (`suites.nix` roles are enough).
+- Machine classes and an `owner` field (the `modules/server` and `modules/wsl` roles are enough).
 - The `{ os, user, home-manager }` user record and a hand-maintained user registry
   (keep `users/<name>/default.nix` importing its pieces).
 - A large `specialArgs` bag passed to every module, `try-import` (silently ignores
   missing files), absolute personal paths in the flake, sops-nix, and the extra
   inputs.
 
-Kept as-is: the `enable`-flag home-manager modules, the flat `suites.nix`,
+Kept as-is: the `enable`-flag home-manager modules, the role modules (`modules/server`, `modules/wsl`),
 `mkLinuxHost` and the `systems` table, the short input list, derivation-based
 verification and the git hooks.
 
@@ -58,11 +58,11 @@ verification and the git hooks.
 
 | # | Leak | Where | Effect on a forked host |
 | --- | --- | --- | --- |
-| 1 | Global user modules | `suites.userModules` (`boog`, `root`) applied by `mkLinuxHost` in `flake.nix` | New host creates my account, password secret and authorized keys |
+| 1 | Global user modules | a global user list (`boog`, `root`) applied by `mkLinuxHost` in `flake.nix` (was `suites.userModules`) | New host creates my account, password secret and authorized keys |
 | 2 | Initrd admin key | `modules/server/boot.nix` imports a key from `secrets/keys.nix` | Their unlock prompt would authorize my key |
 | 3 | LAN values | `modules/server/base.nix` (gateway, DNS, fallback DNS, firewall ports); `hosts/abaddon/*` (node IP, k3s server address, DNS) | Wrong network config |
 | 4 | Secrets | `modules/secrets.nix` defines `boog`, `root` and k3s token for every Linux host; `secrets/secrets.nix` recipients are my keys | Builds, then fails at activation (cannot decrypt) |
-| 5 | Name mismatches | Mac username: `users/darwin/default.nix` vs `machine.username` default; `trustedUsers` default in `modules/shared-options.nix` | Confusing overrides |
+| 5 | Name mismatches | Mac username: `users/darwin/default.nix` vs `machine.username` default; former `trustedUsers` default (now removed) | Confusing overrides |
 | 6 | Personal files in shared modules | `home/ssh/*.config`, 1Password agent config, git signing key import, `users/darwin/*` | Enabling a module pulls my files |
 
 ## Target design
@@ -82,8 +82,7 @@ verification and the git hooks.
 4. **Personal files stay under `users/<name>/`.** Shared home modules take paths
    or content through options with no personal defaults (default `null`/empty).
 5. **One username source per platform.** `machine.username` and the home-manager
-   user name derive from the same value; `trustedUsers` derives from the host's
-   users.
+   user name derive from the same value; trusted users come from each user module (done).
 
 ## Phases
 
@@ -95,10 +94,28 @@ Commit and merge the staged git-identity change. Prerequisite for the rest.
 
 ### Phase 1: host-declared users
 
-- Replace `suites.userModules` with a per-host `users` argument in `flake.nix`.
+- Replace the global user list with a per-host `users` argument in `flake.nix`.
 - Darwin gets the same treatment (`users/darwin` is a user folder named after the
   platform; consider renaming it, see open questions).
+- Done on the way: `suites.nix` removed (roles are `modules/server` and
+  `modules/wsl`), and trusted users come from each `users/*` module instead of a
+  hard-coded option.
 - Expected result: **identical derivations** for all hosts.
+
+### Phase 1b: tidy the user lists (changes derivations)
+
+Follow-up to phase 1, kept separate because it is the first step that is *not* a
+pure refactor. Sheol and abaddon currently evaluate
+`nix.settings.trusted-users` as `["root" "boog" "root"]`: NixOS already trusts
+`root` by default, so `users/root` adding it again is redundant.
+
+- Drop `nix.settings.trusted-users = [ "root" ]` from `users/root/default.nix`.
+- Check the evaluated list is `["root" "boog"]` on the servers and unchanged on
+  darwin.
+- Expected result: **different derivations** for sheol, abaddon and gehenna (only
+  `nix.conf` changes). Re-baseline the fingerprints, then deploy sheol and abaddon
+  with `nixos_remote`. The nix daemon reloads its config on switch; no reboot and
+  no k3s restart is expected, but confirm both nodes stay Ready.
 
 ### Phase 2: site layer
 
@@ -124,7 +141,7 @@ Commit and merge the staged git-identity change. Prerequisite for the rest.
 
 ### Phase 5: consistency and docs
 
-- Single username source per platform; `trustedUsers` from host users.
+- Single username source per platform; trusted users set by each user module (done).
 - Add a "Using this repo" section to `README.md`: add a host, add a user, write a
   site file, re-key secrets, generate initrd host keys.
 
