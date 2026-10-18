@@ -2,20 +2,21 @@
 { home-manager, defaultSpecialArgs }:
 let
   nixosModules = {
-    base-server = import ./modules/base-server.nix;
+    base-server = import ./modules/server/base.nix;
     i18n = import ./modules/i18n.nix;
     minimal-docs = import ./modules/minimal-docs.nix;
     openssh = import ./modules/openssh.nix;
     security = import ./modules/security.nix;
-    tcp-hardening = import ./modules/tcp-hardening.nix;
-    tcp-optimization = import ./modules/tcp-optimization.nix;
-    k3s-node = import ./modules/k3s-node.nix;
-    server-boot = import ./modules/server-boot.nix;
-    server-hardware = import ./modules/server-hardware.nix;
+    tcp-hardening = import ./modules/server/tcp-hardening.nix;
+    tcp-optimization = import ./modules/server/tcp-optimization.nix;
+    k3s-node = import ./modules/server/k3s-node.nix;
+    server-boot = import ./modules/server/boot.nix;
+    server-hardware = import ./modules/server/hardware.nix;
     cli = import ./modules/cli.nix;
     secrets = import ./modules/secrets.nix;
     fonts = import ./modules/fonts.nix;
     shared-options = import ./modules/shared-options.nix;
+    linux-common = import ./modules/linux-common.nix;
 
     boog = import ./users/boog;
     root = import ./users/root;
@@ -24,6 +25,7 @@ let
 
   sharedModules = with nixosModules; [
     cli
+    linux-common
     fonts
     secrets
     shared-options

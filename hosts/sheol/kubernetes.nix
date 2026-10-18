@@ -35,7 +35,7 @@ let
   containerdTemplate = pkgs.writeText "config.toml.tmpl" containerdConfigTemplate;
 in
 {
-  # Package, helper scripts, firewall base and node flags: modules/k3s-node.nix.
+  # Package, helper scripts, firewall base and node flags: modules/server/k3s-node.nix.
   k3sNode.ip = "10.0.2.10";
 
   environment.systemPackages = with pkgs; [

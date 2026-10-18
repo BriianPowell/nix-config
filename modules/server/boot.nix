@@ -67,7 +67,7 @@ in
               "/etc/secrets/initrd/ssh_host_ed25519_key"
             ];
             authorizedKeys = [
-              ''command="systemctl default",no-port-forwarding,no-agent-forwarding,no-X11-forwarding ${(import ../secrets/keys.nix).nixosAdmin}''
+              ''command="systemctl default",no-port-forwarding,no-agent-forwarding,no-X11-forwarding ${(import ../../secrets/keys.nix).nixosAdmin}''
             ];
           };
         };

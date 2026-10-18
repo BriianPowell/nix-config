@@ -1,5 +1,5 @@
 { config, ... }: {
-  # Package, helper scripts, firewall base and node flags: modules/k3s-node.nix.
+  # Package, helper scripts, firewall base and node flags: modules/server/k3s-node.nix.
   k3sNode.ip = "10.0.2.11";
 
   services.k3s = {
