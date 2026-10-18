@@ -75,11 +75,13 @@ function nixos_remote -d 'Check or switch the sheol/abaddon NixOS servers from t
     for h in $targets
         echo "==> nixos-rebuild $verb $h"
         # Build on the target (--build-host) because this machine is aarch64. The
-        # nixos-rebuild comes from the flake, so it matches the flake's nixpkgs.
+        # nixos-rebuild comes from the flake, so it matches the flake's nixpkgs. That
+        # 26.05 build still takes --sudo/--ask-sudo-password; the --elevate spelling is
+        # newer (nixpkgs unstable) and is rejected here.
         command nix shell "$_flag_flake#nixos-rebuild" -c nixos-rebuild $verb \
             --flake "$_flag_flake#$h" \
             --build-host $h --target-host $h \
-            --elevate sudo --ask-elevate-password
+            --sudo --ask-sudo-password
         or begin
             echo "nixos_remote: $verb failed on $h; stopping" >&2
             return 1
