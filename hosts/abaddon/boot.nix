@@ -42,6 +42,11 @@
     # https://mth.st/blog/nixos-initrd-ssh/
     #
     initrd = {
+      # 26.05 enables systemd stage 1 by default, which has no equivalent of the
+      # scripted-initrd hooks below (remote LUKS unlock over SSH). Stay on the
+      # scripted initrd until that unlock is ported to boot.initrd.systemd.services.
+      systemd.enable = false;
+
       preLVMCommands = lib.mkOrder 400 "sleep 1";
 
       luks = {
