@@ -56,4 +56,11 @@
     vscode-server.enable = true;
     eternal-terminal.enable = true;
   };
+
+  # A switch run from an `et` session must not stop the server carrying that
+  # session. The session drops, the switch's output pipe breaks, and
+  # switch-to-configuration panics (exit 101) part way through, leaving units such
+  # as k3s stopped. The new etserver is picked up on the next reboot, or by hand
+  # with `systemctl restart eternal-terminal` from a plain ssh session.
+  systemd.services.eternal-terminal.restartIfChanged = false;
 }
