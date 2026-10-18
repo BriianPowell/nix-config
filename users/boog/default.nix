@@ -5,7 +5,7 @@
   home-manager.users.boog = {
     imports = [
       ../../home
-      ./git.nix
+      ../common/git.nix
       ./home.nix
     ];
   };

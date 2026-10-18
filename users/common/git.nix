@@ -1,7 +1,6 @@
-# Git identity for boog (Linux / WSL).
+# Git identity shared by every account I use (macOS and Linux/WSL).
 _: {
   git = {
-    enable = true;
     userName = "Brian Powell";
     userEmail = "brian@powell.place";
   };
