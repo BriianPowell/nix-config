@@ -35,6 +35,11 @@
       url = "github:1Password/shell-plugins";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -48,6 +53,7 @@
       vscode-server,
       darwin,
       nixos-wsl,
+      git-hooks,
       ...
     }:
     let
@@ -106,14 +112,60 @@
             ];
         };
 
+      # Pre-commit hooks. The devShell installs them into .git/hooks (so direnv sets
+      # them up on first load) and `nix flake check` runs the same checks.
+      mkHooks =
+        system:
+        git-hooks.lib.${system}.run {
+          src = ./.;
+          hooks = {
+            nixfmt.enable = true;
+            deadnix = {
+              enable = true;
+              # Module headers like `{ config, lib, ... }:` are kept uniform across
+              # files, so unused arguments are not worth failing a commit over.
+              settings = {
+                noLambdaArg = true;
+                noLambdaPatternNames = true;
+              };
+            };
+            detect-private-keys.enable = true;
+            ripsecrets = {
+              enable = true;
+              # The exported iTerm2 preferences hold base64 colour-space blobs that
+              # look like secrets.
+              excludes = [ "^home/iterm2/" ];
+            };
+            statix = {
+              enable = true;
+              settings = {
+                config = "${./statix.toml}";
+                # .direnv holds whole flake inputs, which statix would otherwise walk.
+                ignore = [ ".direnv" ];
+              };
+            };
+            check-merge-conflicts.enable = true;
+          };
+        };
+
+      # mkShellNoCC: a C toolchain would export CC/AR/SDKROOT/DEVELOPER_DIR into every
+      # repo that loads this shell through direnv, which can interfere with Xcode and
+      # Homebrew builds. Nothing here needs a compiler.
       mkDevShell =
-        pkgs:
-        pkgs.mkShell {
+        system: pkgs:
+        let
+          hooks = mkHooks system;
+        in
+        pkgs.mkShellNoCC {
           name = "devShell";
-          packages = with pkgs; [
-            git
-            transcrypt
-          ];
+          packages =
+            with pkgs;
+            [
+              git
+              transcrypt
+            ]
+            ++ hooks.enabledPackages;
+          inherit (hooks) shellHook;
         };
     in
     {
@@ -157,7 +209,7 @@
         ++ suites.darwinModules;
       };
 
-      devShells.x86_64-linux.default = mkDevShell (
+      devShells.x86_64-linux.default = mkDevShell "x86_64-linux" (
         import pkgs-stable {
           system = "x86_64-linux";
           config.allowUnfree = true;
@@ -165,7 +217,7 @@
         }
       );
 
-      devShells.aarch64-darwin.default = mkDevShell (
+      devShells.aarch64-darwin.default = mkDevShell "aarch64-darwin" (
         import pkgs-darwin {
           system = "aarch64-darwin";
           config.allowUnfree = true;
@@ -178,5 +230,11 @@
       # rather than whatever the `nixpkgs` registry entry points to.
       packages.aarch64-darwin.nixos-rebuild = pkgs-darwin.legacyPackages.aarch64-darwin.nixos-rebuild-ng;
       packages.x86_64-linux.nixos-rebuild = pkgs-stable.legacyPackages.x86_64-linux.nixos-rebuild-ng;
+
+      # `nix flake check` runs the hooks; `nix fmt` formats the repo.
+      checks.x86_64-linux.pre-commit = mkHooks "x86_64-linux";
+      checks.aarch64-darwin.pre-commit = mkHooks "aarch64-darwin";
+      formatter.x86_64-linux = pkgs-stable.legacyPackages.x86_64-linux.nixfmt;
+      formatter.aarch64-darwin = pkgs-darwin.legacyPackages.aarch64-darwin.nixfmt;
     };
 }
