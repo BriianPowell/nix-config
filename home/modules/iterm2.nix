@@ -30,9 +30,7 @@ let
     else
       value;
 
-  normalizeProfile =
-    p:
-    lib.mapAttrs (k: v: if lib.hasSuffix " Font" k then fixFontName v else v) p;
+  normalizeProfile = p: lib.mapAttrs (k: v: if lib.hasSuffix " Font" k then fixFontName v else v) p;
 
   wrapDynamicProfile =
     path:

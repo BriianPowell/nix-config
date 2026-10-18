@@ -2,7 +2,12 @@
 #
 # Per user: fish.enable = true;
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.fish;
   fishDir = ../fish;

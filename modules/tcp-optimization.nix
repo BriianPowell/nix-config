@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   # TCP Optimizations
   boot = {
     kernel.sysctl = {

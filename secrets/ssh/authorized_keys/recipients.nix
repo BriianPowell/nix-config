@@ -11,6 +11,13 @@ let
       if builtins.isList v then v else v.publicKeys or [ ]
     ) names
   );
-  unique = builtins.attrNames (builtins.listToAttrs (map (k: { name = k; value = null; }) allKeys));
+  unique = builtins.attrNames (
+    builtins.listToAttrs (
+      map (k: {
+        name = k;
+        value = null;
+      }) allKeys
+    )
+  );
 in
 builtins.concatStringsSep "\n" unique

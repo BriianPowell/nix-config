@@ -2,14 +2,18 @@
 #
 # Per user: ssh.enable = true;
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.ssh;
   sshDir = ../ssh;
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
 
-  onePasswordAgentSocket =
-    "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+  onePasswordAgentSocket = "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 in
 {
   options.ssh = {

@@ -3,7 +3,12 @@
 # Per user: tmux.enable = true;
 # Overrides: tmux.extraConfig, tmux.plugins, …
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.tmux;
   tmuxConf = ../config/tmux/tmux.conf;
@@ -37,13 +42,11 @@ in
         pkgs.tmuxPlugins.sensible
       ];
 
-      extraConfig =
-        cfg.extraConfig
-        + ''
+      extraConfig = cfg.extraConfig + ''
 
-          # Reload (HM installs config under ~/.config/tmux/)
-          bind r source-file ~/.config/tmux/tmux.conf
-        '';
+        # Reload (HM installs config under ~/.config/tmux/)
+        bind r source-file ~/.config/tmux/tmux.conf
+      '';
     }
     // lib.optionalAttrs config.fish.enable {
       shell = "${pkgs.fish}/bin/fish";

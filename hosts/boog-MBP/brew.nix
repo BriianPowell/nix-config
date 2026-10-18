@@ -72,13 +72,9 @@ let
     "Windows App" = 1295203466;
   };
 
-  filterOmit =
-    omit: list:
-    lib.filter (name: !lib.elem name omit) list;
+  filterOmit = omit: list: lib.filter (name: !lib.elem name omit) list;
 
-  filterOmitAttrs =
-    omit: attrs:
-    lib.filterAttrs (name: _: !lib.elem name omit) attrs;
+  filterOmitAttrs = omit: attrs: lib.filterAttrs (name: _: !lib.elem name omit) attrs;
 in
 {
   homebrew = {

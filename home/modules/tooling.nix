@@ -2,7 +2,12 @@
 #
 # Per user: tooling.enable = true;
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.tooling;
   dir = ../config;

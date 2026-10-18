@@ -2,7 +2,12 @@
 #
 # Per user: vim.enable = true;
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.vim;
   vimDir = ../vim;

@@ -3,8 +3,7 @@
 # Host base lists live in hosts/<hostname>/brew.nix.
 # Use omit* on a work machine, extra* for one-off apps.
 #
-{ ... }:
-{
+_: {
   machine = {
     username = "Brian_Powell";
 

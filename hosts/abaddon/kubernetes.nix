@@ -3,7 +3,9 @@
     k3s
 
     (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
-    (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (builtins.readFile ../../scripts/k3s-remove-unused-rs))
+    (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (
+      builtins.readFile ../../scripts/k3s-remove-unused-rs
+    ))
   ];
 
   services.k3s = {

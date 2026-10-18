@@ -74,11 +74,15 @@
         nixpkgs.config.allowBroken = false;
         nixpkgs.overlays = [
           (final: prev: {
-            mas =
-              (import pkgs-unstable {
-                system = prev.stdenv.hostPlatform.system;
-                config = prev.config;
-              }).mas;
+            inherit
+              (
+                (import pkgs-unstable {
+                  system = prev.stdenv.hostPlatform.system;
+                  inherit (prev) config;
+                })
+              )
+              mas
+              ;
           })
         ];
       };

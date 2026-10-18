@@ -1,4 +1,4 @@
-{ pkgs,  ... }: {
+{ pkgs, ... }: {
   networking.hostName = "sheol";
   networking.hostId = "aeab81c5"; # head -c 8 /etc/machine-id
 

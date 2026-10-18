@@ -32,7 +32,7 @@
       "net.bridge-nf-call-ip6tables" = 1;
       "net.bridge-nf-call-iptables" = 1;
       "net.ipv4.ip_forward" = 1; # enable for k3s
-      "net.ipv6.conf.all.forwarding" = 1; #enable for k3s
+      "net.ipv6.conf.all.forwarding" = 1; # enable for k3s
       "fs.inotify.max_user_instances" = 8192; # Fix for 'Too many open files error'
       "fs.inotify.max_user_watches" = 524288; # Fix for 'Too many open files error'
     };
@@ -60,7 +60,10 @@
         ssh = {
           enable = true;
           port = 2222;
-          hostKeys = [ "/etc/secrets/initrd/ssh_host_rsa_key" "/etc/secrets/initrd/ssh_host_ed25519_key" ];
+          hostKeys = [
+            "/etc/secrets/initrd/ssh_host_rsa_key"
+            "/etc/secrets/initrd/ssh_host_ed25519_key"
+          ];
           authorizedKeys = [
             (import ../../secrets/keys.nix).nixosAdmin
           ];

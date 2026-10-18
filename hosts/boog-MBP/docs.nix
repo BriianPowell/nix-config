@@ -1,4 +1,4 @@
-{ ... }: {
+_: {
   documentation = {
     man.enable = false;
     info.enable = false;
