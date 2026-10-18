@@ -65,51 +65,70 @@
         inherit home-manager defaultSpecialArgs;
       };
 
-      linuxNixpkgsConfig = {
-        nixpkgs.config.allowUnfree = true;
-        nixpkgs.config.allowBroken = false;
-        nixpkgs.overlays = [
-          (_: prev: {
-            nodejs = prev.nodejs_22;
-          })
-        ];
+      # Per-platform nixpkgs flavour. Everything per-system (nixpkgs config,
+      # devShells, checks, formatter, packages) is derived from this table.
+      systems = {
+        x86_64-linux = {
+          nixpkgs = pkgs-stable;
+          overlays = [
+            (_: prev: {
+              nodejs = prev.nodejs_22;
+            })
+          ];
+        };
+        aarch64-darwin = {
+          nixpkgs = pkgs-darwin;
+          overlays = [
+            (final: prev: {
+              inherit
+                (
+                  (import pkgs-unstable {
+                    system = prev.stdenv.hostPlatform.system;
+                    inherit (prev) config;
+                  })
+                )
+                mas
+                ;
+            })
+          ];
+        };
+      };
+      forEachSystem = f: pkgs-stable.lib.mapAttrs f systems;
+
+      mkNixpkgsConfig = system: {
+        nixpkgs.config = {
+          allowUnfree = true;
+          allowBroken = false;
+        };
+        nixpkgs.overlays = systems.${system}.overlays;
       };
 
-      darwinNixpkgsConfig = {
-        nixpkgs.config.allowUnfree = true;
-        nixpkgs.config.allowBroken = false;
-        nixpkgs.overlays = [
-          (final: prev: {
-            inherit
-              (
-                (import pkgs-unstable {
-                  system = prev.stdenv.hostPlatform.system;
-                  inherit (prev) config;
-                })
-              )
-              mas
-              ;
-          })
-        ];
-      };
-
-      linuxModules = [
-        linuxNixpkgsConfig
-        agenix.nixosModules.default
-      ]
-      ++ suites.sharedModules;
-
+      # Roles supply the host-class modules (servers or WSL); everything the
+      # linux hosts share lives here so a host is a one-liner below.
       mkLinuxHost =
-        name: extraModules:
+        name:
+        {
+          roleModules,
+          extraModules ? [ ],
+        }:
         pkgs-stable.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = defaultSpecialArgs;
-          modules =
-            linuxModules
-            ++ extraModules
-            ++ [
-              ./hosts/${name}
-            ];
+          modules = [
+            (mkNixpkgsConfig "x86_64-linux")
+            agenix.nixosModules.default
+          ]
+          ++ suites.sharedModules
+          ++ [
+            home-manager.nixosModules.home-manager
+            vscode-server.nixosModule
+          ]
+          ++ extraModules
+          ++ roleModules
+          ++ suites.userModules
+          ++ [
+            ./hosts/${name}
+          ];
         };
 
       # Pre-commit hooks. The devShell installs them into .git/hooks (so direnv sets
@@ -170,71 +189,47 @@
     in
     {
       nixosConfigurations = {
-        sheol = mkLinuxHost "sheol" (
-          [
-            home-manager.nixosModules.home-manager
-            vscode-server.nixosModule
-          ]
-          ++ suites.serverModules
-          ++ suites.userModules
-        );
-
-        abaddon = mkLinuxHost "abaddon" (
-          [
-            home-manager.nixosModules.home-manager
-            vscode-server.nixosModule
-          ]
-          ++ suites.serverModules
-          ++ suites.userModules
-        );
-
-        gehenna = mkLinuxHost "gehenna" (
-          [
-            home-manager.nixosModules.home-manager
-            vscode-server.nixosModule
-            nixos-wsl.nixosModules.default
-          ]
-          ++ suites.wslModules
-          ++ suites.userModules
-        );
+        sheol = mkLinuxHost "sheol" { roleModules = suites.serverModules; };
+        abaddon = mkLinuxHost "abaddon" { roleModules = suites.serverModules; };
+        gehenna = mkLinuxHost "gehenna" {
+          extraModules = [ nixos-wsl.nixosModules.default ];
+          roleModules = suites.wslModules;
+        };
       };
 
       darwinConfigurations.boog-MBP = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         specialArgs = defaultSpecialArgs;
         modules = [
-          darwinNixpkgsConfig
+          (mkNixpkgsConfig "aarch64-darwin")
           ./hosts/boog-MBP
         ]
         ++ suites.darwinModules;
       };
 
-      devShells.x86_64-linux.default = mkDevShell "x86_64-linux" (
-        import pkgs-stable {
-          system = "x86_64-linux";
-          config.allowUnfree = true;
-          overlays = linuxNixpkgsConfig.nixpkgs.overlays;
-        }
-      );
-
-      devShells.aarch64-darwin.default = mkDevShell "aarch64-darwin" (
-        import pkgs-darwin {
-          system = "aarch64-darwin";
-          config.allowUnfree = true;
-          overlays = darwinNixpkgsConfig.nixpkgs.overlays;
+      devShells = forEachSystem (
+        system: s: {
+          default = mkDevShell system (
+            import s.nixpkgs {
+              inherit system;
+              config.allowUnfree = true;
+              inherit (s) overlays;
+            }
+          );
         }
       );
 
       # `nixos-rebuild` for deploying to sheol/abaddon from the Mac (see the
       # `nixos_remote` fish function). Pinned here so it matches the flake's nixpkgs
       # rather than whatever the `nixpkgs` registry entry points to.
-      packages.aarch64-darwin.nixos-rebuild = pkgs-darwin.legacyPackages.aarch64-darwin.nixos-rebuild-ng;
-      packages.x86_64-linux.nixos-rebuild = pkgs-stable.legacyPackages.x86_64-linux.nixos-rebuild-ng;
+      packages = forEachSystem (
+        system: s: {
+          nixos-rebuild = s.nixpkgs.legacyPackages.${system}.nixos-rebuild-ng;
+        }
+      );
 
       # `nix flake check` runs the hooks; `nix fmt` formats the repo.
-      checks.x86_64-linux.pre-commit = mkHooks "x86_64-linux";
-      checks.aarch64-darwin.pre-commit = mkHooks "aarch64-darwin";
-      formatter.x86_64-linux = pkgs-stable.legacyPackages.x86_64-linux.nixfmt;
-      formatter.aarch64-darwin = pkgs-darwin.legacyPackages.aarch64-darwin.nixfmt;
+      checks = forEachSystem (system: _: { pre-commit = mkHooks system; });
+      formatter = forEachSystem (system: s: s.nixpkgs.legacyPackages.${system}.nixfmt);
     };
 }
