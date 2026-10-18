@@ -7,3 +7,8 @@ secrets/ssh/**/*.plain
 
 result
 ./darwin/result
+
+# direnv and the pre-commit hook config it generates (machine-local)
+.direnv/
+.envrc
+.pre-commit-config.yaml
