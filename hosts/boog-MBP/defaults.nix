@@ -4,8 +4,7 @@
 # See: https://nix-darwin.github.io/nix-darwin/manual/index.html#system.defaults
 # Dock app layout is intentionally not managed (use persistent-apps only if you want declarative dock tiles).
 
-{ ... }:
-{
+_: {
   system.defaults = {
     NSGlobalDomain = {
       AppleEnableMouseSwipeNavigateWithScrolls = true;

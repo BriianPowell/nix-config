@@ -2,7 +2,12 @@
 #
 # Per user (darwin): finicky.enable = true;
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.finicky;
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
@@ -20,9 +25,6 @@ in
 
   config = lib.mkIf (cfg.enable && isDarwin) {
     home.file.".finicky.js".source =
-      if cfg.configFile != null then
-        cfg.configFile
-      else
-        ../config/.finicky.js;
+      if cfg.configFile != null then cfg.configFile else ../config/.finicky.js;
   };
 }

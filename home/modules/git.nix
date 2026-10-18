@@ -9,7 +9,12 @@
 #
 # Shared defaults (editor, rebase, GitHub SSH URL) live here; identity in users/*/git.nix.
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.git;
 in

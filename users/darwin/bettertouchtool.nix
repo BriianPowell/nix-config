@@ -1,6 +1,5 @@
 # BetterTouchTool preset for boog (macOS).
-{ ... }:
-{
+_: {
   bettertouchtool = {
     enable = true;
     presetFile = ../../home/bettertouchtool/BooG.bttpreset;

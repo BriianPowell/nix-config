@@ -95,7 +95,8 @@ in
       "${dotfiles}/home/.config/fish/functions/git_main_branch.fish";
     "fish/functions/gitclcd.fish".source = "${dotfiles}/home/.config/fish/functions/gitclcd.fish";
     "fish/functions/mkdir.fish".source = "${dotfiles}/home/.config/fish/functions/mkdir.fish";
-    "fish/conf.d/00-tide-config.fish".source = "${dotfiles}/home/.config/fish/conf.d/00-tide-config.fish";
+    "fish/conf.d/00-tide-config.fish".source =
+      "${dotfiles}/home/.config/fish/conf.d/00-tide-config.fish";
     "fish/conf.d/z-tide-reload.fish".source = "${dotfiles}/home/.config/fish/conf.d/z-tide-reload.fish";
   }
   // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {

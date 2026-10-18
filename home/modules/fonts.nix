@@ -3,7 +3,12 @@
 # NixOS hosts also use modules/fonts.nix (system-wide fonts.packages).
 # On Darwin, HM copies fonts from home.packages paths that provide share/fonts.
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.fonts;
 in

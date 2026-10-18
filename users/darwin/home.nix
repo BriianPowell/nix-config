@@ -1,6 +1,5 @@
 # Home Manager profile for Brian_Powell (macOS).
-{ ... }:
-{
+_: {
   fonts.enable = true;
   atuin.enable = true;
   displayplacer.enable = true;

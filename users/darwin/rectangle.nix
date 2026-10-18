@@ -1,6 +1,5 @@
 # Rectangle settings for boog (macOS).
-{ ... }:
-{
+_: {
   rectangle = {
     enable = true;
 

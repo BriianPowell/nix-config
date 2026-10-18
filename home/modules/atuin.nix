@@ -3,7 +3,12 @@
 # Per user: atuin.enable = true;
 # Overrides: atuin.settings = { ... };
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.atuin;
 in

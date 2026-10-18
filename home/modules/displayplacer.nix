@@ -6,7 +6,12 @@
 #     layoutFile = ../../home/displayplacer/desk-layout.sh;
 #   };
 #
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.displayplacer;
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
