@@ -7,6 +7,7 @@
   home-manager.users.Brian_Powell = {
     imports = [
       ../../home
+      ../common/git.nix
       ./git.nix
       ./home.nix
       ./rectangle.nix

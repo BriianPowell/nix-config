@@ -1,12 +1,9 @@
-# Git identity for boog (macOS).
+# Git extras for boog (macOS): global ignores and SSH commit signing (identity: ../common/git.nix).
 let
   keys = import ../../secrets/keys.nix;
 in
 {
   git = {
-    enable = true;
-    userName = "Brian Powell";
-    userEmail = "brian@powell.place";
     ignores = [ ".DS_Store" ];
     signing = {
       enable = true;

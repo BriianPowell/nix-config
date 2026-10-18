@@ -7,7 +7,8 @@
 #     userEmail = "...";
 #   };
 #
-# Shared defaults (editor, rebase, GitHub SSH URL) live here; identity in users/*/git.nix.
+# Shared defaults (editor, rebase, GitHub SSH URL) live here. Identity and per-user
+# extras come from the users/ folders (users/common/git.nix, users/*/git.nix).
 #
 {
   config,
