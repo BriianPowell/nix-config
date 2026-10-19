@@ -59,9 +59,12 @@
     let
       specialArgs = { inherit inputs; };
 
+      dev = import ./dev { inherit git-hooks; };
+
       # A host names its accounts explicitly (`users = [ "boog" ]`); each name is a
-      # folder under users/. Linux hosts also always get root.
-      userModules = names: map (name: ./users/${name}) names;
+      # folder under users/ (or a path, for the fork check). Linux hosts also always
+      # get root.
+      userModules = names: map (u: if builtins.isPath u then u else ./users/${u}) names;
 
       # Per-platform nixpkgs flavour. Everything per-system (nixpkgs config,
       # devShells, checks, formatter, packages) is derived from this table.
@@ -108,6 +111,7 @@
         {
           role,
           users,
+          host ? ./hosts/${name},
           extraModules ? [ ],
         }:
         pkgs-stable.lib.nixosSystem {
@@ -127,111 +131,44 @@
           ++ userModules users
           ++ [
             ./users/root
-            ./hosts/${name}
+            host
           ];
         };
 
-      # Pre-commit hooks. The devShell installs them into .git/hooks (so direnv sets
-      # them up on first load) and `nix flake check` runs the same checks.
-      mkHooks =
-        system:
-        git-hooks.lib.${system}.run {
-          src = ./.;
-          hooks = {
-            nixfmt.enable = true;
-            deadnix = {
-              enable = true;
-              # Module headers like `{ config, lib, ... }:` are kept uniform across
-              # files, so unused arguments are not worth failing a commit over.
-              settings = {
-                noLambdaArg = true;
-                noLambdaPatternNames = true;
-              };
-            };
-            detect-private-keys.enable = true;
-            ripsecrets = {
-              enable = true;
-              # The exported iTerm2 preferences hold base64 colour-space blobs that
-              # look like secrets.
-              excludes = [ "^home/iterm2/" ];
-            };
-            statix = {
-              enable = true;
-              settings = {
-                config = "${./statix.toml}";
-                # .direnv holds whole flake inputs, which statix would otherwise walk.
-                ignore = [ ".direnv" ];
-              };
-            };
-            check-merge-conflicts.enable = true;
-          };
-        };
-
-      # This repo's own shell (`devShells.<system>.nix-config`, loaded by .envrc here). Its
-      # git-hooks.nix shellHook symlinks .pre-commit-config.yaml and reinstalls every hook
-      # into whichever git repo loads it, so it must not be the default that other repos pick up.
-      #
-      # mkShellNoCC: a C toolchain would export CC/AR/SDKROOT/DEVELOPER_DIR into every
-      # repo that loads this shell through direnv, which can interfere with Xcode and
-      # Homebrew builds. Nothing here needs a compiler.
-      mkDevShell =
-        system: pkgs:
-        let
-          hooks = mkHooks system;
-        in
-        pkgs.mkShellNoCC {
-          name = "devShell";
-          packages =
-            with pkgs;
-            [
-              git
-              transcrypt
-            ]
-            ++ hooks.enabledPackages;
-          inherit (hooks) shellHook;
-        };
-
-      # The default shell, for every other repo that loads this flake through direnv
-      # (k3s-collective, hass-config, grafana-dashboards, ...). Also available as `#tools`.
-      # No nix hooks are installed. A repo that carries its own .pre-commit-config.yaml
-      # gets exactly that config activated; anything else is left alone.
-      mkToolsShell =
+      # Fork acceptance check. Builds a server from nothing but a role, a made-up site
+      # and a made-up user (tests/fork-example), and fails if any of my own values
+      # leak into it. Evaluation is what is tested, so nothing heavy is built.
+      forkExample = mkLinuxHost "example-node" {
+        role = ./modules/server;
+        users = [ ./tests/fork-example/user.nix ];
+        host = ./tests/fork-example/host.nix;
+      };
+      forkExampleCheck =
         pkgs:
-        pkgs.mkShellNoCC {
-          name = "tools";
-          packages = with pkgs; [
-            git
-            transcrypt
-            pre-commit
-          ];
-          # Install the repo's own hooks, only when all of these hold:
-          #  - the config is a real file. A symlink is git-hooks.nix output (this repo's
-          #    config, or one committed by mistake) and points into the nix store;
-          #  - core.hooksPath is unset, which `pre-commit install` refuses to work with;
-          #  - there is no pre-commit hook yet, or it is a pre-commit one. Another tool's
-          #    hook (husky, a hand-written one) is never replaced;
-          #  - the hook does not already point at this pre-commit build. The hook embeds
-          #    store paths that a garbage collection can remove, so this also repairs
-          #    those, and skips the install on every other load.
-          # It never fails the shell: a failed install just prints a note.
-          shellHook = ''
-            if top=$(git rev-parse --show-toplevel 2>/dev/null); then
-              cfg="$top/.pre-commit-config.yaml"
-              hook="$(git rev-parse --path-format=absolute --git-common-dir)/hooks/pre-commit"
-              if [ -f "$cfg" ] && [ ! -L "$cfg" ] \
-                && [ -z "$(git config --get core.hooksPath)" ] \
-                && { [ ! -e "$hook" ] || grep -q 'File generated by pre-commit' "$hook"; } \
-                && ! grep -qF '${pkgs.pre-commit}/bin/pre-commit' "$hook" 2>/dev/null; then
-                if (cd "$top" && ${pkgs.pre-commit}/bin/pre-commit install >/dev/null 2>&1); then
-                  echo "pre-commit: installed hooks from $cfg" >&2
-                else
-                  echo "pre-commit: could not install hooks from $cfg" >&2
-                fi
-              fi
-            fi
-            unset top cfg hook
-          '';
-        };
+        let
+          inherit (pkgs) lib;
+          cfg = forkExample.config;
+          myKeys = import ./secrets/keys.nix;
+          checks = {
+            "gateway comes from the site" = cfg.networking.defaultGateway.address == "192.168.1.1";
+            "dns comes from the site" = cfg.networking.nameservers == [ "192.168.1.1" ];
+            "node ip comes from the site" = cfg.k3sNode.ip == "192.168.1.50";
+            "initrd keys come from the site" =
+              lib.all (k: lib.hasInfix "AAAAexample" k) cfg.boot.initrd.network.ssh.authorizedKeys
+              && !(lib.any (k: lib.hasInfix myKeys.nixosAdmin k) cfg.boot.initrd.network.ssh.authorizedKeys);
+            "only the declared user is trusted" =
+              lib.elem "example" cfg.nix.settings.trusted-users
+              && !(lib.elem "boog" cfg.nix.settings.trusted-users);
+            "my account is absent" = !(cfg.users.users ? boog) && !(cfg.age.secrets ? "passwords/users/boog");
+          };
+          failed = lib.attrNames (lib.filterAttrs (_: ok: !ok) checks);
+        in
+        assert lib.assertMsg (
+          failed == [ ]
+        ) "fork-example check failed: ${lib.concatStringsSep ", " failed}";
+        pkgs.runCommand "fork-example" { } ''
+          echo ${lib.escapeShellArg (builtins.unsafeDiscardStringContext cfg.system.build.toplevel.drvPath)} > $out
+        '';
     in
     {
       nixosConfigurations = {
@@ -272,12 +209,12 @@
             config.allowUnfree = true;
             inherit (s) overlays;
           };
-          toolsShell = mkToolsShell pkgs;
+          toolsShell = dev.mkToolsShell pkgs;
         in
         {
           default = toolsShell;
           tools = toolsShell;
-          nix-config = mkDevShell system pkgs;
+          nix-config = dev.mkDevShell system pkgs;
         }
       );
 
@@ -290,8 +227,17 @@
         }
       );
 
-      # `nix flake check` runs the hooks; `nix fmt` formats the repo.
-      checks = forEachSystem (system: _: { pre-commit = mkHooks system; });
+      # `nix flake check` runs the hooks and the fork acceptance check; `nix fmt`
+      # formats the repo.
+      checks = forEachSystem (
+        system: s:
+        {
+          pre-commit = dev.mkHooks system;
+        }
+        // pkgs-stable.lib.optionalAttrs (system == "x86_64-linux") {
+          fork-example = forkExampleCheck s.nixpkgs.legacyPackages.${system};
+        }
+      );
       formatter = forEachSystem (system: s: s.nixpkgs.legacyPackages.${system}.nixfmt);
     };
 }

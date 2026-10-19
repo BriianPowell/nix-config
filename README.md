@@ -4,7 +4,7 @@ Declarative system and home configuration for NixOS, nix-darwin, and NixOS-WSL h
 
 **New machine or reinstall?** See [INSTALL.md](docs/INSTALL.md).
 
-**Home Manager layout:** [home/MIGRATION.md](home/MIGRATION.md).
+**Home Manager layout:** [docs/HOME-MANAGER.md](docs/HOME-MANAGER.md).
 
 ## Nix flake packages
 
