@@ -4,6 +4,8 @@ let
   secret = config.age.secrets."ssh/authorized_keys/boog".path;
 in
 {
+  age.secrets."ssh/authorized_keys/boog".file = ../../secrets/ssh/authorized_keys/boog.age;
+
   system.activationScripts.boogAuthorizedKeys = {
     text = ''
       if [ ! -f "${secret}" ]; then

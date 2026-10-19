@@ -131,6 +131,11 @@ Status: done. The site is `site.servers.{gateway,dns}`, `site.hosts.<name>.ip` a
 
 ### Phase 3: secrets ownership
 
+Status: done. User secrets live in `users/*`, the k3s token in
+`hosts/abaddon/kubernetes.nix`; `modules/secrets.nix` is gone. This is the one
+step that was not derivation-identical: sheol no longer decrypts the k3s token
+(it never read it). Documented in `docs/SECRETS.md`.
+
 - Move `age.secrets` definitions next to the user or role that uses them.
 - Document re-keying in `docs/` (recipients, regenerating the `.age` files,
   initrd host keys under `/etc/secrets/initrd`).
