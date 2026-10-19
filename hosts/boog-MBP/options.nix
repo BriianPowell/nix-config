@@ -7,7 +7,6 @@
   options.machine = {
     username = lib.mkOption {
       type = lib.types.str;
-      default = "boog";
       description = ''
         Primary macOS account name. Must match:
         - system.primaryUser

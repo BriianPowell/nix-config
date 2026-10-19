@@ -35,8 +35,8 @@
   # need (and can't easily provision on first boot) the agenix-managed password
   # that users/boog and users/root configure. Override them to an unset value.
   users.mutableUsers = lib.mkForce false;
-  users.users.boog.hashedPasswordFile = lib.mkForce null;
-  users.users.root.hashedPasswordFile = lib.mkForce null;
+  users.users.boog.hashedPasswordFile = null;
+  users.users.root.hashedPasswordFile = null;
 
   # Convenience: passwordless sudo from the WSL shell.
   security.sudo.wheelNeedsPassword = lib.mkForce false;
