@@ -119,6 +119,9 @@ pure refactor. Sheol and abaddon currently evaluate
 
 ### Phase 2: site layer
 
+Status: done. The site is `site.servers.{gateway,dns}`, `site.hosts.<name>.ip` and
+`site.initrdAuthorizedKeys`; node IPs and the k3s server address are read from it.
+
 - Add `modules/site.nix` and `sites/home.nix`; hosts import the site file.
 - Move gateway, DNS, fallback DNS and the initrd admin keys out of the shared
   server modules.

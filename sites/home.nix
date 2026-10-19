@@ -2,8 +2,16 @@
 # imports it from its hosts.
 _: {
   site = {
-    gateway = "10.0.2.1";
-    dns = [ "10.0.2.1" ];
+    servers = {
+      gateway = "10.0.2.1";
+      dns = [ "10.0.2.1" ];
+    };
+
+    hosts = {
+      sheol.ip = "10.0.2.10";
+      abaddon.ip = "10.0.2.11";
+    };
+
     initrdAuthorizedKeys = [ (import ../secrets/keys.nix).nixosAdmin ];
   };
 }

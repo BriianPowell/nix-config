@@ -186,6 +186,22 @@
             ++ hooks.enabledPackages;
           inherit (hooks) shellHook;
         };
+
+      # For the other repos that load this flake through direnv (k3s-collective, hass-config,
+      # grafana-dashboards). Same CLI tools, but no git-hooks.nix shellHook: that hook installs
+      # THIS repo's nix hooks into whichever git repo loads the shell. Those repos carry their own
+      # .pre-commit-config.yaml; `pre-commit install` activates it. Load with
+      # `use flake <path to nix-config>#tools` in their .envrc.
+      mkToolsShell =
+        pkgs:
+        pkgs.mkShellNoCC {
+          name = "tools";
+          packages = with pkgs; [
+            git
+            transcrypt
+            pre-commit
+          ];
+        };
     in
     {
       nixosConfigurations = {
@@ -219,14 +235,17 @@
       };
 
       devShells = forEachSystem (
-        system: s: {
-          default = mkDevShell system (
-            import s.nixpkgs {
-              inherit system;
-              config.allowUnfree = true;
-              inherit (s) overlays;
-            }
-          );
+        system: s:
+        let
+          pkgs = import s.nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+            inherit (s) overlays;
+          };
+        in
+        {
+          default = mkDevShell system pkgs;
+          tools = mkToolsShell pkgs;
         }
       );
 
