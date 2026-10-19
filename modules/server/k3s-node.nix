@@ -15,7 +15,10 @@ in
   options.k3sNode = {
     ip = lib.mkOption {
       type = lib.types.str;
-      default = config.site.hosts.${config.networking.hostName}.ip;
+      default =
+        (config.site.hosts.${config.networking.hostName}
+          or (throw "k3sNode.ip: no site.hosts.${config.networking.hostName} entry; add one to your site file or set k3sNode.ip")
+        ).ip;
       defaultText = lib.literalExpression "config.site.hosts.\${config.networking.hostName}.ip";
       description = "Node IP, used as both the internal and external address. Defaults to the host's entry in the site file.";
     };

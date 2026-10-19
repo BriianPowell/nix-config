@@ -70,6 +70,10 @@ in
     "--kube-apiserver-arg=audit-log-maxsize=100"
     "--kube-apiserver-arg=service-account-extend-token-expiration=false"
     "--kubelet-arg=streaming-connection-idle-timeout=5m"
+    # Lets the Deluge pod (k3s-collective apps/media/deluge) set this one sysctl so it can run
+    # unprivileged with NET_ADMIN. wg-quick needs it for the WireGuard default route. It is
+    # namespaced to the pod; no other unsafe sysctl is allowed. Sheol only (Deluge is pinned there).
+    "--kubelet-arg=allowed-unsafe-sysctls=net.ipv4.conf.all.src_valid_mark"
     "--kubelet-arg=tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
   ];
 

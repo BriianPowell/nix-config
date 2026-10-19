@@ -15,7 +15,7 @@ what its users and role need.
 | `ssh/authorized_keys/boog` | `users/boog/authorized-keys.nix` | login keys for `boog` |
 | `passwords/users/root` | `users/root/default.nix` | the `root` account |
 | `passwords/k3s/token` | `hosts/abaddon/kubernetes.nix` | agent joining the k3s server |
-| `ssh/github/<host>` | `modules/openssh.nix` (optional) | per-host GitHub deploy key |
+| `ssh/github/<host>` | `users/boog/github-deploy-key.nix` (optional) | per-host GitHub deploy key |
 
 Only agents need the k3s token; the server (sheol) does not read it.
 

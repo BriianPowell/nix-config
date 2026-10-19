@@ -1,10 +1,4 @@
-# Home Manager profile for boog (Linux / WSL).
+# Home Manager profile for boog (Linux / WSL), on top of users/common/home.nix.
 _: {
-  atuin.enable = true;
-  git.enable = true;
-  fish.enable = true;
-  ssh.enable = true;
-  tmux.enable = true;
-  tooling.enable = true;
-  vim.enable = true;
+  ssh.configFile = ./ssh.config;
 }

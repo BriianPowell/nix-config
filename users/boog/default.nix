@@ -1,11 +1,18 @@
-{ pkgs, config, ... }:
 {
-  imports = [ ./authorized-keys.nix ];
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+{
+  imports = [
+    ./authorized-keys.nix
+    ./github-deploy-key.nix
+  ];
 
   home-manager.users.boog = {
     imports = [
-      ../../home
-      ../common/git.nix
+      ../common/home.nix
       ./home.nix
     ];
   };
@@ -21,7 +28,8 @@
       description = "Brian Powell";
       shell = pkgs.fish;
       extraGroups = [ "wheel" ];
-      hashedPasswordFile = config.age.secrets."passwords/users/boog".path;
+      # mkDefault so a host that cannot decrypt it (WSL) can set it to null.
+      hashedPasswordFile = lib.mkDefault config.age.secrets."passwords/users/boog".path;
       # Keys come from agenix → activationScripts.boogAuthorizedKeys (not keys/keyFiles here).
     };
   };

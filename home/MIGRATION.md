@@ -38,7 +38,7 @@ Shared behavior lives in the module; per-user differences live under `users/`.
 | Finicky | `finicky.*` | `home/config/.finicky.js` | `users/darwin/home.nix` |
 | displayplacer | `displayplacer.*` | `home/displayplacer/` | `users/darwin/displayplacer.nix` |
 | Fish | `fish.*` | `home/fish/` | `users/*/home.nix` |
-| SSH | `ssh.*` | `home/ssh/` | `users/*/home.nix` |
+| SSH | `ssh.*` | `users/*/ssh.config` | `users/*/home.nix` |
 | Vim | `vim.*` | `home/vim/` | `users/*/home.nix` |
 | Atuin | `atuin.*` | Nix (`config.toml`) | `users/*/home.nix` |
 | Rectangle | `rectangle.*` | Nix + optional JSON | `users/darwin/rectangle.nix` |

@@ -16,6 +16,12 @@ in
 {
   options.tooling = {
     enable = lib.mkEnableOption "shared editor configuration files";
+
+    onePasswordAgentConfig = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "1Password SSH agent config (agent.toml), macOS only. It lists vault and item names, so each user supplies their own.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -25,8 +31,8 @@ in
       ".prettierrc.js".source = "${dir}/.prettierrc.js";
     };
 
-    xdg.configFile = lib.optionalAttrs isDarwin {
-      "1Password/ssh/agent.toml".source = "${dir}/1Password/ssh/agent.toml";
+    xdg.configFile = lib.optionalAttrs (isDarwin && cfg.onePasswordAgentConfig != null) {
+      "1Password/ssh/agent.toml".source = cfg.onePasswordAgentConfig;
     };
   };
 }

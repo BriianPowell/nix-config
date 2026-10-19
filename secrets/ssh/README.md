@@ -12,7 +12,7 @@ Encryption uses the same format as **agenix 0.15**: `age -r "ssh-ed25519 AAAA…
 
 ## Mac login (sheol / abaddon)
 
-- **1Password** item **NixOS Admin** (Tech Stack) — see `home/ssh/darwin.config` and `home/config/1Password/ssh/agent.toml`.
+- **1Password** item **NixOS Admin** (Tech Stack) — see `users/darwin/ssh.config` and `users/darwin/1password-agent.toml`.
 - Do not use `IdentitiesOnly yes` without `IdentityFile` (that skips the 1Password agent).
 - **Git signing** uses `keys.gitSigning` in `secrets/keys.nix` (imported by `users/darwin/git.nix`). Keep **Personal** in `agent.toml`, not NixOS Admin.
 
@@ -53,7 +53,7 @@ Initrd uses `secrets/keys.nix` directly (`nixosAdmin`) at eval time—not `boog.
 
 4. Repeat for abaddon. Commit `sheol.age` / `abaddon.age`, rebuild each host.
 
-5. Test on the server: `ssh -T git@github.com` (uses `~/.ssh/github` per `home/ssh/default.config`).
+5. Test on the server: `ssh -T git@github.com` (uses `~/.ssh/github` per `users/boog/ssh.config`).
 
 ## Host keys in `secrets.nix`
 

@@ -1,13 +1,8 @@
-# Home Manager profile for Brian_Powell (macOS).
+# Home Manager profile for Brian_Powell (macOS), on top of users/common/home.nix.
 _: {
   fonts.enable = true;
-  atuin.enable = true;
   displayplacer.enable = true;
   finicky.enable = true;
-  git.enable = true;
-  fish.enable = true;
-  ssh.enable = true;
-  tmux.enable = true;
-  tooling.enable = true;
-  vim.enable = true;
+  ssh.configFile = ./ssh.config;
+  tooling.onePasswordAgentConfig = ./1password-agent.toml;
 }

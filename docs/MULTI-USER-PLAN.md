@@ -63,7 +63,7 @@ verification and the git hooks.
 | 3 | LAN values | `modules/server/base.nix` (gateway, DNS, fallback DNS, firewall ports); `hosts/abaddon/*` (node IP, k3s server address, DNS) | Wrong network config |
 | 4 | Secrets | `modules/secrets.nix` defines `boog`, `root` and k3s token for every Linux host; `secrets/secrets.nix` recipients are my keys | Builds, then fails at activation (cannot decrypt) |
 | 5 | Name mismatches | Mac username: `users/darwin/default.nix` vs `machine.username` default; former `trustedUsers` default (now removed) | Confusing overrides |
-| 6 | Personal files in shared modules | `home/ssh/*.config`, 1Password agent config, git signing key import, `users/darwin/*` | Enabling a module pulls my files |
+| 6 | Personal files in shared modules | SSH client config, 1Password agent config, atuin server, GitHub deploy key (all moved to `users/` in phase 4); git signing key import, `users/darwin/*` | Enabling a module pulls my files |
 
 ## Target design
 
@@ -142,6 +142,20 @@ step that was not derivation-identical: sheol no longer decrypts the k3s token
 - Expected result: identical derivations.
 
 ### Phase 4: personal files out of shared modules
+
+Status: done, with one deliberate difference from "identical derivations".
+
+- `ssh.configFile` and `tooling.onePasswordAgentConfig` are options with a `null`
+  default; `users/boog` and `users/darwin` supply their own files
+  (`users/*/ssh.config`, `users/darwin/1password-agent.toml`).
+- The atuin sync server is set from `users/common/atuin.nix`, not in the module.
+- The per-host GitHub deploy key moved from `modules/openssh.nix` to
+  `users/boog/github-deploy-key.nix`.
+- `machine.username` no longer defaults to `boog`.
+- Because the SSH and agent files now come from `users/` instead of a copied
+  `home/ssh/` directory, their store paths change, so the home-manager derivations
+  change on sheol, abaddon, gehenna and the Mac. File contents are identical
+  (git reports 100% renames); `nix-diff` shows only the source path differing.
 
 - SSH client config, 1Password agent file, signing key import, Mac app settings:
   options with empty defaults, values supplied from `users/<name>/`.

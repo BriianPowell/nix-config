@@ -47,7 +47,6 @@ in
       enableFishIntegration = cfg.enableFishIntegration && config.fish.enable;
 
       settings = {
-        sync_address = "https://atuin.powell.place";
         enter_accept = true;
         sync.records = true;
       }
