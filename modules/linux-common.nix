@@ -5,7 +5,6 @@
     ./cli.nix
     ./fonts.nix
     ./nix-settings.nix
-    ./secrets.nix
   ];
 
   system.stateVersion = "24.11";

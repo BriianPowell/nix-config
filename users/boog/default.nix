@@ -11,6 +11,8 @@
   };
   nix.settings.trusted-users = [ "boog" ];
 
+  age.secrets."passwords/users/boog".file = ../../secrets/passwords/users/boog.age;
+
   users = {
     mutableUsers = false;
     users.boog = {
