@@ -6,16 +6,34 @@
 { lib, ... }:
 {
   options.site = {
-    gateway = lib.mkOption {
-      type = lib.types.str;
-      example = "192.168.1.1";
-      description = "Default IPv4 gateway for the servers at this site.";
+    servers = {
+      gateway = lib.mkOption {
+        type = lib.types.str;
+        example = "192.168.1.1";
+        description = "Default IPv4 gateway of the network the servers live on.";
+      };
+
+      dns = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        example = [ "192.168.1.1" ];
+        description = "DNS resolvers for the servers, also used as the fallback and inside the initrd.";
+      };
     };
 
-    dns = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      example = [ "192.168.1.1" ];
-      description = "DNS resolvers, also used as the fallback and inside the initrd.";
+    hosts = lib.mkOption {
+      type = lib.types.attrsOf (
+        lib.types.submodule {
+          options.ip = lib.mkOption {
+            type = lib.types.str;
+            description = "Static address of the host on the server network.";
+          };
+        }
+      );
+      default = { };
+      example = {
+        node1.ip = "192.168.1.10";
+      };
+      description = "Machines at this site, by hostname. Read for node IPs and the k3s server address.";
     };
 
     initrdAuthorizedKeys = lib.mkOption {

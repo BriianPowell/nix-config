@@ -36,8 +36,6 @@ let
 in
 {
   # Package, helper scripts, firewall base and node flags: modules/server/k3s-node.nix.
-  k3sNode.ip = "10.0.2.10";
-
   environment.systemPackages = with pkgs; [
     docker
     runc

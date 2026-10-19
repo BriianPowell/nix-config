@@ -1,6 +1,6 @@
 #
 # Settings every k3s node (server or agent) shares. Host files set
-# `k3sNode.ip`, the role, and anything role-specific.
+# the role and anything role-specific. The node IP comes from the site file.
 #
 {
   config,
@@ -15,7 +15,9 @@ in
   options.k3sNode = {
     ip = lib.mkOption {
       type = lib.types.str;
-      description = "Node IP, used as both the internal and external address.";
+      default = config.site.hosts.${config.networking.hostName}.ip;
+      defaultText = lib.literalExpression "config.site.hosts.\${config.networking.hostName}.ip";
+      description = "Node IP, used as both the internal and external address. Defaults to the host's entry in the site file.";
     };
     extraFlags = lib.mkOption {
       type = lib.types.listOf lib.types.str;
