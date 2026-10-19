@@ -70,10 +70,13 @@ in
     "--kube-apiserver-arg=audit-log-maxsize=100"
     "--kube-apiserver-arg=service-account-extend-token-expiration=false"
     "--kubelet-arg=streaming-connection-idle-timeout=5m"
-    # Lets the Deluge pod (k3s-collective apps/media/deluge) set this one sysctl so it can run
-    # unprivileged with NET_ADMIN. wg-quick needs it for the WireGuard default route. It is
-    # namespaced to the pod; no other unsafe sysctl is allowed. Sheol only (Deluge is pinned there).
-    "--kubelet-arg=allowed-unsafe-sysctls=net.ipv4.conf.all.src_valid_mark"
+    # Unsafe sysctls pods may set on this node. This flag REPLACES k3s's own default allowlist, so
+    # it must keep the sysctls k3s's service-LB pods (svclb-*) request, or they fail with
+    # SysctlForbidden and Traefik/AdGuard stop answering on this node (this happened once).
+    #   net.ipv4.ip_forward, net.ipv6.conf.all.forwarding: k3s servicelb (svclb-*) pods
+    #   net.ipv4.conf.all.src_valid_mark: Deluge (k3s-collective apps/media/deluge); wg-quick needs
+    #     it to run unprivileged with NET_ADMIN. Namespaced to the pod. Sheol only (Deluge is pinned here).
+    "--kubelet-arg=allowed-unsafe-sysctls=net.ipv4.ip_forward,net.ipv6.conf.all.forwarding,net.ipv4.conf.all.src_valid_mark"
     "--kubelet-arg=tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
   ];
 
