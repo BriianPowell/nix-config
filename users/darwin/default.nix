@@ -1,10 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
+let
+  # The one place the account name is written: users/darwin/machine.nix.
+  name = config.machine.username;
+in
 {
   imports = [
     ./machine.nix
   ];
 
-  home-manager.users.Brian_Powell = {
+  home-manager.users.${name} = {
     imports = [
       ../common/home.nix
       ./git.nix
@@ -16,11 +20,11 @@
     ];
   };
 
-  nix.settings.trusted-users = [ "Brian_Powell" ];
+  nix.settings.trusted-users = [ name ];
 
   users = {
-    users.Brian_Powell = {
-      home = "/Users/Brian_Powell";
+    users.${name} = {
+      home = "/Users/${name}";
       shell = pkgs.fish;
     };
   };
