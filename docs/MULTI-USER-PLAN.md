@@ -163,11 +163,25 @@ Status: done, with one deliberate difference from "identical derivations".
 
 ### Phase 5: consistency and docs
 
+Status: done.
+
+- The Mac account name is written once, in `users/darwin/machine.nix`;
+  `users/darwin/default.nix` derives the home-manager user, the system user, the
+  home directory and the trusted-user entry from `machine.username`.
+- `README.md` has a "Using this repo" section.
+- The fork acceptance check is `checks.x86_64-linux.fork-example` (a made-up site,
+  user and host under `tests/fork-example`). It fails if my gateway, DNS, node IP,
+  initrd key, account or secrets show up in it. I confirmed it fails when a trusted
+  user is hard-coded in a shared module and when a site has no entry for the host.
+
 - Single username source per platform; trusted users set by each user module (done).
 - Add a "Using this repo" section to `README.md`: add a host, add a user, write a
   site file, re-key secrets, generate initrd host keys.
 
 ### Optional: export modules as flake outputs
+
+Status: deferred until someone else consumes the repo; tracked in
+[#21](https://github.com/BriianPowell/nix-config/issues/21).
 
 - Expose `nixosModules.default` and `homeModules.default` so another repo can
   consume the generic modules as a flake input instead of forking. Decide after

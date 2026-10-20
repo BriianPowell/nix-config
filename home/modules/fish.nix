@@ -101,6 +101,7 @@ in
       "fish/functions/git_feature_branch.fish".source = "${fishDir}/functions/git_feature_branch.fish";
       "fish/functions/git_main_branch.fish".source = "${fishDir}/functions/git_main_branch.fish";
       "fish/functions/gitclcd.fish".source = "${fishDir}/functions/gitclcd.fish";
+      "fish/functions/hass_deploy.fish".source = "${fishDir}/functions/hass_deploy.fish";
       "fish/functions/mkdir.fish".source = "${fishDir}/functions/mkdir.fish";
       "fish/functions/nixos_remote.fish".source = "${fishDir}/functions/nixos_remote.fish";
       "fish/conf.d/00-tide-config.fish".source = "${fishDir}/conf.d/00-tide-config.fish";
