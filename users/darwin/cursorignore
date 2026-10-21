@@ -1,0 +1,84 @@
+# Global Cursor ignore, managed by nix (users/darwin/home.nix). Edit here, not ~/.cursorignore.
+# Only ciphertext (*.age) is hidden from agents; secrets/*.nix and scripts are public.
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+.env.test
+.env.*
+
+# SSH keys and certificates
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+*.csr
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+id_dsa
+id_ecdsa
+known_hosts
+
+# Credential and secrets files
+credentials
+credentials.json
+credentials.yaml
+credentials.yml
+*.age
+secrets.json
+secrets.yaml
+secrets.yml
+*.secret
+.secrets
+secret.txt
+secret.yaml
+secret.json
+
+# API keys and OAuth tokens
+.npmrc
+.pypirc
+.netrc
+.gitcredentials
+token
+token.json
+token.yaml
+tokens.json
+oauth_token
+oauth_credentials
+api_keys.json
+api_keys.yaml
+service_account.json
+keyfile.json
+*.keyfile
+
+# AWS credentials
+.aws/
+aws_credentials
+aws_config
+
+# GCP credentials
+.gcp/
+application_default_credentials.json
+
+# Azure credentials
+.azure/
+
+# Kubernetes secrets
+kubeconfig
+*.kubeconfig
+.kube/config
+
+# Private keys
+*.private
+privatekey
+private_key
+private_key.json

@@ -4,7 +4,17 @@ Declarative system and home configuration for NixOS, nix-darwin, and NixOS-WSL h
 
 **New machine or reinstall?** See [INSTALL.md](docs/INSTALL.md).
 
-**Home Manager layout:** [docs/HOME-MANAGER.md](docs/HOME-MANAGER.md). **Secrets:** [docs/SECRETS.md](docs/SECRETS.md).
+## Docs
+
+| Doc | What it covers |
+| --- | --- |
+| [docs/INSTALL.md](docs/INSTALL.md) | New machine or reinstall: Sheol, Abaddon, Gehenna (WSL), Darwin |
+| [docs/HOME-MANAGER.md](docs/HOME-MANAGER.md) | How user config is layered; adding an account |
+| [docs/SECRETS.md](docs/SECRETS.md) | Where each secret is declared; users, hosts and re-keying |
+| [secrets/ssh/README.md](secrets/ssh/README.md) | SSH secret runbook: login keys, deploy keys, host key check |
+| [hosts/boog-MBP/README.md](hosts/boog-MBP/README.md) | The Mac host layout and syncing macOS defaults |
+| [docs/MULTI-USER-PLAN.md](docs/MULTI-USER-PLAN.md) | Why the repo is laid out this way for forks, and what is left |
+
 
 ## Using this repo
 
@@ -18,7 +28,7 @@ value.
 | a **user** | Create `users/<name>/` (see [docs/HOME-MANAGER.md](docs/HOME-MANAGER.md#adding-an-account)): the NixOS account, `nix.settings.trusted-users`, and its secrets. |
 | a **server host** | Create `hosts/<hostname>/` with the values only that machine has: disk UUIDs (`server.disks`), LUKS UUID and NIC drivers (`server.luksUuid`, `server.nicDrivers`), and its `networking.interfaces`. Import your site file from `hosts/<hostname>/default.nix`, then add it in `flake.nix` with `role = ./modules/server;` and `users = [ "<name>" ]`. |
 | a **WSL host** | Same, with `role = ./modules/wsl;` plus `extraModules = [ nixos-wsl.nixosModules.default ];`. The host only sets `networking.hostName` and `wsl.defaultUser`. |
-| **secrets** | Add the host key to `secrets/keys.nix` and the recipient lists, then re-key. See [docs/SECRETS.md](docs/SECRETS.md). |
+| **secrets** | Add the host key to `secrets/keys.nix` and to `hosts` in `secrets/secrets.nix`, then `agenix -r`. A fork replaces both files' keys with its own. See [docs/SECRETS.md](docs/SECRETS.md). |
 | the **initrd unlock host keys** | Generate them on the server at install time (`/etc/secrets/initrd/`); see [docs/INSTALL.md](docs/INSTALL.md). |
 
 Every Linux host also gets the `root` account, which declares its password secret

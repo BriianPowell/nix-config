@@ -1,49 +1,57 @@
 # SSH secrets (agenix)
 
-| Secret | Plaintext input | On host |
-|--------|-----------------|---------|
-| `authorized_keys/boog.age` | `authorized_keys/boog.plain` (public keys, one per line) | `/home/boog/.ssh/authorized_keys` via activation |
-| `github/sheol.age` | `github/sheol.plain` (private deploy key) | `/home/boog/.ssh/github` |
-| `github/abaddon.age` | `github/abaddon.plain` (private deploy key) | `/home/boog/.ssh/github` |
+Runbook for the SSH-related secrets. Concepts (who can decrypt, adding users and
+hosts, re-keying) are in [`docs/SECRETS.md`](../../docs/SECRETS.md). Run every
+command from the repo root.
 
-Plaintext `*.plain` files are gitignored. Commit only `*.age` files.
+| Secret | Plaintext input (gitignored) | Ends up on the host |
+| --- | --- | --- |
+| `authorized_keys/boog.age` | `authorized_keys/boog.plain`: public keys, one per line | `/home/boog/.ssh/authorized_keys`, written by an activation script |
+| `github/sheol.age` | `github/sheol.plain`: private deploy key | `/home/boog/.ssh/github` |
+| `github/abaddon.age` | `github/abaddon.plain`: private deploy key | `/home/boog/.ssh/github` |
 
-Encryption uses the same format as **agenix 0.15**: `age -r "ssh-ed25519 AAAA…"` (not `ssh-to-age`). Use the provided `encrypt.sh` scripts.
+Commit only `*.age` files; `*.plain` is in `.gitignore`.
 
-## Mac login (sheol / abaddon)
+The `encrypt.sh` scripts take their recipients from the matching rule in
+`secrets/secrets.nix` and encrypt with `age -r <ssh-public-key>`, which is the
+format agenix reads. `authorized_keys/recipients.nix` is used only by the
+`authorized_keys` script, and it collects every key in `secrets.nix`. The scripts
+need `nix` and network access the first time (they fetch `age` from nixpkgs).
 
-- **1Password** item **NixOS Admin** (Tech Stack) — see `users/darwin/ssh.config` and `users/darwin/1password-agent.toml`.
-- Do not use `IdentitiesOnly yes` without `IdentityFile` (that skips the 1Password agent).
-- **Git signing** uses `keys.gitSigning` in `secrets/keys.nix` (imported by `users/darwin/git.nix`). Keep **Personal** in `agent.toml`, not NixOS Admin.
+## Update login keys
 
-### Update login keys
-
-1. Put the NixOS Admin **public** key in `authorized_keys/boog.plain`.
-2. From repo root:
+1. Put the public keys that may log in as `boog` in `authorized_keys/boog.plain`.
+2. Encrypt:
 
    ```bash
    ./secrets/ssh/authorized_keys/encrypt.sh
    ```
 
-3. If the key changed, update `secrets/keys.nix` (`nixosAdmin`).
-4. Commit `boog.age` (and `secrets/keys.nix` if changed).
-5. `nixos-rebuild switch` on sheol and abaddon.
+3. Commit `boog.age`, then `nixos-rebuild switch` on sheol and abaddon.
 
-### Initrd / LUKS (port 2222)
+The Mac's login key is the **NixOS Admin** item in 1Password (see
+`users/darwin/ssh.config` and `users/darwin/1password-agent.toml`). Do not set
+`IdentitiesOnly yes` without an `IdentityFile`, because that skips the 1Password
+agent. Git signing uses `keys.gitSigning` (`users/darwin/git.nix`); keep the
+Personal key, not NixOS Admin, in `agent.toml`.
 
-Initrd uses `secrets/keys.nix` directly (`nixosAdmin`) at eval time—not `boog.age`.
+## Initrd (LUKS unlock on port 2222)
+
+This does not use `boog.age`. The allowed keys are `site.initrdAuthorizedKeys` in
+`sites/home.nix`, which reads `nixosAdmin` from `secrets/keys.nix` at evaluation
+time. If you rotate the NixOS Admin key, change `nixosAdmin` in `keys.nix`
+(the site file and the initrd pick it up) and update `boog.plain`.
 
 ## GitHub deploy keys (per host)
 
-1. Generate (once per host):
+1. Generate one per host:
 
    ```bash
    ssh-keygen -t ed25519 -f ./sheol-github -N "" -C "sheol-github-deploy"
    ```
 
-2. Add `sheol-github.pub` on GitHub → repo → **Settings → Deploy keys**.
-
-3. Encrypt:
+2. Add `sheol-github.pub` on GitHub under the repo's **Settings, Deploy keys**.
+3. Encrypt it and clean up:
 
    ```bash
    cp sheol-github secrets/ssh/github/sheol.plain
@@ -51,28 +59,40 @@ Initrd uses `secrets/keys.nix` directly (`nixosAdmin`) at eval time—not `boog.
    rm -f sheol-github sheol-github.pub secrets/ssh/github/sheol.plain
    ```
 
-4. Repeat for abaddon. Commit `sheol.age` / `abaddon.age`, rebuild each host.
+4. Repeat for abaddon (the script accepts only `sheol` or `abaddon`; a new host
+   means editing the check at the top of `github/encrypt.sh`). Commit the `.age`
+   files and rebuild each host.
+5. Test on the server: `ssh -T git@github.com` (it uses `~/.ssh/github`, per
+   `users/boog/ssh.config`).
 
-5. Test on the server: `ssh -T git@github.com` (uses `~/.ssh/github` per `users/boog/ssh.config`).
+## Check a host key against `secrets.nix`
 
-## Host keys in `secrets.nix`
-
-Each host must decrypt its own secrets. Compare live keys to `secrets/secrets.nix`:
+A host decrypts with its own SSH host key, so the key in `secrets/keys.nix` must
+match the machine:
 
 ```bash
 ssh sheol 'awk "{print \$1, \$2}" /etc/ssh/ssh_host_ed25519_key.pub'
 ssh abaddon 'awk "{print \$1, \$2}" /etc/ssh/ssh_host_ed25519_key.pub'
 ```
 
-If a host key rotated, update `secrets.nix`, re-run the `encrypt.sh` scripts, commit, and rebuild.
+If one differs, the host was reinstalled or rotated. Update `keys.nix`, run
+`agenix -r` from `secrets/`, commit and rebuild.
 
-## Alternative: `agenix -e` (interactive)
+## Interactive alternative
 
-From `secrets/` in iTerm:
+`agenix` is in the repo's dev shell (`direnv allow`, or `nix develop .#nix-config`),
+and `RULES` already points at `secrets/secrets.nix`:
 
 ```bash
-export RULES=$PWD/secrets.nix
-nix run github:ryantm/agenix#agenix -- -e ssh/authorized_keys/boog.age
+cd secrets
+agenix -e ssh/authorized_keys/boog.age
 ```
 
-Paste the same content as `boog.plain` when the editor opens.
+Paste what you would have put in `boog.plain` when the editor opens. Outside the
+dev shell, run it with
+`nix run github:ryantm/agenix#agenix -- -e <file>` and set `RULES=$PWD/secrets.nix`.
+
+`agenix` reads the private key from a file (`-i <file>`, default `~/.ssh/id_*`), not
+from the SSH agent. To use the NixOS Admin key from 1Password without saving it,
+in bash or zsh use `-i <(op read "op://<vault>/NixOS Admin/private key?ssh-format=openssh")`;
+in fish use `-i (op read "..." | psub)`.

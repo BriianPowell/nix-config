@@ -59,7 +59,7 @@
     let
       specialArgs = { inherit inputs; };
 
-      dev = import ./dev { inherit git-hooks; };
+      dev = import ./dev { inherit git-hooks agenix; };
 
       # A host names its accounts explicitly (`users = [ "boog" ]`); each name is a
       # folder under users/ (or a path, for the fork check). Linux hosts also always
@@ -120,6 +120,11 @@
           modules = [
             (mkNixpkgsConfig "x86_64-linux")
             agenix.nixosModules.default
+            # Which commit built this generation (`nixos-version --configuration-revision`).
+            # A dirty tree gets `<rev>-dirty`, so a local build that was never committed
+            # is recognisable. The revision is part of the system derivation, so every
+            # commit produces a new generation even when nothing else changed.
+            { system.configurationRevision = self.rev or self.dirtyRev or null; }
           ]
           ++ [
             ./modules/linux-common.nix

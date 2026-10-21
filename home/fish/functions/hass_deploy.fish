@@ -27,7 +27,7 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
         return 0
     end
 
-    set -l check_cmd command kubectl -n $ns exec deploy/homeassistant -- \
+    set -l check_cmd kubectl -n $ns exec deploy/homeassistant -- \
         python3 -m homeassistant --script check_config -c /config
 
     echo "==> fetching $host:$dir"
@@ -59,7 +59,7 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
 
     if set -q _flag_check
         echo "==> checking the config currently on the volume (nothing is pulled)"
-        $check_cmd
+        command $check_cmd
         return $status
     end
 
@@ -72,7 +72,7 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
     end
 
     echo "==> Home Assistant config check"
-    $check_cmd
+    command $check_cmd
     if test $status -ne 0
         echo "hass_deploy: the config check FAILED." >&2
         if test "$old" != "$upstream"

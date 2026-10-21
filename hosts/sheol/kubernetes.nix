@@ -47,6 +47,9 @@ in
     daemon.settings.features.cdi = true;
   };
 
+  # Same token as abaddon reads, so a wipe of this node's data cannot break the join.
+  k3sNode.tokenSecret = ../../secrets/passwords/k3s/token.age;
+
   services.k3s = {
     role = "server";
     clusterInit = true;

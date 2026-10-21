@@ -1,6 +1,10 @@
 # Plan: multi-user and fork-friendly configuration
 
-Status: draft. Nothing in this plan is implemented yet.
+Status: **phases 0 to 5 and S1 are done.** Open: S2, S3 and the backlog. The module
+export is deferred ([#21](https://github.com/BriianPowell/nix-config/issues/21)).
+The sections below keep the original reasoning; where a name changed during
+implementation, the current name is used. For how to *use* the result, see
+`README.md` ("Using this repo"), `docs/HOME-MANAGER.md` and `docs/SECRETS.md`.
 
 ## Goal
 
@@ -54,7 +58,7 @@ Kept as-is: the `enable`-flag home-manager modules, the role modules (`modules/s
 `mkLinuxHost` and the `systems` table, the short input list, derivation-based
 verification and the git hooks.
 
-## Where my values leak into every host today
+## Where my values leaked into every host (before this work)
 
 | # | Leak | Where | Effect on a forked host |
 | --- | --- | --- | --- |
@@ -71,13 +75,14 @@ verification and the git hooks.
    `users/<name>` for each. The global `userModules` goes away. `root` stays as a
    common base unless we decide otherwise (see open questions).
 2. **A `site` layer.** A small module `modules/site.nix` with no defaults:
-   `site.gateway`, `site.dns`, `site.adminKeys` (keys allowed to unlock the
-   initrd). My values live in `sites/home.nix`; each host imports a site file.
+   `site.servers.{gateway,dns}`, `site.hosts.<name>.ip` and
+   `site.initrdAuthorizedKeys` (keys allowed to unlock the initrd). My values live
+   in `sites/home.nix`; each server host imports a site file.
    `server/base.nix` and `server/boot.nix` read from it. The reference repo does
    not cover this, so it is designed here.
 3. **Secrets live with their owner.** The `boog` password and authorized-keys
    secrets move into `users/boog`; `root` into `users/root`; the k3s token into
-   the k3s agent role (not every host). A forker re-keys `secrets/secrets.nix` to
+   the agent host, `hosts/abaddon` (not every host). A forker re-keys `secrets/secrets.nix` to
    their own keys and replaces the `.age` files.
 4. **Personal files stay under `users/<name>/`.** Shared home modules take paths
    or content through options with no personal defaults (default `null`/empty).
@@ -195,9 +200,15 @@ Phases S1 and S2 can run any time, including before phase 1.
 
 ### Phase S1: label generations with their git commit
 
+Status: done (NixOS hosts only; the Mac is rebuilt locally from a dirty tree most of
+the time, so a label adds little there). Verified: servers and gehenna `etc` are
+identical once the revision is forced to `null`; the only other difference is the
+`nixos-version` script, which now embeds the revision. Comparison scripts must force
+`system.configurationRevision = null` (see Verification).
+
 - Set `system.configurationRevision` from the flake revision, so
-  `nixos-version --configuration-revision` and the boot menu show which commit a
-  generation came from.
+  `nixos-version --configuration-revision` (and `--json`) show which commit a
+  generation came from. The boot menu entry names are unchanged.
 - **This intentionally changes the system derivations** (the revision is part of
   them). Land it in its own PR, and exclude it from the fingerprint comparison
   when verifying other phases (or re-baseline after it merges).
@@ -253,7 +264,9 @@ Phases S1 and S2 can run any time, including before phase 1.
 - **Fingerprint comparison** on every phase: evaluated system derivations for
   `abaddon`, `sheol`, `gehenna` (etc and system-path), `boog-MBP`, plus devShells,
   formatters and `nixos-rebuild`. Identical derivations mean no deploy risk. Any
-  difference gets diffed and explained before merging.
+  difference gets diffed and explained before merging. Since S1, force
+  `system.configurationRevision = null` (via `extendModules`) so the commit label
+  does not count as a difference.
 - **Fork acceptance check.** Add a minimal example host that must evaluate with a
   dummy user and dummy site, and assert that it contains no `boog` account, no
   authorized key from my files, and none of my network values. This guards

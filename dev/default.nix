@@ -1,6 +1,6 @@
 # Development tooling for this repo: pre-commit hooks and the dev shells.
 # Kept out of flake.nix so that file is only about hosts and per-system outputs.
-{ git-hooks }:
+{ git-hooks, agenix }:
 let
   # Pre-commit hooks. The devShell installs them into .git/hooks (so direnv sets
   # them up on first load) and `nix flake check` runs the same checks.
@@ -57,9 +57,18 @@ let
         [
           git
           transcrypt
+          # The same agenix the NixOS modules use, for `agenix -e/-d/-r` on secrets/.
+          agenix.packages.${system}.default
         ]
         ++ hooks.enabledPackages;
-      inherit (hooks) shellHook;
+      # Point agenix at the rules file from any directory inside the repo.
+      shellHook = ''
+        ${hooks.shellHook}
+        if top=$(git rev-parse --show-toplevel 2>/dev/null); then
+          export RULES="$top/secrets/secrets.nix"
+        fi
+        unset top
+      '';
     };
 
   # The default shell, for every other repo that loads this flake through direnv

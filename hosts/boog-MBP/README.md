@@ -35,7 +35,7 @@ machine.homebrew.omitCasks = [ "signal" "steam" ];  # example: work laptop
 machine.homebrew.extraCasks = [ "some-app" ];
 ```
 
-`machine.username` must match `users.users.boog` and `home-manager.users.boog`.
+`machine.username` is the one place the account name is written (it has no default). `users/darwin/default.nix` derives the system user, the home-manager user, the home directory and the trusted-user entry from it.
 
 ## Rebuild
 
