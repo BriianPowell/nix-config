@@ -70,6 +70,7 @@ let
     "Amphetamine" = 937984704;
     "Xcode" = 497799835;
     "Windows App" = 1295203466;
+    "WireGuard" = 1451685025; # VPN client for the UDM WireGuard server
   };
 
   filterOmit = omit: list: lib.filter (name: !lib.elem name omit) list;

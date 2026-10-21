@@ -22,6 +22,15 @@ in
       defaultText = lib.literalExpression "config.site.hosts.\${config.networking.hostName}.ip";
       description = "Node IP, used as both the internal and external address. Defaults to the host's entry in the site file.";
     };
+    tokenSecret = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = ''
+        agenix file holding the cluster join token (the plain secret, without the
+        `K10...::server:` prefix). Every node reads it, so the token survives a wipe
+        of the server's data directory. Null lets a server generate its own token.
+      '';
+    };
     extraFlags = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -38,8 +47,13 @@ in
       ))
     ];
 
+    age.secrets."passwords/k3s/token" = lib.mkIf (cfg.tokenSecret != null) {
+      file = cfg.tokenSecret;
+    };
+
     services.k3s = {
       enable = true;
+      tokenFile = lib.mkIf (cfg.tokenSecret != null) config.age.secrets."passwords/k3s/token".path;
       extraFlags = toString (
         [
           "--node-name ${config.networking.hostName}"

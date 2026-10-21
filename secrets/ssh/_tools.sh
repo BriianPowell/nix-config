@@ -3,11 +3,11 @@
 set -euo pipefail
 
 _age_bin() {
-  # Same age build agenix 0.15 uses (see: agenix --help).
-  nix build --no-link --print-out-paths --accept-flake-config \
-    "github:ryantm/agenix#packages.$(nix eval --raw --impure --expr builtins.currentSystem).default" \
-    >/dev/null 2>&1 || true
-  echo "/nix/store/p8k7clblzsl67b4ackia5b51fpimq77i-age-1.2.1/bin/age"
+  # Any age build produces files agenix can decrypt; resolve one from nixpkgs
+  # instead of pinning a store path that garbage collection can remove.
+  local out
+  out="$(nix build --no-link --print-out-paths nixpkgs#age)"
+  echo "$out/bin/age"
 }
 
 age_encrypt_ssh_recipients() {
