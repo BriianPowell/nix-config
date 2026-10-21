@@ -47,6 +47,9 @@
   # user modules set. Those use mkDefault, so a plain null here wins.
   users.users.${config.wsl.defaultUser}.hashedPasswordFile = null;
   users.users.root.hashedPasswordFile = null;
+  # With no password or key on any account, NixOS asserts that you would be locked out.
+  # In WSL you enter through wsl.exe, not a login prompt, so that does not apply.
+  users.allowNoPasswordLogin = true;
 
   # Convenience: passwordless sudo from the WSL shell.
   security.sudo.wheelNeedsPassword = false;

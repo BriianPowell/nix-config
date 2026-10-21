@@ -1,0 +1,202 @@
+#!/usr/bin/env bash
+# Compare what two checkouts of this flake would build, without building anything.
+#
+#   derivation-fingerprint list [--only linux|darwin] [DIR]
+#       Print "<host> <derivation path>" for every host of the flake in DIR (default: .).
+#
+#   derivation-fingerprint compare [--only linux|darwin] [--closure] BASE_DIR [HEAD_DIR]
+#       Markdown report of which hosts differ between the two checkouts, with the
+#       reason from nix-diff. --closure also builds the differing Linux hosts and adds
+#       a closure diff (large; needs the build to be cached or fast).
+#
+# Identical derivations mean a change cannot alter that host. The commit label
+# (system.configurationRevision) is forced to null so it never counts as a difference.
+# A host whose toplevel fails to evaluate is fingerprinted by its etc and system path
+# instead, so one broken host does not hide the others.
+set -euo pipefail
+
+only=all
+closure=0
+args=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --only)
+      only="${2:?--only needs linux or darwin}"
+      shift 2
+      ;;
+    --closure)
+      closure=1
+      shift
+      ;;
+    -h | --help)
+      sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
+      exit 0
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+case "$only" in linux | darwin | all) ;; *)
+  echo "derivation-fingerprint: --only must be linux or darwin" >&2
+  exit 1
+  ;;
+esac
+cmd="${args[0]:-}"
+
+abs() { (cd "$1" && pwd); }
+
+# shellcheck disable=SC2016  # the nix expression is deliberately single-quoted
+list() {
+  local dir
+  dir="$(abs "${1:-.}")"
+  nix eval --raw --impure --expr '
+    let
+      flake = builtins.getFlake "'"$dir"'";
+      only = "'"$only"'";
+      norev = c: c.extendModules { modules = [ { system.configurationRevision = null; } ]; };
+      linux = builtins.concatLists (
+        builtins.attrValues (
+          builtins.mapAttrs (
+            name: cfg:
+            let
+              c = norev cfg;
+              top = builtins.tryEval c.config.system.build.toplevel.drvPath;
+            in
+            if top.success then
+              [ "${name} ${top.value}" ]
+            else
+              [
+                "${name}.etc ${c.config.system.build.etc.drvPath}"
+                "${name}.path ${c.config.system.path.drvPath}"
+              ]
+          ) (flake.nixosConfigurations or { })
+        )
+      );
+      darwin = builtins.attrValues (
+        builtins.mapAttrs (name: cfg: "${name} ${cfg.system.drvPath}") (flake.darwinConfigurations or { })
+      );
+      lines =
+        (if only == "darwin" then [ ] else linux) ++ (if only == "linux" then [ ] else darwin);
+    in
+    builtins.concatStringsSep "\n" lines + "\n"
+  ' 2>/dev/null
+}
+
+# Keep nix-diff readable: for a changed encrypted (*.age) source show only its name, not
+# its binary contents, and drop any other non-printable bytes.
+summarize_diff() {
+  LC_ALL=C awk '
+    skip && match($0, /^ */) && RLENGTH > depth { next }
+    { skip = 0 }
+    /input sources? named .*\.age/ { match($0, /^ */); depth = RLENGTH; skip = 1 }
+    { print }
+  ' | LC_ALL=C tr -cd '\11\12\40-\176'
+}
+
+compare() {
+  local base="${1:?compare needs BASE_DIR}" head="${2:-.}"
+  local tmp
+  tmp="$(mktemp -d)"
+  # shellcheck disable=SC2064  # expand now: $tmp is out of scope when the trap runs
+  trap "rm -rf '$tmp'" EXIT
+  list "$base" >"$tmp/base"
+  list "$head" >"$tmp/head"
+  if [[ ! -s "$tmp/base" || ! -s "$tmp/head" ]]; then
+    echo "derivation-fingerprint: evaluation produced no hosts (base: $(wc -l <"$tmp/base"), head: $(wc -l <"$tmp/head"))" >&2
+    return 1
+  fi
+
+  local names changed=() same=() name b h
+  names="$(cut -d' ' -f1 "$tmp/base" "$tmp/head" | sort -u)"
+  echo "### Derivation comparison"
+  echo
+  echo "| Host | Result |"
+  echo "| --- | --- |"
+  while IFS= read -r name; do
+    b="$(grep -m1 "^$name " "$tmp/base" | cut -d' ' -f2 || true)"
+    h="$(grep -m1 "^$name " "$tmp/head" | cut -d' ' -f2 || true)"
+    if [[ -z "$b" ]]; then
+      echo "| \`$name\` | added |"
+    elif [[ -z "$h" ]]; then
+      echo "| \`$name\` | removed |"
+    elif [[ "$b" == "$h" ]]; then
+      echo "| \`$name\` | identical |"
+      same+=("$name")
+    else
+      echo "| \`$name\` | **changed** |"
+      changed+=("$name|$b|$h")
+    fi
+  done <<<"$names"
+  echo
+
+  if [[ ${#changed[@]} -eq 0 ]]; then
+    echo "No host derivation changed, so this change cannot alter what any host builds."
+    return 0
+  fi
+
+  # nix-diff from the flake's own nixpkgs (`nix run --inputs-from` rejects input names that
+  # are not valid flake ids, such as _1password-shell-plugins).
+  local nix_diff
+  # shellcheck disable=SC2016  # the nix expression is deliberately single-quoted
+  nix_diff="$(nix build --impure --no-link --print-out-paths --expr \
+    '(builtins.getFlake "'"$(abs "$head")"'").inputs.nixpkgs.legacyPackages.${builtins.currentSystem}.nix-diff')/bin/nix-diff"
+
+  local entry a_drv b_drv
+  for entry in "${changed[@]}"; do
+    name="${entry%%|*}"
+    a_drv="$(cut -d'|' -f2 <<<"$entry")"
+    b_drv="$(cut -d'|' -f3 <<<"$entry")"
+    echo "<details><summary><code>$name</code>: why it changed (nix-diff)</summary>"
+    echo
+    echo '```'
+    "$nix_diff" --color never "$a_drv" "$b_drv" 2>&1 | summarize_diff | head -n 120 || true
+    echo '```'
+    echo
+    echo "</details>"
+    echo
+  done
+
+  if [[ $closure -eq 1 ]]; then
+    echo "### Closure diff"
+    echo
+    if [[ "$(uname -s)" != Linux ]]; then
+      echo "Skipped: the Linux hosts can only be built on a Linux machine."
+      return 0
+    fi
+    local linux_names
+    linux_names="$(
+      only=linux
+      list "$head" | cut -d' ' -f1
+    )"
+    for entry in "${changed[@]}"; do
+      name="${entry%%|*}"
+      [[ "$name" == *.etc || "$name" == *.path ]] && continue
+      # Only Linux hosts are built here.
+      grep -qx "$name" <<<"$linux_names" || continue
+      a_drv="$(cut -d'|' -f2 <<<"$entry")"
+      b_drv="$(cut -d'|' -f3 <<<"$entry")"
+      local out_a out_b
+      out_a="$(nix build --no-link --print-out-paths "$a_drv^out")"
+      out_b="$(nix build --no-link --print-out-paths "$b_drv^out")"
+      echo "<details><summary><code>$name</code></summary>"
+      echo
+      echo '```'
+      nix store diff-closures "$out_a" "$out_b" 2>&1 | head -n 200
+      echo '```'
+      echo
+      echo "</details>"
+      echo
+    done
+  fi
+}
+
+case "$cmd" in
+  list) list "${args[1]:-.}" ;;
+  compare) compare "${args[1]:-}" "${args[2]:-.}" ;;
+  *)
+    echo "usage: derivation-fingerprint list|compare [--only linux|darwin] [--closure] DIR..." >&2
+    exit 1
+    ;;
+esac

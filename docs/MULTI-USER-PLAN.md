@@ -1,6 +1,7 @@
 # Plan: multi-user and fork-friendly configuration
 
-Status: **phases 0 to 5 and S1 are done.** Open: S2, S3 and the backlog. The module
+Status: **phases 0 to 5, S1, the secrets cleanup (S1b), S2 and S3 are done** (S3 has not
+run on GitHub yet). Open: the backlog. The module
 export is deferred ([#21](https://github.com/BriianPowell/nix-config/issues/21)).
 The sections below keep the original reasoning; where a name changed during
 implementation, the current name is used. For how to *use* the result, see
@@ -81,9 +82,10 @@ verification and the git hooks.
    `server/base.nix` and `server/boot.nix` read from it. The reference repo does
    not cover this, so it is designed here.
 3. **Secrets live with their owner.** The `boog` password and authorized-keys
-   secrets move into `users/boog`; `root` into `users/root`; the k3s token into
-   the agent host, `hosts/abaddon` (not every host). A forker re-keys `secrets/secrets.nix` to
-   their own keys and replaces the `.age` files.
+   secrets move into `users/boog`; `root` into `users/root`; the k3s token
+   is declared by `modules/server/k3s-node.nix` for hosts that set
+   `k3sNode.tokenSecret`. A forker re-keys `secrets/secrets.nix` to their own keys
+   and replaces the `.age` files.
 4. **Personal files stay under `users/<name>/`.** Shared home modules take paths
    or content through options with no personal defaults (default `null`/empty).
 5. **One username source per platform.** `machine.username` and the home-manager
@@ -136,10 +138,10 @@ Status: done. The site is `site.servers.{gateway,dns}`, `site.hosts.<name>.ip` a
 
 ### Phase 3: secrets ownership
 
-Status: done. User secrets live in `users/*`, the k3s token in
-`hosts/abaddon/kubernetes.nix`; `modules/secrets.nix` is gone. This is the one
-step that was not derivation-identical: sheol no longer decrypts the k3s token
-(it never read it). Documented in `docs/SECRETS.md`.
+Status: done. User secrets live in `users/*`; `modules/secrets.nix` is gone. This
+step was not derivation-identical: sheol stopped decrypting the k3s token. That was
+reversed in S1b, which pins the token on both nodes (`k3sNode.tokenSecret` in
+`modules/server/k3s-node.nix`). Documented in `docs/SECRETS.md`.
 
 - Move `age.secrets` definitions next to the user or role that uses them.
 - Document re-keying in `docs/` (recipients, regenerating the `.age` files,
@@ -214,25 +216,81 @@ identical once the revision is forced to `null`; the only other difference is th
   when verifying other phases (or re-baseline after it merges).
 - Dirty trees get a distinct marker, so an undeployed local build is visible.
 
+### Phase S1b: secrets cleanup
+
+Status: done and deployed to both servers.
+
+- **One admin recipient.** `secrets/secrets.nix` encrypts to the hosts plus
+  `keys.nixosAdmin` only. Two unlabelled 2023 personal keys and the git signing key
+  were removed, and all six `.age` files were re-keyed (checked by reading the
+  recipient tags in each file header). The signing key stays in `keys.nix` for
+  commit signing; signing and decrypting are separate keys.
+- **Pinned k3s token.** The token is the plain secret (no `K10...::server:` prefix),
+  read by both nodes through `k3sNode.tokenSecret`, so wiping sheol's data directory
+  no longer breaks abaddon's join. Verified before the change that the file held the
+  same secret sheol was running (matching hashes), because sheol runs embedded etcd,
+  which encrypts its bootstrap data with the token. Abaddon's derivation did not
+  change; sheol's did, by the secret and `--token-file`.
+- **Tooling.** `agenix` (the flake's pinned version) and `RULES` are in the
+  `nix-config` dev shell; `programs.direnv` loads it on the Mac; the dead
+  `secrets/ssh/initrd-login.nix` is gone. The `encrypt.sh` scripts, `_tools.sh` and
+  `recipients.nix` were removed afterwards: `agenix -e <file>` with piped input
+  encrypts to that file's recipients in `secrets.nix`, which is all they did.
+- **Docs.** `secrets/ssh/README.md` is now a runbook for the SSH material only, and
+  `docs/SECRETS.md` covers recipients, adding users and hosts, and re-keying.
+- `~/.cursorignore` is managed from `users/darwin/cursorignore` and hides only
+  `*.age`, so agents can read the public secrets files.
+
 ### Phase S2: safer deploys with `nixos_remote`
 
-- After `boot` or `switch`, compare the boot default (`bootctl`) with the newly
-  installed profile and warn when they differ (catches a pinned EFI default).
-- Resolve the flake path from the repo containing the script, or fail clearly,
-  instead of using whatever the current directory happens to be (catches
-  deploying the wrong checkout).
-- Add a `nixos_status` command that prints installed, booted and default
-  generation for each host.
-- Lives in `home/fish/functions/`; no effect on system derivations.
+Status: done in the repo; installed with the next Mac switch. No effect on system
+derivations. The probe and the table logic were tested against a stubbed `ssh`
+with canned output copied from sheol (healthy, pinned default, `test` deploy,
+unreachable host); the remote script itself has not been run on a server yet.
+
+- **`nixos_remote status [host...]`** prints installed, running, booted and
+  boot-default generations, and whether the running kernel or initrd differs from
+  the booted one. No sudo: it reads the world-readable EFI variables
+  (`LoaderEntrySelected`, `LoaderEntryDefault`) and the system profile links.
+- **After `switch` or `boot`, `nixos_remote` warns** when the default is pinned
+  (`bootctl set-default`) to a generation other than the one just installed, and
+  says when a reboot is needed to run a changed kernel or initrd.
+- **The flake checkout is printed** (path and commit) before anything runs. The
+  plan first said to resolve it from the repo containing the script, but the
+  function is installed from the nix store and cannot find its repository; showing
+  the path and the existing branch and dirty-tree warnings covers the same risk.
+- The servers' login shell is fish, so remote probes go in over stdin to `sh -s`
+  (`__nixos_remote_probe`), not as a command line.
+- One file, `home/fish/functions/nixos_remote.fish`: `status` is an action, and the
+  probe and verify helpers live in the same file, so nothing new is registered in
+  `home/modules/fish.nix`.
 
 ### Phase S3: CI on pull requests
 
-- Run `nix flake check` (hooks, formats, and the fork acceptance check from the
-  Verification section).
-- Post the before/after derivation comparison and a closure diff as a PR
-  comment, replacing the manual comparison script.
-- Depends on the example host from the fork acceptance check; best done after
-  phase 2.
+Status: done in the repo, **not yet run on GitHub**. The comparison script was run
+locally (changed, identical, Linux and Mac, under bash 3.2, shellcheck clean) and the
+workflow passes `actionlint`, but the first pull request will be its first real run.
+
+- **`.github/workflows/ci.yml`**, actions pinned by commit SHA, `pull_request`
+  trigger only (a fork's code never sees secrets):
+  - `check`: `nix flake check` (pre-commit hooks, the fork acceptance check and an
+    evaluation of every host).
+  - `compare`: runs `scripts/derivation-fingerprint compare` against the base branch,
+    Linux hosts on Linux and the Mac on macOS. The report goes to the job summary,
+    and to a PR comment (updated in place) for PRs from this repository.
+  - `closure`: the same with `--closure`, a closure diff of the Linux hosts, only
+    when the PR carries the `closure-diff` label. It builds both sides, so it is slow
+    and may need the cache; untested.
+- **`scripts/derivation-fingerprint`** (`list` and `compare`) replaces the manual
+  comparison scripts. It forces `system.configurationRevision = null`, explains each
+  difference with nix-diff, and shows only the name of a changed `.age` file (nix-diff
+  would print its ciphertext).
+- **`nix flake check` needed a fix first.** `gehenna`'s toplevel failed NixOS's
+  lockout assertion (no password or key on any account), so the check could never
+  pass. The WSL role now sets `users.allowNoPasswordLogin = true`: a WSL guest is
+  entered through `wsl.exe`, not a login prompt. Only gehenna's derivation changed.
+- Not covered: the Mac build itself (the macOS job only evaluates), and applying any
+  change to a real host.
 
 ### Backlog (no order, pick as needed)
 
@@ -258,15 +316,22 @@ identical once the revision is forced to `null`; the only other difference is th
   `k3s-collective` monitoring stack, not this repo; recorded here so it is not
   lost.
 - **More architectures** (aarch64, Raspberry Pi) in `mkLinuxHost`.
+- **Move to `AGENIX_RULES` and `agenix-rules.nix`.** Newer agenix deprecates
+  `RULES` and `secrets.nix` discovery; do it when the agenix input is bumped.
+- **Finish `gehenna`.** Not installed yet; the checklist (host key, secrets
+  recipient, first real build) is a TODO comment in `hosts/gehenna/default.nix`.
+  Ignored until the machine exists.
+- **A Cursor module for the Mac** (`home/modules/cursor.nix`): the ignore file,
+  keybindings and `argv.json`, not extensions or `mcp.json`.
 
 ## Verification
 
 - **Fingerprint comparison** on every phase: evaluated system derivations for
-  `abaddon`, `sheol`, `gehenna` (etc and system-path), `boog-MBP`, plus devShells,
-  formatters and `nixos-rebuild`. Identical derivations mean no deploy risk. Any
-  difference gets diffed and explained before merging. Since S1, force
-  `system.configurationRevision = null` (via `extendModules`) so the commit label
-  does not count as a difference.
+  `abaddon`, `sheol`, `gehenna` and `boog-MBP`. Identical derivations mean no deploy
+  risk. Any difference gets diffed and explained before merging.
+  `scripts/derivation-fingerprint compare <base-checkout> .` does this (CI runs it on
+  every PR); it forces `system.configurationRevision = null` so the commit label does
+  not count as a difference.
 - **Fork acceptance check.** Add a minimal example host that must evaluate with a
   dummy user and dummy site, and assert that it contains no `boog` account, no
   authorized key from my files, and none of my network values. This guards
@@ -300,9 +365,14 @@ identical once the revision is forced to `null`; the only other difference is th
 - **`users/darwin` is renamed later**, in its own small PR, not in phase 1.
 - **One site file per location** (`sites/home.nix`); a host imports the one that
   applies.
+- **Secrets have one admin recipient** (`keys.nixosAdmin`, also the server login
+  key). The git signing key is never a recipient.
+- **The k3s token is pinned on both nodes**, as the plain secret, so it survives a
+  wipe of the server.
 - **The fork acceptance example host lives only in flake `checks`**, not as a real
   directory under `hosts/`.
 
 ## Open questions
 
-- Do the optional module exports belong in this plan, or in a follow-up?
+- None open. The optional module exports are deferred to
+  [#21](https://github.com/BriianPowell/nix-config/issues/21).

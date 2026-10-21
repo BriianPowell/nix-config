@@ -55,7 +55,7 @@ fails at activation, so every server must be a recipient before its first switch
 2. Add a rule to `secrets/secrets.nix`:
    `"passwords/users/<name>.age".publicKeys = hosts ++ users;`, then create the file
    with `cd secrets && agenix -e passwords/users/<name>.age`. For SSH material use
-   the `encrypt.sh` flow in `secrets/ssh/README.md`.
+   the commands in `secrets/ssh/README.md`.
 3. List the name in the host's `users = [ ... ]` in `flake.nix`.
 
 ## Adding a host

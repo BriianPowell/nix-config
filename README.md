@@ -40,6 +40,28 @@ from `secrets/passwords/users/root.age`. A fork must re-key that file (or replac
 repo's own values show up in it, so a change that hard-codes something personal is
 caught before it reaches a fork.
 
+## Checking a change
+
+`nix flake check` runs the hooks, the fork check and an evaluation of every host.
+To see what a change would do to each machine **without building or deploying**:
+
+```bash
+git worktree add --detach /tmp/base main       # or any commit to compare against
+scripts/derivation-fingerprint compare /tmp/base .
+git worktree remove /tmp/base
+```
+
+It prints a table of hosts that are `identical`, `changed`, `added` or `removed`, and
+for a changed host the reason (nix-diff). Identical means the change cannot alter that
+host. `--only linux|darwin` limits it to one platform, and `--closure` also builds the
+changed Linux hosts and shows a closure diff (slow). `scripts/derivation-fingerprint
+list` prints the raw derivation paths. CI runs the same comparison on every pull
+request; see [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+To deploy the servers from the Mac: `nixos_remote status` shows each server's
+installed, running, booted and boot-default generation, and `nixos_remote check`,
+`switch` and the other actions deploy (`nixos_remote --help`).
+
 ## Nix flake packages
 
 - [Home Manager](https://github.com/nix-community/home-manager)
