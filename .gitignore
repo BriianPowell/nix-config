@@ -2,7 +2,7 @@
 *.bin
 *.key
 *passwd*
-secrets/ssh/**/*.plain
+secrets/**/*.plain
 
 
 result

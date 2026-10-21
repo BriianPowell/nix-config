@@ -1,0 +1,133 @@
+# CI for pull requests and main.
+#
+#   check    nix flake check: pre-commit hooks, the fork acceptance check, and an
+#            evaluation of every host.
+#   compare  which hosts would build differently from the base branch, and why
+#            (scripts/derivation-fingerprint). Linux hosts on Linux, the Mac on macOS.
+#            The result goes to the job summary, and to a PR comment for PRs from this
+#            repository (a fork's token cannot comment).
+#   closure  closure diff for the Linux hosts; heavy, so it runs only when the pull
+#            request has the `closure-diff` label.
+#
+# Pull requests run with the `pull_request` trigger, so a fork's code never sees secrets.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31.11.2
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ github.token }}
+      - name: nix flake check
+        run: nix flake check --print-build-logs
+
+  compare:
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            only: linux
+          - os: macos-latest
+            only: darwin
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      ONLY: ${{ matrix.only }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      REPO: ${{ github.repository }}
+      CAN_COMMENT: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31.11.2
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ github.token }}
+      - name: Compare derivations with the base branch
+        run: |
+          git worktree add --detach "$RUNNER_TEMP/base" "$BASE_SHA"
+          scripts/derivation-fingerprint compare --only "$ONLY" "$RUNNER_TEMP/base" . | tee report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Comment on the pull request
+        if: env.CAN_COMMENT == 'true'
+        run: |
+          marker="<!-- derivation-fingerprint:$ONLY -->"
+          body="$(printf '%s\n## Derivation comparison (%s)\n\n' "$marker" "$ONLY"; cat report.md)"
+          # GitHub caps a comment at 65536 characters.
+          body="$(printf '%s' "$body" | head -c 60000)"
+          id="$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n 1)"
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" -f body="$body" >/dev/null
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$body" >/dev/null
+          fi
+
+  closure:
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'closure-diff')
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      REPO: ${{ github.repository }}
+      CAN_COMMENT: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Free disk space
+        run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /opt/hostedtoolcache
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31.11.2
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ github.token }}
+      - name: Closure diff against the base branch
+        run: |
+          git worktree add --detach "$RUNNER_TEMP/base" "$BASE_SHA"
+          scripts/derivation-fingerprint compare --only linux --closure "$RUNNER_TEMP/base" . | tee report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Comment on the pull request
+        if: env.CAN_COMMENT == 'true'
+        run: |
+          marker="<!-- derivation-fingerprint:closure -->"
+          body="$(printf '%s\n## Closure diff\n\n' "$marker"; cat report.md)"
+          body="$(printf '%s' "$body" | head -c 60000)"
+          id="$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n 1)"
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" -f body="$body" >/dev/null
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$body" >/dev/null
+          fi
