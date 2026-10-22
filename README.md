@@ -28,7 +28,7 @@ value.
 | a **user** | Create `users/<name>/` (see [docs/HOME-MANAGER.md](docs/HOME-MANAGER.md#adding-an-account)): the NixOS account, `nix.settings.trusted-users`, and its secrets. |
 | a **server host** | Create `hosts/<hostname>/` with the values only that machine has: disk UUIDs (`server.disks`), LUKS UUID and NIC drivers (`server.luksUuid`, `server.nicDrivers`), and its `networking.interfaces`. Import your site file from `hosts/<hostname>/default.nix`, then add it in `flake.nix` with `role = ./modules/server;` and `users = [ "<name>" ]`. |
 | a **WSL host** | Same, with `role = ./modules/wsl;` plus `extraModules = [ nixos-wsl.nixosModules.default ];`. The host only sets `networking.hostName` and `wsl.defaultUser`. |
-| **secrets** | Add the host key to `secrets/keys.nix` and to `hosts` in `secrets/secrets.nix`, then `agenix -r`. A fork replaces both files' keys with its own. See [docs/SECRETS.md](docs/SECRETS.md). |
+| **secrets** | Add the host key to `secrets/keys.nix` and to `hosts` in `secrets/agenix-rules.nix`, then `agenix -r`. A fork replaces both files' keys with its own. See [docs/SECRETS.md](docs/SECRETS.md). |
 | the **initrd unlock host keys** | Generate them on the server at install time (`/etc/secrets/initrd/`); see [docs/INSTALL.md](docs/INSTALL.md). |
 
 Every Linux host also gets the `root` account, which declares its password secret

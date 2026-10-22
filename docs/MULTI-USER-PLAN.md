@@ -66,7 +66,7 @@ verification and the git hooks.
 | 1 | Global user modules | a global user list (`boog`, `root`) applied by `mkLinuxHost` in `flake.nix` (was `suites.userModules`) | New host creates my account, password secret and authorized keys |
 | 2 | Initrd admin key | `modules/server/boot.nix` imports a key from `secrets/keys.nix` | Their unlock prompt would authorize my key |
 | 3 | LAN values | `modules/server/base.nix` (gateway, DNS, fallback DNS, firewall ports); `hosts/abaddon/*` (node IP, k3s server address, DNS) | Wrong network config |
-| 4 | Secrets | `modules/secrets.nix` defines `boog`, `root` and k3s token for every Linux host; `secrets/secrets.nix` recipients are my keys | Builds, then fails at activation (cannot decrypt) |
+| 4 | Secrets | `modules/secrets.nix` defines `boog`, `root` and k3s token for every Linux host; `secrets/agenix-rules.nix` recipients are my keys | Builds, then fails at activation (cannot decrypt) |
 | 5 | Name mismatches | Mac username: `users/darwin/default.nix` vs `machine.username` default; former `trustedUsers` default (now removed) | Confusing overrides |
 | 6 | Personal files in shared modules | SSH client config, 1Password agent config, atuin server, GitHub deploy key (all moved to `users/` in phase 4); git signing key import, `users/darwin/*` | Enabling a module pulls my files |
 
@@ -84,7 +84,7 @@ verification and the git hooks.
 3. **Secrets live with their owner.** The `boog` password and authorized-keys
    secrets move into `users/boog`; `root` into `users/root`; the k3s token
    is declared by `modules/server/k3s-node.nix` for hosts that set
-   `k3sNode.tokenSecret`. A forker re-keys `secrets/secrets.nix` to their own keys
+   `k3sNode.tokenSecret`. A forker re-keys `secrets/agenix-rules.nix` to their own keys
    and replaces the `.age` files.
 4. **Personal files stay under `users/<name>/`.** Shared home modules take paths
    or content through options with no personal defaults (default `null`/empty).
@@ -220,7 +220,7 @@ identical once the revision is forced to `null`; the only other difference is th
 
 Status: done and deployed to both servers.
 
-- **One admin recipient.** `secrets/secrets.nix` encrypts to the hosts plus
+- **One admin recipient.** `secrets/agenix-rules.nix` encrypts to the hosts plus
   `keys.nixosAdmin` only. Two unlabelled 2023 personal keys and the git signing key
   were removed, and all six `.age` files were re-keyed (checked by reading the
   recipient tags in each file header). The signing key stays in `keys.nix` for
@@ -231,11 +231,12 @@ Status: done and deployed to both servers.
   same secret sheol was running (matching hashes), because sheol runs embedded etcd,
   which encrypts its bootstrap data with the token. Abaddon's derivation did not
   change; sheol's did, by the secret and `--token-file`.
-- **Tooling.** `agenix` (the flake's pinned version) and `RULES` are in the
-  `nix-config` dev shell; `programs.direnv` loads it on the Mac; the dead
+- **Tooling.** `agenix` (the flake's pinned version) and `AGENIX_RULES` are in the
+  `nix-config` dev shell (the rules file is `secrets/agenix-rules.nix`, the name newer
+  agenix expects, instead of the deprecated `secrets.nix` discovery and `RULES`); `programs.direnv` loads it on the Mac; the dead
   `secrets/ssh/initrd-login.nix` is gone. The `encrypt.sh` scripts, `_tools.sh` and
   `recipients.nix` were removed afterwards: `agenix -e <file>` with piped input
-  encrypts to that file's recipients in `secrets.nix`, which is all they did.
+  encrypts to that file's recipients in `agenix-rules.nix`, which is all they did.
 - **Docs.** `secrets/ssh/README.md` is now a runbook for the SSH material only, and
   `docs/SECRETS.md` covers recipients, adding users and hosts, and re-keying.
 - `~/.cursorignore` is managed from `users/darwin/cursorignore` and hides only
@@ -294,13 +295,16 @@ workflow passes `actionlint`, but the first pull request will be its first real 
 
 ### Backlog (no order, pick as needed)
 
+Open items across the setup are tracked in
+[#23](https://github.com/BriianPowell/nix-config/issues/23).
+
 - **Generate SSH aliases from the site host list.** The plain host entries and
   the `*Initrd` aliases come from one list of hosts and addresses; the k3s server
   address and DNS entries read from the same place. Depends on phase 2.
 - **Scaffolding for new hosts and users.** A script or flake template that
   creates the skeleton, initrd host keys, and the re-keying steps, turning the
   README guide into a command.
-- **Generated secret recipients.** Derive `secrets/secrets.nix` recipients from
+- **Generated secret recipients.** Derive `secrets/agenix-rules.nix` recipients from
   the hosts and users. Depends on phase 3.
 - **Generated option docs** with `nixosOptionsDoc`, so forkers can browse every
   option.
@@ -316,8 +320,6 @@ workflow passes `actionlint`, but the first pull request will be its first real 
   `k3s-collective` monitoring stack, not this repo; recorded here so it is not
   lost.
 - **More architectures** (aarch64, Raspberry Pi) in `mkLinuxHost`.
-- **Move to `AGENIX_RULES` and `agenix-rules.nix`.** Newer agenix deprecates
-  `RULES` and `secrets.nix` discovery; do it when the agenix input is bumped.
 - **Finish `gehenna`.** Not installed yet; the checklist (host key, secrets
   recipient, first real build) is a TODO comment in `hosts/gehenna/default.nix`.
   Ignored until the machine exists.

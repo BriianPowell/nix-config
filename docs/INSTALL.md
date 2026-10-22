@@ -212,13 +212,13 @@ Built on top of [nix-community/NixOS-WSL](https://github.com/nix-community/NixOS
    sudo nixos-rebuild switch --flake .#gehenna
    ```
 
-4. **agenix secrets**: the WSL role (`modules/wsl`) sets `hashedPasswordFile` to `null` so first boot does not depend on decrypting secrets. To enable the rest of the agenix secrets on `gehenna`, copy its SSH host key into `secrets/secrets.nix` and re-encrypt:
+4. **agenix secrets**: the WSL role (`modules/wsl`) sets `hashedPasswordFile` to `null` so first boot does not depend on decrypting secrets. To enable the rest of the agenix secrets on `gehenna`, copy its SSH host key into `secrets/agenix-rules.nix` and re-encrypt:
 
    ```bash
    # On gehenna:
    cat /etc/ssh/ssh_host_ed25519_key.pub
    # On a machine with your agenix identity, add the key to `hosts` in
-   # secrets/secrets.nix, then:
+   # secrets/agenix-rules.nix, then:
    cd secrets && agenix -r
    ```
 
