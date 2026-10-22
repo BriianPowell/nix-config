@@ -6,7 +6,12 @@
 # https://github.com/k3s-io/k3s/issues/6518
 #
 
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   toolkitTools = pkgs.nvidia-container-toolkit.tools;
   # CDI mode in nvidia-container-runtime config.toml (see nvidia.nix).
@@ -126,5 +131,19 @@ in
     allowedUDPPorts = [
       5353 # Home Assistant on k3s
     ];
+
+    # Home Assistant runs with hostNetwork (HomeKit needs mDNS and 21063 on the host), so its web port
+    # 8123 listens on every address of this node. The NICs are trusted (modules/server/k3s-node.nix), which
+    # makes the allowedTCPPorts above irrelevant for LAN traffic, so close 8123 explicitly: only the pods
+    # (Traefik, Prometheus), abaddon (its pods leave through its node IP) and this host may use it.
+    # Everyone else goes through https://hass.powell.place. extraCommands run after the trusted-interface
+    # accept, so the rules are inserted at the top of the chain; each -I 1 goes in front of the previous
+    # one, so the order that ends up in the chain is: accept abaddon, accept pods, accept loopback, drop.
+    extraCommands = ''
+      iptables -w -I nixos-fw 1 -p tcp --dport 8123 -j DROP
+      iptables -w -I nixos-fw 1 -p tcp --dport 8123 -s 127.0.0.0/8 -j ACCEPT
+      iptables -w -I nixos-fw 1 -p tcp --dport 8123 -s 10.42.0.0/16 -j ACCEPT
+      iptables -w -I nixos-fw 1 -p tcp --dport 8123 -s ${config.site.hosts.abaddon.ip} -j ACCEPT
+    '';
   };
 }

@@ -3,7 +3,7 @@
 Secrets are [agenix](https://github.com/ryantm/agenix) files under `secrets/`.
 Each is encrypted to the SSH host keys of the machines that read it (plus the
 admin key that edits it), so the repo can be public. Recipients are listed in
-`secrets/secrets.nix`; public keys are in `secrets/keys.nix`.
+`secrets/agenix-rules.nix`; public keys are in `secrets/keys.nix`.
 
 This file covers *where* each secret is declared, who can decrypt it, and how that
 changes when you add users or hosts. The commands for the SSH material (login
@@ -31,9 +31,9 @@ network. To change it: `agenix -e passwords/k3s/token.age`, then redeploy abaddo
 and then sheol (the server's etcd data is encrypted with this token, so a changed
 value needs the cluster reset steps in k3s's docs).
 
-## Who can decrypt (`secrets/secrets.nix`)
+## Who can decrypt (`secrets/agenix-rules.nix`)
 
-`secrets/keys.nix` holds the public keys; `secrets/secrets.nix` is the agenix rules
+`secrets/keys.nix` holds the public keys; `secrets/agenix-rules.nix` is the agenix rules
 file that maps each `.age` file to the keys that may decrypt it. It has two lists
 and one rule per file:
 
@@ -52,7 +52,7 @@ fails at activation, so every server must be a recipient before its first switch
 
 1. Create `users/<name>/default.nix` with its `age.secrets."passwords/users/<name>"`
    declaration and `hashedPasswordFile`.
-2. Add a rule to `secrets/secrets.nix`:
+2. Add a rule to `secrets/agenix-rules.nix`:
    `"passwords/users/<name>.age".publicKeys = hosts ++ users;`, then create the file
    with `cd secrets && agenix -e passwords/users/<name>.age`. For SSH material use
    the commands in `secrets/ssh/README.md`.
@@ -62,7 +62,7 @@ fails at activation, so every server must be a recipient before its first switch
 
 1. Install the host (see `docs/INSTALL.md`) and copy its SSH host public key into
    `secrets/keys.nix`.
-2. Add it to the `hosts` list in `secrets/secrets.nix`. That gives it every shared
+2. Add it to the `hosts` list in `secrets/agenix-rules.nix`. That gives it every shared
    secret. If it has a GitHub deploy key, add an `ssh/github/<host>.age` rule too.
 3. Re-encrypt so the existing files include the new key:
    `cd secrets && agenix -r`.
@@ -74,13 +74,13 @@ key to `hosts` (steps above) before deploying it.
 
 ## Re-keying (changing who can decrypt)
 
-After editing `hosts` or the admin recipients in `secrets/secrets.nix`, run
+After editing `hosts` or the admin recipients in `secrets/agenix-rules.nix`, run
 `agenix -r` from `secrets/` on a machine that holds a key which can already decrypt
 the files. Commit the changed `.age` files. If a host's SSH key rotates, update
 `secrets/keys.nix` first (`secrets/ssh/README.md` has the commands to compare live
 keys).
 
-A fork replaces `secrets/keys.nix` and the key lists in `secrets/secrets.nix` with
+A fork replaces `secrets/keys.nix` and the key lists in `secrets/agenix-rules.nix` with
 its own, deletes the `.age` files and creates new ones. Nothing here can be
 decrypted without the original private keys.
 

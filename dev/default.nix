@@ -65,7 +65,7 @@ let
       shellHook = ''
         ${hooks.shellHook}
         if top=$(git rev-parse --show-toplevel 2>/dev/null); then
-          export RULES="$top/secrets/secrets.nix"
+          export AGENIX_RULES="$top/secrets/agenix-rules.nix"
         fi
         unset top
       '';

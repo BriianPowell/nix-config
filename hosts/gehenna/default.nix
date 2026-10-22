@@ -5,7 +5,7 @@
 # switched. Before the first deploy:
 #   1. Install it (docs/INSTALL.md, "Gehenna (WSL)") and read its SSH host public key
 #      from /etc/ssh/ssh_host_ed25519_key.pub.
-#   2. Add that key to secrets/keys.nix and to `hosts` in secrets/secrets.nix, then
+#   2. Add that key to secrets/keys.nix and to `hosts` in secrets/agenix-rules.nix, then
 #      re-key with `agenix -r` (docs/SECRETS.md, "Adding a host"). Until then it can
 #      decrypt nothing, and the boog authorized-keys activation script
 #      (users/boog/authorized-keys.nix) fails on switch because its secret is missing.

@@ -4,11 +4,13 @@ Runbook for the SSH-related secrets. Concepts (who can decrypt, adding users and
 hosts, re-keying) are in [`docs/SECRETS.md`](../../docs/SECRETS.md).
 
 Everything here uses `agenix`, which is in the repo's dev shell (`direnv allow`, or
-`nix develop .#nix-config`). `RULES` already points at `secrets/secrets.nix`, and file
-names are relative to `secrets/`, so the commands work from anywhere in the repo.
+`nix develop .#nix-config`). `AGENIX_RULES` already points at
+`secrets/agenix-rules.nix`, and file names are relative to `secrets/`, so the commands
+work from anywhere in the repo. Outside the dev shell, run them from `secrets/` or a
+folder below it: agenix finds `agenix-rules.nix` on its own.
 
 `agenix -e <file>.age` encrypts to the recipients of that file's rule in
-`secrets.nix`. With piped input it replaces the contents without opening an editor and
+`agenix-rules.nix`. With piped input it replaces the contents without opening an editor and
 without needing a private key, which is how the commands below work. Without piped
 input it opens `$EDITOR` and needs your admin key (`-i <key>`).
 
@@ -24,7 +26,7 @@ commands below need no plaintext file in the repo.
 ## Using this if you fork the repo
 
 The `.age` files, the keys in `secrets/keys.nix` and the recipient lists in
-`secrets/secrets.nix` belong to the original owner; none of them decrypt for you.
+`secrets/agenix-rules.nix` belong to the original owner; none of them decrypt for you.
 Replace them in this order (`docs/SECRETS.md` has the concepts):
 
 1. **Make an admin key** you keep private (any ed25519 key; a hardware or password
@@ -32,9 +34,9 @@ Replace them in this order (`docs/SECRETS.md` has the concepts):
    and delete the other entries you don't use (`gitSigning`, hosts that aren't yours).
 2. **Add your hosts' keys.** Install a host first, then copy its public key from
    `/etc/ssh/ssh_host_ed25519_key.pub` into `keys.nix` and into `hosts` in
-   `secrets/secrets.nix`. A host can only decrypt after its key is listed.
+   `secrets/agenix-rules.nix`. A host can only decrypt after its key is listed.
 3. **Delete every `*.age` file**, then create your own, one command each, from the
-   repo's dev shell. Names must match the rules in `secrets/secrets.nix` (rename or add
+   repo's dev shell. Names must match the rules in `secrets/agenix-rules.nix` (rename or add
    rules for your own users and hosts):
 
    ```bash
@@ -50,7 +52,7 @@ Replace them in this order (`docs/SECRETS.md` has the concepts):
    ```
 
    Without a private key, `agenix -e` with piped input still works, because it only
-   needs the public keys in `secrets.nix`. To read a file back you need the admin key
+   needs the public keys in `agenix-rules.nix`. To read a file back you need the admin key
    (`agenix -d <file> -i <key>`).
 4. **Point the modules at your files.** The paths are in `users/<name>/`,
    `hosts/<name>/` and `sites/*.nix`; `secrets/keys.nix` is also read by `sites/*.nix`
@@ -115,7 +117,7 @@ file and the initrd pick it up) and update the login keys above.
    ```
 
 4. Repeat for abaddon. A new host also needs a rule for `ssh/github/<host>.age` in
-   `secrets.nix`. Commit the `.age` files and rebuild each host.
+   `agenix-rules.nix`. Commit the `.age` files and rebuild each host.
 5. Test on the server: `ssh -T git@github.com` (it uses `~/.ssh/github`, per
    `users/boog/ssh.config`).
 
