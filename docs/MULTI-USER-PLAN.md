@@ -295,8 +295,8 @@ workflow passes `actionlint`, but the first pull request will be its first real 
 
 ### Backlog (no order, pick as needed)
 
-Open items across the setup are tracked in
-[#23](https://github.com/BriianPowell/nix-config/issues/23).
+Open items across the setup are tracked as
+[`enhancement` issues](https://github.com/BriianPowell/nix-config/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement).
 
 - **Generate SSH aliases from the site host list.** The plain host entries and
   the `*Initrd` aliases come from one list of hosts and addresses; the k3s server
@@ -364,7 +364,7 @@ Open items across the setup are tracked in
 - **Users are an explicit list per host** (`users = [ "boog" ]`). Nothing is
   discovered or applied implicitly.
 - **`root` stays a base user on every host.** It holds nothing personal.
-- **`users/darwin` is renamed later**, in its own small PR, not in phase 1.
+- **`users/darwin` keeps its name** (decided; the Mac account name is fixed by the machine, see `users/darwin/machine.nix`).
 - **One site file per location** (`sites/home.nix`); a host imports the one that
   applies.
 - **Secrets have one admin recipient** (`keys.nixosAdmin`, also the server login

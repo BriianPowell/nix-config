@@ -232,12 +232,14 @@
         }
       );
 
-      # `nix flake check` runs the hooks and the fork acceptance check; `nix fmt`
+      # `nix flake check` runs the hooks, the fork acceptance check and the secrets
+      # consistency check; `nix fmt`
       # formats the repo.
       checks = forEachSystem (
         system: s:
         {
           pre-commit = dev.mkHooks system;
+          secrets-consistency = import ./dev/secrets-check.nix { pkgs = s.nixpkgs.legacyPackages.${system}; };
         }
         // pkgs-stable.lib.optionalAttrs (system == "x86_64-linux") {
           fork-example = forkExampleCheck s.nixpkgs.legacyPackages.${system};
