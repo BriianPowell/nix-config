@@ -1,6 +1,6 @@
 function nixos_remote -d 'Check or switch the sheol/abaddon NixOS servers from this machine'
     # Reference: https://wiki.nixos.org/wiki/Nixos-rebuild#Deploying_on_other_machines
-    argparse h/help 'f/flake=' y/yes -- $argv; or return 1
+    argparse h/help 'f/flake=' y/yes 't/timeout=' no-revert -- $argv; or return 1
 
     set -l hosts abaddon sheol # abaddon first: it is the node with less running on it
 
@@ -11,14 +11,18 @@ function nixos_remote -d 'Check or switch the sheol/abaddon NixOS servers from t
         echo "  status  show each host's installed, running, booted and boot-default generation"
         echo "  check   dry-activate: build on the server, show what would change, activate nothing"
         echo "  build   build on the server only"
-        echo "  test    activate now, without touching the bootloader (undone by a reboot)"
+        echo "  test    activate now, without touching the bootloader (undone by a reboot);"
+        echo "          reverts by itself unless you confirm in time (see --timeout)"
         echo "  switch  activate now and make it the boot default"
         echo "  boot    make it the boot default, activate on next reboot"
+        echo "  rollback  go back one generation (or undo a 'test'), activate now and make it the boot default"
         echo
         echo "Hosts: $hosts, or 'all' (default: all, in that order, stopping at the first failure)"
         echo
         echo "  -f, --flake  flake to deploy (default: ~/Code/Self/nix-config)"
-        echo "  -y, --yes    skip the confirmation for test/switch/boot"
+        echo "  -y, --yes    skip the confirmation for test/switch/boot/rollback"
+        echo "  -t, --timeout SECONDS  how long 'test' waits for you before reverting (default 300)"
+        echo "  --no-revert  'test' without the automatic revert"
         echo
         echo "Hosts are reached through the ssh aliases of the same name (user boog); sudo asks"
         echo "for your password on each. Builds run on the server, since this machine cannot"
@@ -44,12 +48,14 @@ function nixos_remote -d 'Check or switch the sheol/abaddon NixOS servers from t
     end
     set -l verb
     switch $action
+        case rollback
+            set verb rollback
         case check
             set verb dry-activate
         case build test switch boot
             set verb $action
         case '*'
-            echo "nixos_remote: unknown action '$action' (use status, check, build, test, switch or boot)" >&2
+            echo "nixos_remote: unknown action '$action' (use status, check, build, test, switch, boot or rollback)" >&2
             return 1
     end
 
@@ -64,6 +70,28 @@ function nixos_remote -d 'Check or switch the sheol/abaddon NixOS servers from t
         end
     end
 
+    if test $verb = rollback
+        if not set -q _flag_yes
+            read -l -P "rollback $targets? [y/N] " answer
+            string match -qri '^y(es)?$' -- $answer; or return 1
+        end
+        for h in $targets
+            echo "==> rollback $h"
+            __nixos_remote_rollback $h
+            or begin
+                echo "nixos_remote: rollback failed on $h; stopping" >&2
+                return 1
+            end
+        end
+        return
+    end
+
+    set -q _flag_timeout; or set _flag_timeout 300
+    string match -qr '^[0-9]+$' -- $_flag_timeout; or begin
+        echo "nixos_remote: --timeout needs a number of seconds" >&2
+        return 1
+    end
+
     set -q _flag_flake; or set _flag_flake ~/Code/Self/nix-config
     if not test -f $_flag_flake/flake.nix
         echo "nixos_remote: no flake.nix in $_flag_flake" >&2
@@ -76,7 +104,7 @@ function nixos_remote -d 'Check or switch the sheol/abaddon NixOS servers from t
 
     # A flake build uses the working tree, so uncommitted tracked changes (or another
     # branch) would be deployed too. Say so before anything activates.
-    if contains -- $verb test switch boot
+    if contains -- $verb test switch boot rollback
         set -l branch (command git -C $_flag_flake branch --show-current 2>/dev/null)
         set -l dirty (command git -C $_flag_flake status --porcelain --untracked-files=no 2>/dev/null)
         test "$branch" != main; and echo "Warning: $_flag_flake is on branch '$branch', not main"
@@ -92,20 +120,96 @@ function nixos_remote -d 'Check or switch the sheol/abaddon NixOS servers from t
     end
 
     for h in $targets
-        echo "==> nixos-rebuild $verb $h"
-        # Build on the target (--build-host) because this machine is aarch64. The
-        # nixos-rebuild comes from the flake, so it matches the flake's nixpkgs. That
-        # 26.05 build still takes --sudo/--ask-sudo-password; the --elevate spelling is
-        # newer (nixpkgs unstable) and is rejected here.
-        command nix shell "$_flag_flake#nixos-rebuild" -c nixos-rebuild $verb \
-            --flake "$_flag_flake#$h" \
-            --build-host $h --target-host $h \
-            --sudo --ask-sudo-password
+        if test $verb = test; and not set -q _flag_no_revert
+            # Build first, so the revert timer is not counting down during the build.
+            __nixos_remote_rebuild build $h $_flag_flake; or return 1
+            set -l unit nixos-remote-revert-(date +%s)
+            echo "==> arming an automatic revert on $h in $_flag_timeout seconds"
+            # The installed generation is untouched by `test`, so re-activating it is the undo.
+            command ssh -t $h sudo systemd-run --unit=$unit --on-active=$_flag_timeout \
+                --description=nixos-remote-test-revert \
+                /nix/var/nix/profiles/system/bin/switch-to-configuration test
+            or begin
+                echo "nixos_remote: could not arm the revert on $h; not activating" >&2
+                return 1
+            end
+            __nixos_remote_rebuild test $h $_flag_flake
+            or begin
+                echo "nixos_remote: test failed on $h; the revert still runs in $_flag_timeout seconds" >&2
+                return 1
+            end
+            __nixos_remote_confirm $h $unit $_flag_timeout; or return 1
+            continue
+        end
+        __nixos_remote_rebuild $verb $h $_flag_flake; or return 1
+        contains -- $verb switch boot; and __nixos_remote_verify $h $verb
+    end
+end
+
+function __nixos_remote_rebuild -a verb host flake
+    echo "==> nixos-rebuild $verb $host"
+    # Build on the target (--build-host) because this machine is aarch64. The
+    # nixos-rebuild comes from the flake, so it matches the flake's nixpkgs. That
+    # 26.05 build still takes --sudo/--ask-sudo-password; the --elevate spelling is
+    # newer (nixpkgs unstable) and is rejected here.
+    command nix shell "$flake#nixos-rebuild" -c nixos-rebuild $verb \
+        --flake "$flake#$host" \
+        --build-host $host --target-host $host \
+        --sudo --ask-sudo-password
+    or begin
+        echo "nixos_remote: $verb failed on $host; stopping" >&2
+        return 1
+    end
+end
+
+# After `test`: ask whether to keep the new configuration. If the host cannot be reached
+# (a bad change can cut ssh), or the answer is no, the armed timer reverts it.
+function __nixos_remote_confirm -a host unit secs
+    if not __nixos_remote_probe $host >/dev/null 2>&1
+        echo "Warning: $host is not answering over ssh. It reverts by itself within $secs seconds." >&2
+        return 1
+    end
+    read -l -P "$host still reachable. Keep the new configuration until reboot? [y/N] " answer
+    if string match -qri '^y(es)?$' -- $answer
+        command ssh -t $host sudo systemctl stop $unit.timer
         or begin
-            echo "nixos_remote: $verb failed on $h; stopping" >&2
+            echo "Warning: could not cancel the revert on $host; it may still run" >&2
             return 1
         end
-        contains -- $verb switch boot; and __nixos_remote_verify $h $verb
+        echo "$host: kept (a reboot undoes it; run 'nixos_remote switch $host' to make it permanent)"
+    else
+        echo "==> reverting $host now"
+        command ssh -t $host "sudo sh -c 'systemctl stop $unit.timer; systemctl start $unit.service'"
+        or begin
+            echo "Warning: could not revert $host over ssh; the timer still reverts it" >&2
+            return 1
+        end
+        echo "$host: reverted to the installed generation"
+    end
+end
+
+# `nixos_remote rollback`: a `test` deploy is undone by re-activating the installed
+# generation; otherwise go back one generation and make that the boot default.
+function __nixos_remote_rollback -a host
+    set -l out (__nixos_remote_probe $host 2>/dev/null)
+    if test $status -ne 0; or test (count $out) -eq 0
+        echo "nixos_remote: could not read $host's state over ssh" >&2
+        return 1
+    end
+    for line in $out
+        set -l kv (string split -m1 = -- $line)
+        set -f "p_$kv[1]" $kv[2]
+    end
+    if test "$p_current" != "$p_installed"
+        echo "$host runs generation $p_current, installed is $p_installed: re-activating $p_installed"
+        command ssh -t $host sudo /nix/var/nix/profiles/system/bin/switch-to-configuration test
+        or return 1
+        echo "$host: back on installed generation $p_installed"
+    else
+        echo "$host: generation $p_installed -> previous generation"
+        command ssh -t $host sudo nixos-rebuild switch --rollback
+        or return 1
+        __nixos_remote_verify $host switch
     end
 end
 

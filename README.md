@@ -60,7 +60,9 @@ request; see [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 To deploy the servers from the Mac: `nixos_remote status` shows each server's
 installed, running, booted and boot-default generation, and `nixos_remote check`,
-`switch` and the other actions deploy (`nixos_remote --help`).
+`switch` and the other actions deploy (`nixos_remote --help`). `test` arms a timer
+on the server first, so a change that cuts ssh reverts by itself (default 300 s;
+answer the prompt to keep it). `nixos_remote rollback <host>` goes back one generation.
 
 ## Nix flake packages
 
