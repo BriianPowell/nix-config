@@ -123,27 +123,20 @@ in
     '';
   };
 
-  networking.firewall = {
-    allowedTCPPorts = [
-      2381 # etcd metrics (--etcd-expose-metrics)
-      21063 # Home Assistant on k3s
+  # Home Assistant runs with hostNetwork, so these listen on the node itself and LAN devices (phones,
+  # HomeKit accessories, UPnP/SSDP gear, WebRTC viewers) must reach them. The LAN NICs are otherwise
+  # default-drop (modules/server/k3s-node.nix); the web UI 8123, etcd and metrics ports are
+  # deliberately absent here: pods and the other node reach them without a rule, everyone else uses
+  # https://hass.powell.place.
+  k3sNode = {
+    lanTCPPorts = [
+      21063 # HomeKit accessory protocol
+      18555 # go2rtc WebRTC (camera streams in the HA UI)
     ];
-    allowedUDPPorts = [
-      5353 # Home Assistant on k3s
+    lanUDPPorts = [
+      5353 # mDNS (HomeKit discovery)
+      1900 # SSDP discovery
+      18555 # go2rtc WebRTC
     ];
-
-    # Home Assistant runs with hostNetwork (HomeKit needs mDNS and 21063 on the host), so its web port
-    # 8123 listens on every address of this node. The NICs are trusted (modules/server/k3s-node.nix), which
-    # makes the allowedTCPPorts above irrelevant for LAN traffic, so close 8123 explicitly: only the pods
-    # (Traefik, Prometheus), abaddon (its pods leave through its node IP) and this host may use it.
-    # Everyone else goes through https://hass.powell.place. extraCommands run after the trusted-interface
-    # accept, so the rules are inserted at the top of the chain; each -I 1 goes in front of the previous
-    # one, so the order that ends up in the chain is: accept abaddon, accept pods, accept loopback, drop.
-    extraCommands = ''
-      iptables -w -I nixos-fw 1 -p tcp --dport 8123 -j DROP
-      iptables -w -I nixos-fw 1 -p tcp --dport 8123 -s 127.0.0.0/8 -j ACCEPT
-      iptables -w -I nixos-fw 1 -p tcp --dport 8123 -s 10.42.0.0/16 -j ACCEPT
-      iptables -w -I nixos-fw 1 -p tcp --dport 8123 -s ${config.site.hosts.abaddon.ip} -j ACCEPT
-    '';
   };
 }
