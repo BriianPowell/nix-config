@@ -80,6 +80,18 @@ in
         "cni0"
         "lo"
       ];
+      # node-exporter runs with hostNetwork/hostPort 9100 on every node, and the trusted NICs above
+      # would let the whole LAN read its host metrics. Only Prometheus (a pod, 10.42.0.0/16, or a pod
+      # on the other node, which leaves through that node's IP) and the nodes themselves may scrape it.
+      # extraCommands run after the trusted-interface accept, so the rules go at the top of the
+      # chain; each -I 1 lands in front of the previous one (final order: accepts, then drop).
+      extraCommands = ''
+        iptables -w -I nixos-fw 1 -p tcp --dport 9100 -j DROP
+        iptables -w -I nixos-fw 1 -p tcp --dport 9100 -s 127.0.0.0/8 -j ACCEPT
+        iptables -w -I nixos-fw 1 -p tcp --dport 9100 -s 10.42.0.0/16 -j ACCEPT
+        iptables -w -I nixos-fw 1 -p tcp --dport 9100 -s ${config.site.hosts.sheol.ip} -j ACCEPT
+        iptables -w -I nixos-fw 1 -p tcp --dport 9100 -s ${config.site.hosts.abaddon.ip} -j ACCEPT
+      '';
     };
   };
 }

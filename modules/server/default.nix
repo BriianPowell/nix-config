@@ -6,6 +6,7 @@
     ../openssh.nix
     ../security.nix
     ../site.nix
+    ../tailscale.nix
     ./base.nix
     ./boot.nix
     ./hardware.nix
