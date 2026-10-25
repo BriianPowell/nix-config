@@ -60,7 +60,6 @@ let
     "stay"
     # "steam" # Blocked on Firm laptop
     "sublime-text"
-    "tailscale-app"
     "typora"
     "visual-studio-code"
     "webull"

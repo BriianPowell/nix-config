@@ -3,6 +3,12 @@
 `modules/tailscale.nix` is an opt-in NixOS module (off by default; the server role
 imports it). Tracking issue: [#70](https://github.com/BriianPowell/nix-config/issues/70).
 
+**Status: not used on my hosts.** I tried it on one node and removed it again: a device
+policy on the machine I use most blocks Tailscale's system extension, and the UDM's
+WireGuard server already covers remote access. The module stays for anyone who wants
+it. It was last used with the steps below; nothing in this repo creates the auth key
+or the secret for you.
+
 ## Design
 
 - Servers join with a **tagged, pre-approved auth key**, so they belong to a tag, not to
