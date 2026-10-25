@@ -52,6 +52,11 @@ in
     unitConfig.StartLimitIntervalSec = 0;
     serviceConfig = {
       Type = "oneshot";
+      # Same owner as the media apps (media-user.nix), so extracted files are not root-owned and
+      # Sonarr/Radarr (PUID 1500) can import and delete them. Needs the download tree to be owned
+      # by this user first.
+      User = "media";
+      Group = "media";
       ExecStart = unpackScript;
       Nice = 19;
       IOSchedulingClass = "idle";
