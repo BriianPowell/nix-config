@@ -18,6 +18,7 @@ in
   "passwords/users/root.age".publicKeys = hosts ++ users;
   "passwords/k3s/token.age".publicKeys = hosts ++ users;
   "ssh/authorized_keys/boog.age".publicKeys = hosts ++ users;
+  "tailscale/auth-key.age".publicKeys = hosts ++ users;
 
   "ssh/github/sheol.age".publicKeys = [ keys.sheol ] ++ users;
   "ssh/github/abaddon.age".publicKeys = [ keys.abaddon ] ++ users;
