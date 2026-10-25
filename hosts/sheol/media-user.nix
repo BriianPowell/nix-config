@@ -1,4 +1,4 @@
-{ _ }:
+_:
 
 # Owner of the shared media files under /mnt/moriyya/media (the dataset the k3s media apps mount
 # as /data, plus each app's config directory). The same numbers are used as PUID/PGID in
