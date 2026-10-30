@@ -92,6 +92,18 @@ in
       '';
     };
 
+    requestTimeout = lib.mkOption {
+      type = lib.types.ints.positive;
+      default = 1800000;
+      description = ''
+        Milliseconds OpenCode waits for a response from the local server, and between
+        streamed chunks. The default is 5 minutes, but a large local model can spend
+        longer reading a long prompt before its first token, or queue a request behind
+        another one when the server has a single slot (-np 1). A timed-out request is
+        retried, which repeats the same wait.
+      '';
+    };
+
     providerName = lib.mkOption {
       type = lib.types.str;
       default = "llama";
@@ -273,6 +285,8 @@ in
             name = "llama.cpp (local)";
             options = {
               inherit (cfg) baseURL apiKey;
+              timeout = cfg.requestTimeout;
+              chunkTimeout = cfg.requestTimeout;
             };
             inherit (cfg) models;
           };
