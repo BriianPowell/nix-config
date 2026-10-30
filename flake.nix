@@ -40,6 +40,12 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Declarative disk layouts for reinstalling sheol/abaddon (see diskoConfigurations).
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -54,6 +60,7 @@
       darwin,
       nixos-wsl,
       git-hooks,
+      disko,
       ...
     }:
     let
@@ -193,6 +200,28 @@
           role = ./modules/server;
           users = [ "boog" ];
         };
+        # Same hosts, with the disko layout from hosts/<host>/disko.nix added, for a
+        # wipe-and-reinstall with nixos-anywhere (docs/INSTALL.md, "Reinstall with
+        # nixos-anywhere"). The running hosts above keep their UUID mounts; here
+        # disko's mounts win (hardware.nix and boot.nix only set defaults). A
+        # reinstall gets new UUIDs, so update `server.disks` and `server.luksUuid`
+        # afterwards, before the next switch of the real host.
+        sheol-install = mkLinuxHost "sheol" {
+          role = ./modules/server;
+          users = [ "boog" ];
+          extraModules = [
+            disko.nixosModules.disko
+            ./hosts/sheol/disko.nix
+          ];
+        };
+        abaddon-install = mkLinuxHost "abaddon" {
+          role = ./modules/server;
+          users = [ "boog" ];
+          extraModules = [
+            disko.nixosModules.disko
+            ./hosts/abaddon/disko.nix
+          ];
+        };
         gehenna = mkLinuxHost "gehenna" {
           users = [ "boog" ];
           extraModules = [ nixos-wsl.nixosModules.default ];
@@ -235,8 +264,13 @@
       # `nixos_remote` fish function). Pinned here so it matches the flake's nixpkgs
       # rather than whatever the `nixpkgs` registry entry points to.
       packages = forEachSystem (
-        system: s: {
+        system: s:
+        {
           nixos-rebuild = s.nixpkgs.legacyPackages.${system}.nixos-rebuild-ng;
+        }
+        # The disko CLI, pinned by the lockfile, for use from the installer.
+        // pkgs-stable.lib.optionalAttrs (system == "x86_64-linux") {
+          inherit (disko.packages.${system}) disko;
         }
       );
 

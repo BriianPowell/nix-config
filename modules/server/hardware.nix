@@ -31,21 +31,23 @@ in
   };
 
   config = {
+    # mkDefault so a disko layout (the <host>-install configurations) can take over
+    # the mounts; a host that does not use disko gets exactly these.
     fileSystems."/" = {
-      device = "/dev/disk/by-uuid/${cfg.root}";
-      fsType = "ext4";
+      device = lib.mkDefault "/dev/disk/by-uuid/${cfg.root}";
+      fsType = lib.mkDefault "ext4";
       options = opts;
     };
 
     fileSystems."/boot/efi" = {
-      device = "/dev/disk/by-uuid/${cfg.efi}";
-      fsType = "vfat";
+      device = lib.mkDefault "/dev/disk/by-uuid/${cfg.efi}";
+      fsType = lib.mkDefault "vfat";
       options = opts;
     };
 
     fileSystems."/home" = {
-      device = "/dev/disk/by-uuid/${cfg.home}";
-      fsType = "btrfs";
+      device = lib.mkDefault "/dev/disk/by-uuid/${cfg.home}";
+      fsType = lib.mkDefault "btrfs";
       options = opts;
     };
 

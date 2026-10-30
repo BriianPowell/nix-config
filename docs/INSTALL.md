@@ -6,6 +6,7 @@ Host-specific install and recovery notes for this flake. Day-to-day rebuild comm
 
 - [Sheol (NixOS)](#sheol-nixos)
 - [Abaddon (NixOS)](#abaddon-nixos)
+- [Reinstall with nixos-anywhere](#reinstall-with-nixos-anywhere)
 - [Recovering from a bad time](#recovering-from-a-bad-time)
 - [Failed FDE password (GRUB rescue)](#failed-fde-password-grub-rescue)
 - [Gehenna (WSL)](#gehenna-wsl)
@@ -166,6 +167,84 @@ Host-specific install and recovery notes for this flake. Day-to-day rebuild comm
    sudo nixos-install
    reboot
    ```
+
+## Reinstall with nixos-anywhere
+
+A wipe-and-reinstall of sheol or abaddon in one command, instead of the manual steps
+above. It uses the `sheol-install` and `abaddon-install` configurations in `flake.nix`:
+the normal host plus the disk layout in `hosts/<host>/disko.nix`
+(`hosts/disko-luks-lvm.nix`). The running hosts are unchanged; they still mount by UUID.
+
+**This destroys the boot disk named in `hosts/<host>/disko.nix`.** Sheol's `moriyya`
+ZFS pool disks are not in the layout and are not touched. Back up first.
+
+What the layout makes: GPT with an ESP at `/boot/efi` and a LUKS2 volume named `root`
+holding LVM `vg` (`root` ext4, `home` btrfs), like the manual guide. It differs in two
+ways: LUKS2 instead of LUKS1 (the hosts boot with systemd-boot, not GRUB), and no
+initrd key file (`boot.nix` does not use one).
+
+### Before
+
+1. Check that the disk in `hosts/<host>/disko.nix` (a `/dev/disk/by-id` path) is the
+   one you mean. `homeSize` is the fixed size of `/home`; `/` gets the rest.
+2. Save the machine's host keys, so the reinstall keeps its identity. Agenix decrypts
+   with the SSH host key, and your `<host>Initrd` ssh alias expects the same initrd key.
+   Without them the new install cannot read its secrets and you must re-key
+   (`secrets/ssh/README.md`). Run this while the old system is still up:
+
+   ```sh
+   umask 077
+   mkdir -p ~/reinstall-<host>/etc/ssh ~/reinstall-<host>/etc/secrets/initrd
+   ssh <host> sudo tar -C / -cf - etc/ssh/ssh_host_ed25519_key etc/ssh/ssh_host_ed25519_key.pub \
+     etc/secrets/initrd | tar -C ~/reinstall-<host> -xf -
+   ```
+
+   Keep this directory out of git and delete it afterwards. It holds private keys.
+3. Choose the LUKS passphrase and put it in a local file outside the `--extra-files` directory (anything inside it is copied onto the
+   new system) that you delete afterwards:
+
+   ```sh
+   umask 077
+   read -s -P "LUKS passphrase: " p; printf '%s' $p > ~/reinstall-<host>.luks
+   ```
+
+### Run
+
+The target must accept ssh as root, either the NixOS installer or a Linux system
+nixos-anywhere can kexec from. Building an x86_64-linux system on the Mac needs
+`--build-on remote` (or a Linux builder).
+
+```sh
+nix run nixpkgs#nixos-anywhere -- \
+  --flake .#<host>-install \
+  --build-on remote \
+  --extra-files ~/reinstall-<host> \
+  --disk-encryption-keys /tmp/luks-passphrase ~/reinstall-<host>.luks \
+  --target-host root@<address>
+```
+
+`--extra-files` takes a directory whose contents are copied to `/` of the new system, so
+point it at `~/reinstall-<host>` (it contains `etc/ssh` and `etc/secrets`), not at `etc`.
+Check the flags with `nixos-anywhere --help`; they come from nixos-anywhere 1.13.
+`--vm-test` builds the system and tests the disk layout in a VM without touching the
+machine, but it needs a Linux builder.
+
+### After
+
+1. The new filesystems have new UUIDs, and the initrd opens the LUKS volume by UUID.
+   The `<host>-install` configuration uses disko's labels instead, so the machine boots,
+   but the normal host configuration still has the old values. Read the new ones on the
+   machine and update `hosts/<host>/hardware.nix` (`server.disks.*`) and `server.luksUuid` in
+   `hosts/<host>/boot.nix`:
+
+   ```sh
+   ssh <host> 'lsblk -o NAME,UUID,FSTYPE'
+   ```
+
+2. Switch to the normal configuration with `nixos_remote switch <host>`, which also
+   confirms the secrets still decrypt.
+3. Unlock check: reboot and unlock over `ssh <host>Initrd`.
+4. Delete `~/reinstall-<host>` and `~/reinstall-<host>.luks`.
 
 ## Recovering from a bad time
 

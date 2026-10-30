@@ -55,7 +55,8 @@ in
       initrd = {
         systemd.enable = true;
 
-        luks.devices.root.device = "/dev/disk/by-uuid/${cfg.luksUuid}";
+        # mkDefault so a disko layout can point this at its own partition.
+        luks.devices.root.device = lib.mkDefault "/dev/disk/by-uuid/${cfg.luksUuid}";
 
         network = {
           enable = true;
