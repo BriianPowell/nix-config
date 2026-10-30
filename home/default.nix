@@ -3,6 +3,7 @@
 }:
 {
   imports = [
+    ./modules/agents.nix
     ./modules/atuin.nix
     ./modules/bettertouchtool.nix
     ./modules/displayplacer.nix
@@ -11,6 +12,8 @@
     ./modules/fish.nix
     ./modules/git.nix
     ./modules/iterm2.nix
+    ./modules/llm.nix
+    ./modules/opencode.nix
     ./modules/rectangle.nix
     ./modules/ssh.nix
     ./modules/tmux.nix

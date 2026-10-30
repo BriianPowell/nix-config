@@ -46,6 +46,11 @@
     ripgrep # https://github.com/BurntSushi/ripgrep
     trivy
 
+    # AI
+    llama-cpp # https://github.com/ggml-org/llama.cpp
+    opencode # https://opencode.ai/
+    python3Packages.huggingface-hub # https://huggingface.co/docs/huggingface_hub (provides `hf` CLI)
+
     # DevOps
     ansible
     fluxcd

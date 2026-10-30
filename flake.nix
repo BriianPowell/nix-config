@@ -89,6 +89,14 @@
                   })
                 )
                 mas
+                # Stable llama.cpp lags on newer model architectures; unstable keeps model support current.
+                llama-cpp
+                # OpenCode moves fast; the stable channel lacks newer agent, skill and permission features.
+                opencode
+                # Newer than the stable channel, which also has no graphify.
+                graphify
+                context7-mcp
+                github-mcp-server
                 ;
             })
           ];
