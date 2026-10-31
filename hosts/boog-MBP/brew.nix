@@ -83,8 +83,12 @@ in
   homebrew = {
     enable = true;
     onActivation = {
-      autoUpdate = false;
-      upgrade = false;
+      # Every `darwin-rebuild switch` refreshes Homebrew and upgrades what is listed here,
+      # so apps follow the weekly flake.lock update. This is not pinned or reviewed: an
+      # upgrade that breaks an app shows up on the switch that applied it. Casks that update
+      # themselves (not `--greedy`) are left to their own updater.
+      autoUpdate = true;
+      upgrade = true;
       cleanup = "zap";
     };
     taps = lib.unique (baseTaps ++ hb.extraTaps);

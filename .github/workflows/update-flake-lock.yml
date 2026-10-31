@@ -1,0 +1,91 @@
+# Weekly flake.lock update, opened as a pull request.
+#
+# Renovate runs in the k3s-collective cluster, which has no Nix and deliberately cannot run
+# commands from a repository, so it cannot update flake.lock. This job does it on a GitHub runner.
+#
+# Who opens the PR: the GitHub App `nix-config-lock-updater` (installed on this repository
+# only: Contents, Pull requests and Metadata). The workflow mints a short-lived installation
+# token from the repository variable FLAKE_LOCK_APP_ID and the secret FLAKE_LOCK_APP_KEY. A PR
+# opened with the default GITHUB_TOKEN would not start other workflows; one opened by an App does,
+# so ci.yml (check, compare, and closure when labelled) runs on it like any other PR.
+#
+# The PR body lists every input that changed, from the update action's commit message (old and
+# new revision with dates).
+#
+# Needs repository setting: Settings > Actions > General > "Allow GitHub Actions to create and
+# approve pull requests".
+#
+# References:
+# https://github.com/DeterminateSystems/update-flake-lock
+name: Update flake.lock
+
+on:
+  schedule:
+    - cron: '0 14 * * 1'
+  workflow_dispatch:
+
+# The App token does the writing; the workflow's own token only needs to read.
+permissions:
+  contents: read
+
+concurrency:
+  group: update-flake-lock
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        id: app-token
+        with:
+          app-id: ${{ vars.FLAKE_LOCK_APP_ID }}
+          private-key: ${{ secrets.FLAKE_LOCK_APP_KEY }}
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+      - uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31.11.2
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ github.token }}
+      - uses: DeterminateSystems/update-flake-lock@da03c0f078bc4b2c37ee4f7e072d34bf8f188bb3 # v29
+        id: update
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          branch: update-flake-lock
+          commit-msg: 'flake.lock: update inputs'
+          pr-title: 'flake.lock: update inputs'
+          pr-labels: dependencies
+          pr-reviewers: BriianPowell
+          # {{ env.GIT_COMMIT_MESSAGE }} is the commit message plus one line per updated input.
+          pr-body: |
+            Weekly `flake.lock` update, opened by the `Update flake.lock` workflow.
+
+            ```
+            {{ env.GIT_COMMIT_MESSAGE }}
+            ```
+
+            Each `Updated input` line shows the old and new revision with its date. To read what
+            changed upstream, open the repository at the two revisions (for nixpkgs:
+            `https://github.com/NixOS/nixpkgs/compare/<old>...<new>`).
+
+            ### Before merging
+
+            - Wait for `check` (nix flake check) and read the `compare` comment, which says which
+              hosts would build differently. Add the `closure-diff` label for a closure diff.
+            - After merging, `git pull`, then `darwin-rebuild switch` for the Mac and
+              `nixos_remote check <host>` before `switch` for sheol and abaddon.
+
+      - name: Summary
+        if: always()
+        env:
+          OPERATION: ${{ steps.update.outputs.pull-request-operation }}
+          URL: ${{ steps.update.outputs.pull-request-url }}
+        run: |
+          {
+            echo "### flake.lock update"
+            echo
+            echo "- Pull request: ${OPERATION:-none} ${URL}"
+          } >> "$GITHUB_STEP_SUMMARY"
