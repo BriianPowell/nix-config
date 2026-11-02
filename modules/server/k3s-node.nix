@@ -61,7 +61,7 @@ in
 
   config = {
     environment.systemPackages = [
-      pkgs.k3s
+      config.services.k3s.package
       (pkgs.writeShellScriptBin "k3s-reset-node" (builtins.readFile ../../scripts/k3s-reset-node))
       (pkgs.writeShellScriptBin "k3s-remove-unused-rs" (
         builtins.readFile ../../scripts/k3s-remove-unused-rs
@@ -74,6 +74,10 @@ in
 
     services.k3s = {
       enable = true;
+      # Pinned to one minor so a flake.lock update never jumps the cluster a minor by itself. Upgrade one
+      # minor at a time, server first. Keep the kubectl cap in k3s-collective's renovate.json within one
+      # minor of this.
+      package = pkgs.k3s_1_36;
       tokenFile = lib.mkIf (cfg.tokenSecret != null) config.age.secrets."passwords/k3s/token".path;
       extraFlags = toString (
         [

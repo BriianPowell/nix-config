@@ -43,6 +43,7 @@ let
     # "logi-options+" # Not good software
     # "microsoft-teams"
     "nextcloud"
+    "obsidian"
     "parsec"
     "pgadmin4"
     "podman-desktop" # Using Docker Desktop for the time being
