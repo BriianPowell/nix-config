@@ -14,6 +14,8 @@ name: CI
 
 on:
   pull_request:
+    # `labeled` is not a default type; without it, adding `closure-diff` runs nothing.
+    types: [opened, synchronize, reopened, labeled]
   push:
     branches: [main]
 
@@ -21,11 +23,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  # Label events get their own group so adding a label (the update bot adds one right
+  # after opening the PR) does not cancel the check and compare runs already in flight.
+  group: ci-${{ github.workflow }}-${{ github.ref }}-${{ github.event.action == 'labeled' && 'label' || 'code' }}
   cancel-in-progress: true
 
 jobs:
   check:
+    # Labeling does not change the code, so only the closure job reacts to it.
+    if: github.event.action != 'labeled'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -39,7 +45,7 @@ jobs:
         run: nix flake check --print-build-logs
 
   compare:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.action != 'labeled'
     strategy:
       fail-fast: false
       matrix:
@@ -90,7 +96,11 @@ jobs:
           fi
 
   closure:
-    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'closure-diff')
+    # On a label event, run only for `closure-diff` itself, not for unrelated labels.
+    if: >-
+      github.event_name == 'pull_request'
+      && contains(github.event.pull_request.labels.*.name, 'closure-diff')
+      && (github.event.action != 'labeled' || github.event.label.name == 'closure-diff')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
