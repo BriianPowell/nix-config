@@ -1,7 +1,10 @@
 # Home Manager profile for Brian_Powell (macOS), on top of users/common/home.nix.
 { config, ... }:
 {
-  agents.enable = true;
+  agents = {
+    enable = true;
+    notify.enable = true;
+  };
   opencode = {
     enable = true;
     graphify.enable = true;

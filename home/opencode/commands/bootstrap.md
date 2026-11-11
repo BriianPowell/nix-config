@@ -15,12 +15,22 @@ before every step that changes the repo. Never read or print secrets (`.env`,
    which is globally git-ignored. Do not run any semantic or LLM extraction.
 3. Read `graphify-out/GRAPH_REPORT.md`. Use `graphify explain` and `graphify query` for
    anything unclear instead of reading many files.
-4. Draft an `AGENTS.md` (or propose edits to the existing one): what the repo is, how
+4. Draft an `AGENTS.md` (or propose edits to the existing one; `repo_init` leaves a
+   skeleton with TODO placeholders to replace). `CLAUDE.md` should contain only
+   `@AGENTS.md` so Claude Code reads the same file. Content: what the repo is, how
    to build, test and format it, the main modules and how they relate, conventions
    that can be seen in the code, and what must not be touched. Mark anything you
-   inferred rather than saw. Show the draft and ask before writing it.
+   inferred rather than saw. A "Verify before you finish" section is mandatory: the
+   exact lint, test and build commands, copied from CI config, package scripts or the
+   Makefile, which the agent must run and report before calling a task done. If none
+   can be found, write "none found" instead of guessing, and say so in your summary.
+   Keep the file to about 100 lines; follow the "Size and structure" rules in the
+   `repo-bootstrap` skill. Show the draft and ask before writing it.
 5. Offer, but do not do unprompted: `graphify hook install` (git hooks that rebuild the
    graph on commit/checkout/merge, which edits `.git/hooks`).
-6. Finish with a short list of what changed and what is left for the user.
+6. Tell the user that `AGENTS.md` only stays useful if it changes with the code: later
+   changes that alter a documented command, directory or convention should update it in
+   the same commit.
+7. Finish with a short list of what changed and what is left for the user.
 
 $ARGUMENTS

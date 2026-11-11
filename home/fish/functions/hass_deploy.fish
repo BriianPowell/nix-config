@@ -30,13 +30,21 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
     set -l check_cmd kubectl -n $ns exec deploy/homeassistant -- \
         python3 -m homeassistant --script check_config -c /config
 
+    # The UI editors write these and they are git-ignored, but older commits tracked them, so a pull
+    # or reset across that change would delete or overwrite them. Copy them aside before touching
+    # the clone and put them back after (an empty file if one never existed: the config includes them).
+    set -l ui_files automations.yaml scenes.yaml scripts.yaml
+    set -l ui_backup /tmp/hass_deploy-ui
+    set -l save_ui "cd $dir && rm -rf $ui_backup && mkdir -p $ui_backup && for f in $ui_files; do if [ -e \$f ]; then cp -p \$f $ui_backup/; fi; done && t=\$(git ls-files $ui_files) && { [ -z \"\$t\" ] || git checkout -q -- \$t; }"
+    set -l restore_ui "cd $dir && for f in $ui_files; do if [ -e $ui_backup/\$f ]; then cp -p $ui_backup/\$f \$f; elif [ ! -e \$f ]; then if [ \$f = automations.yaml ]; then echo '[]' > \$f; else : > \$f; fi; fi; done"
+
     echo "==> fetching $host:$dir"
     command ssh $host "git -C $dir fetch --quiet origin"; or begin
         echo "hass_deploy: could not fetch on $host" >&2
         return 1
     end
 
-    set -l dirty (command ssh $host "git -C $dir status --porcelain --untracked-files=no")
+    set -l dirty (command ssh $host "git -C $dir status --porcelain --untracked-files=no" | string match -rv '^.. (automations|scenes|scripts)\.yaml$')
     if test (count $dirty) -gt 0
         echo "hass_deploy: uncommitted changes in $dir on $host; resolve them there first:" >&2
         printf '  %s\n' $dirty >&2
@@ -65,10 +73,15 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
 
     if test "$old" != "$upstream"
         echo "==> pulling"
+        command ssh $host $save_ui; or begin
+            echo "hass_deploy: could not back up the UI-owned files on $host; nothing changed" >&2
+            return 1
+        end
         command ssh $host "git -C $dir pull --ff-only --quiet"; or begin
             echo "hass_deploy: pull failed (not a fast-forward?); nothing changed" >&2
             return 1
         end
+        command ssh $host $restore_ui
     end
 
     echo "==> Home Assistant config check"
@@ -78,6 +91,7 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
         if test "$old" != "$upstream"
             echo "Putting the clone back at $(string sub -l 8 $old)." >&2
             command ssh $host "git -C $dir reset --hard $old" >/dev/null
+            command ssh $host $restore_ui
         end
         echo "Home Assistant was not restarted." >&2
         return 1
@@ -93,7 +107,7 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
     if test (count $changed) -gt 0
         set reloadable_only 1
         for f in $changed
-            if not string match -qr '^(automations|lovelace|themes|www|blueprints)/|^includes/(scripts|scenes|templates)' -- $f
+            if not string match -qr '^(automations|lovelace|themes|www|blueprints)/|^includes/templates/|^ui-lovelace\.yaml$' -- $f
                 set reloadable_only 0
                 break
             end

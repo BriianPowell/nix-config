@@ -3,7 +3,7 @@
 }:
 {
   imports = [
-    ./modules/agents.nix
+    ./modules/agents
     ./modules/atuin.nix
     ./modules/bettertouchtool.nix
     ./modules/displayplacer.nix
@@ -13,7 +13,7 @@
     ./modules/git.nix
     ./modules/iterm2.nix
     ./modules/llm.nix
-    ./modules/opencode.nix
+    ./modules/opencode
     ./modules/rectangle.nix
     ./modules/ssh.nix
     ./modules/tmux.nix

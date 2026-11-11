@@ -103,9 +103,13 @@ in
       "fish/functions/gitclcd.fish".source = "${fishDir}/functions/gitclcd.fish";
       "fish/functions/hass_deploy.fish".source = "${fishDir}/functions/hass_deploy.fish";
       "fish/functions/envrc_init.fish".source = "${fishDir}/functions/envrc_init.fish";
+      "fish/functions/repo_init.fish".source = "${fishDir}/functions/repo_init.fish";
       "fish/functions/k3s_kubeconfig.fish".source = "${fishDir}/functions/k3s_kubeconfig.fish";
       "fish/functions/mkdir.fish".source = "${fishDir}/functions/mkdir.fish";
       "fish/functions/nixos_remote.fish".source = "${fishDir}/functions/nixos_remote.fish";
+      # direnv loads every file in direnv/lib/; `use_nvmrc` puts the repo's pinned Node
+      # (installed by nvm.fish above) on PATH, since nvm.fish does not switch on `cd`.
+      "direnv/lib/use_nvmrc.sh".source = ../direnv/use_nvmrc.sh;
       "fish/conf.d/00-tide-config.fish".source = "${fishDir}/conf.d/00-tide-config.fish";
       "fish/conf.d/z-tide-reload.fish".source = "${fishDir}/conf.d/z-tide-reload.fish";
     }

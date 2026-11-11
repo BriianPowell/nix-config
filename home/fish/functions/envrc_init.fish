@@ -39,7 +39,11 @@ function envrc_init -d 'Create an .envrc that loads a dev shell from the nix-con
     # .git/info/exclude is local to this clone, so no tracked file changes.
     set -l exclude (command git rev-parse --path-format=absolute --git-path info/exclude)
     command mkdir -p (dirname $exclude)
-    grep -qxF .envrc $exclude 2>/dev/null; or echo .envrc >>$exclude
+    # .direnv/ is nix-direnv's cache (copies of flake inputs, a profile). A repo that does
+    # not ignore it shows it as untracked, and a `git add .` would stage all of it.
+    for entry in .envrc .direnv/
+        grep -qxF $entry $exclude 2>/dev/null; or echo $entry >>$exclude
+    end
 
     echo "Wrote $target:"
     command cat $target

@@ -19,7 +19,12 @@ modules/               # Shared NixOS roles and common config
 sites/                 # Location values (addresses, admin keys)
   └─ home.nix          # My home network config
 home/                  # Home Manager modules (option namespaces)
-  ├─ modules/          # One namespace per app (fish, git, iter2, etc.)
+  ├─ modules/          # One namespace per app (fish, git, iter2, etc.); big ones are directories
+  │   ├─ agents/       # Shared AI-agent setup (see "Agent Harnesses")
+  │   └─ opencode/     # OpenCode config, split like agents/
+  ├─ opencode/         # Commands, skills, plugins shared by every harness
+  ├─ fish/functions/   # Fish functions (repo_init, envrc_init, nixos_remote, ...)
+  ├─ direnv/           # direnv helpers (use_nvmrc)
   └─ default.nix       # Imports all modules; enabled via `<app>.enable`
 users/                 # User accounts and personal config
   ├─ <name>/           # Per-user: account, secrets, home-manager hooks
@@ -56,6 +61,7 @@ flake.nix (darwinConfigurations.boog-MBP)
 ### Home Manager Modules
 ```
 home/modules/*.nix     # Defines option namespace (e.g., fish.enable, fish.prompts)
+home/modules/<app>/    # Same, split by concern when a module grows (default.nix imports the rest)
 users/common/home.nix  # Enables shared modules for all accounts
 users/<name>/home.nix  # Per-user overrides and personal values
 ```
@@ -144,9 +150,23 @@ No defaults—must be provided by each host:
 5. **Test locally**: `nix flake check` and `scripts/derivation-fingerprint compare`
 6. **Deploy**: Use `nixos_remote` for servers, `darwin-rebuild` for Mac
 
+## Agent Harnesses
+
+Claude Code, Cursor, VS Code Copilot and OpenCode share one setup (`agents.enable`, `opencode.enable`):
+- `home/modules/agents/`: `context.nix` writes the machine context (`~/.claude/CLAUDE.md`,
+  OpenCode's `AGENTS.md`, `~/.config/agents/machine.md`); `guardrails.nix` (`agents.protect`)
+  becomes Claude's `settings.json` deny/ask rules and OpenCode's `permission`; `notify.nix`
+  (`agents.notify.enable`, macOS only) adds desktop-notification hooks for Claude Code
+  (Cursor imports them) and Copilot. OpenCode has its own plugin.
+- `home/modules/opencode/`: provider and models (`default.nix`), `permission.nix`, `mcp.nix`, `graphify.nix`.
+- `home/opencode/`: `/bootstrap` command and skills, linked into every harness; `notify.js` is OpenCode's.
+- `repo_init` (fish) bootstraps a new repo: `.envrc`, `AGENTS.md`, `CLAUDE.md` (`@AGENTS.md`).
+- The generated machine files embed this checkout's path and package list. After changing a module,
+  render the files before and after with `nix eval` and compare them rather than reading the diff.
+
 ## Code Graph
 
-`graphify-out/` contains a code graph (204 nodes, 33 communities). Run:
+`graphify-out/` contains a code graph (see `graphify-out/GRAPH_REPORT.md`). Run:
 - `graphify query "<question>"` for semantic questions
 - `graphify update .` after code changes (offline, no LLM needed)
 
@@ -164,4 +184,5 @@ No defaults—must be provided by each host:
 
 ## Local LLM
 
-This repo includes extensive local LLM setup guides (the largest documentation community). See `LLM_Setup_Guide.md` for Ollama, llama.cpp, MLX, llama-swap, and OpenCode integration.
+The `llm.*` options (`home/modules/llm.nix`) run llama-swap; `opencode.*` reads the same model list.
+Details are in the comments at the top of those two modules.
