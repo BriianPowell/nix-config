@@ -44,6 +44,7 @@ let
     # "microsoft-teams"
     "nextcloud"
     "obsidian"
+    "openwhispr"
     "parsec"
     "pgadmin4"
     "podman-desktop" # Using Docker Desktop for the time being
