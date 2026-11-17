@@ -33,6 +33,8 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
     # The UI editors write these and they are git-ignored, but older commits tracked them, so a pull
     # or reset across that change would delete or overwrite them. Copy them aside before touching
     # the clone and put them back after (an empty file if one never existed: the config includes them).
+    # These are POSIX sh, piped to `sh` on stdin: the login shell on $host is fish, which would
+    # reject them as an ssh command string.
     set -l ui_files automations.yaml scenes.yaml scripts.yaml
     set -l ui_backup /tmp/hass_deploy-ui
     set -l save_ui "cd $dir && rm -rf $ui_backup && mkdir -p $ui_backup && for f in $ui_files; do if [ -e \$f ]; then cp -p \$f $ui_backup/; fi; done && t=\$(git ls-files $ui_files) && { [ -z \"\$t\" ] || git checkout -q -- \$t; }"
@@ -73,7 +75,7 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
 
     if test "$old" != "$upstream"
         echo "==> pulling"
-        command ssh $host $save_ui; or begin
+        printf '%s\n' $save_ui | command ssh $host sh; or begin
             echo "hass_deploy: could not back up the UI-owned files on $host; nothing changed" >&2
             return 1
         end
@@ -81,7 +83,7 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
             echo "hass_deploy: pull failed (not a fast-forward?); nothing changed" >&2
             return 1
         end
-        command ssh $host $restore_ui
+        printf '%s\n' $restore_ui | command ssh $host sh
     end
 
     echo "==> Home Assistant config check"
@@ -91,7 +93,7 @@ function hass_deploy -d 'Pull hass-config on sheol, check it with Home Assistant
         if test "$old" != "$upstream"
             echo "Putting the clone back at $(string sub -l 8 $old)." >&2
             command ssh $host "git -C $dir reset --hard $old" >/dev/null
-            command ssh $host $restore_ui
+            printf '%s\n' $restore_ui | command ssh $host sh
         end
         echo "Home Assistant was not restarted." >&2
         return 1
