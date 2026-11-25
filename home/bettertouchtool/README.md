@@ -1,6 +1,6 @@
 # BetterTouchTool configuration (per user)
 
-Managed by `home/modules/bettertouchtool.nix`. Cask: `hosts/boog-MBP/brew.nix`.
+Managed by `home/modules/bettertouchtool.nix`. Cask: `hosts/<host>/brew.nix`.
 
 ## One-time BTT setup (required for automatic import)
 
@@ -18,7 +18,7 @@ Test the socket:
 If that prints a value (e.g. `0`) instead of an error, rebuild:
 
 ```bash
-darwin-rebuild switch --flake .#boog-MBP
+darwin-rebuild switch --flake .#<host>
 ```
 
 ## Per-user setup
@@ -28,19 +28,19 @@ darwin-rebuild switch --flake .#boog-MBP
 {
   bettertouchtool = {
     enable = true;
-    presetFile = ../../home/bettertouchtool/BooG.bttpreset;
+    presetFile = ./bettertouchtool/BooG.bttpreset;
   };
 }
 ```
 
 ## Export / update preset
 
-BTT → **Presets** → **Export** → save as `home/bettertouchtool/BooG.bttpreset` (or `.json`), then rebuild.
+BTT → **Presets** → **Export** → save as `users/<name>/bettertouchtool/BooG.bttpreset` (or `.json`), then rebuild.
 
 ## Apply
 
 ```bash
-darwin-rebuild switch --flake .#boog-MBP
+darwin-rebuild switch --flake .#<host>
 ```
 
 Preset import runs when the file hash changes. See module for `importOnActivation`.
@@ -51,7 +51,7 @@ Preset import runs when the file hash changes. See module for `importOnActivatio
 
 ```bash
 rm ~/.config/bettertouchtool/.preset-hash
-darwin-rebuild switch --flake .#boog-MBP
+darwin-rebuild switch --flake .#<host>
 ```
 
 Or temporarily set `bettertouchtool.forceImport = true` in `users/darwin/bettertouchtool.nix`.

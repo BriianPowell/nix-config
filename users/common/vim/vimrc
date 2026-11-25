@@ -88,8 +88,8 @@ set t_Co=256
 syntax on
 try
   let g:dracula_colorterm = 0
-  let g:airline_theme = 'dracula_pro'
-  colorscheme dracula_pro
+  let g:airline_theme = 'dracula-pro'
+  colorscheme dracula-pro
 catch
   " Couldn't load colorscheme
 endtry
@@ -100,5 +100,5 @@ set laststatus=2
 let g:netrw_liststyle = 3
 
 " vim-lumen automatically switches between light/dark colorschemes
-let g:lumen_light_colorscheme = 'alucard'
-let g:lumen_dark_colorscheme = 'dracula_pro'
+let g:lumen_light_colorscheme = 'dracula-pro-alucard'
+let g:lumen_dark_colorscheme = 'dracula-pro'

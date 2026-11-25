@@ -2,6 +2,7 @@
 # nix-darwin config (installed packages, brew casks, local LLM endpoint), installed as
 #   ~/.claude/CLAUDE.md                global instructions for Claude Code
 #   ~/.config/opencode/AGENTS.md       global instructions for OpenCode (adds MCP servers)
+#   ~/.codex/AGENTS.md                 global instructions for Codex
 #   ~/.config/agents/machine.md        same text; paste into Cursor
 #                                      (Settings > Rules > User Rules, which is
 #                                      stored in Cursor, not in a file)
@@ -180,5 +181,6 @@ in
       "opencode/AGENTS.md".text = opencodeText;
       "agents/machine.md".text = text;
     };
+    home.file.".codex/AGENTS.md".text = text;
   };
 }

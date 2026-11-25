@@ -29,24 +29,27 @@ the value:
 | `atuin.settings.sync_address` | `users/common/atuin.nix` |
 | `ssh.configFile` | `users/<name>/home.nix` (file next to it) |
 | `tooling.onePasswordAgentConfig` | `users/darwin/home.nix` |
+| `fish.functionFiles` (helpers naming my hosts) | `users/darwin/home.nix`, files in `users/darwin/fish/functions/` |
+| `vim.vimrcFile`, `vim.themes` | `users/common/home.nix`, files in `users/common/vim/` |
+| `finicky.configFile` | `users/darwin/home.nix`, file in `users/darwin/finicky/` |
 
 ## Modules
 
 | Module | Options | Files | Enabled in |
 | --- | --- | --- | --- |
 | Git | `git.*` | (Nix only) | `users/common/home.nix` |
-| Fish | `fish.*` | `home/fish/` | `users/common/home.nix` |
+| Fish | `fish.*` | `home/fish/` (generic); host-specific functions via `fish.functionFiles` | `users/common/home.nix` |
 | SSH | `ssh.*` | `users/<name>/ssh.config` | `users/common/home.nix` |
 | Tmux | `tmux.*` | `home/config/tmux/` | `users/common/home.nix` |
 | Tooling | `tooling.*` | `home/config/` (editorconfig, prettier, gemrc) | `users/common/home.nix` |
-| Vim | `vim.*` | `home/vim/` | `users/common/home.nix` |
+| Vim | `vim.*` | `users/common/vim/` (vimrc; the licensed Dracula PRO theme is a `requireFile`, see `vim/dracula-pro.nix`) | `users/common/home.nix` |
 | Atuin | `atuin.*` | Nix (`config.toml`) | `users/common/home.nix` |
 | Fonts | `fonts.*` | Nix | `users/darwin/home.nix` |
-| Finicky | `finicky.*` | `home/config/.finicky.js` | `users/darwin/home.nix` |
-| displayplacer | `displayplacer.*` | `home/displayplacer/` | `users/darwin/home.nix` |
-| Rectangle | `rectangle.*` | Nix + optional JSON | `users/darwin/rectangle.nix` |
-| iTerm2 | `iterm2.*` | `home/iterm2/*.plist` | `users/darwin/iterm2.nix` |
-| BetterTouchTool | `bettertouchtool.*` | `home/bettertouchtool/*.json` | `users/darwin/bettertouchtool.nix` |
+| Finicky | `finicky.*` | `users/darwin/finicky/finicky.js` | `users/darwin/home.nix` |
+| displayplacer | `displayplacer.*` | `users/darwin/displayplacer/` | `users/darwin/home.nix` |
+| Rectangle | `rectangle.*` | Nix + optional JSON in `users/darwin/rectangle/` | `users/darwin/rectangle.nix` |
+| iTerm2 | `iterm2.*` | `users/darwin/iterm2/` | `users/darwin/iterm2.nix` |
+| BetterTouchTool | `bettertouchtool.*` | `users/darwin/bettertouchtool/` | `users/darwin/bettertouchtool.nix` |
 
 ## Adding an account
 

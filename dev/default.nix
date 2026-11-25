@@ -24,7 +24,7 @@ let
           enable = true;
           # The exported iTerm2 preferences hold base64 colour-space blobs that
           # look like secrets.
-          excludes = [ "^home/iterm2/" ];
+          excludes = [ "^users/darwin/iterm2/" ];
         };
         statix = {
           enable = true;

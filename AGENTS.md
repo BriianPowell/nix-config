@@ -23,12 +23,12 @@ home/                  # Home Manager modules (option namespaces)
   │   ├─ agents/       # Shared AI-agent setup (see "Agent Harnesses")
   │   └─ opencode/     # OpenCode config, split like agents/
   ├─ opencode/         # Commands, skills, plugins shared by every harness
-  ├─ fish/functions/   # Fish functions (repo_init, envrc_init, nixos_remote, ...)
+  ├─ fish/functions/   # Generic fish functions (repo_init, envrc_init, ...)
   ├─ direnv/           # direnv helpers (use_nvmrc)
   └─ default.nix       # Imports all modules; enabled via `<app>.enable`
 users/                 # User accounts and personal config
-  ├─ <name>/           # Per-user: account, secrets, home-manager hooks
-  ├─ common/           # Shared across all accounts
+  ├─ <name>/           # Per-user: account, secrets, home-manager hooks, personal files
+  ├─ common/           # Shared across all accounts (git, atuin, vim files)
   └─ root/             # Root account on Linux hosts
 secrets/               # agenix-encrypted files (SSH keys, passwords)
 docs/                  # Installation, Home Manager, secrets runbooks
@@ -152,12 +152,13 @@ No defaults—must be provided by each host:
 
 ## Agent Harnesses
 
-Claude Code, Cursor, VS Code Copilot and OpenCode share one setup (`agents.enable`, `opencode.enable`):
+Claude Code, Codex, Cursor, VS Code Copilot and OpenCode share one setup (`agents.enable`, `opencode.enable`):
 - `home/modules/agents/`: `context.nix` writes the machine context (`~/.claude/CLAUDE.md`,
-  OpenCode's `AGENTS.md`, `~/.config/agents/machine.md`); `guardrails.nix` (`agents.protect`)
+  `~/.codex/AGENTS.md`, OpenCode's `AGENTS.md`, `~/.config/agents/machine.md`); `guardrails.nix` (`agents.protect`)
   becomes Claude's `settings.json` deny/ask rules and OpenCode's `permission`; `notify.nix`
-  (`agents.notify.enable`, macOS only) adds desktop-notification hooks for Claude Code
-  (Cursor imports them) and Copilot. OpenCode has its own plugin.
+  (`agents.notify.enable`, macOS only) adds desktop-notification hooks: Claude Code,
+  Cursor (native `stop`, merged into `~/.cursor/hooks.json`), Codex (`~/.codex/hooks.json`; the
+  Codex app owns `config.toml`, so it is not touched) and Copilot. OpenCode has its own plugin.
 - `home/modules/opencode/`: provider and models (`default.nix`), `permission.nix`, `mcp.nix`, `graphify.nix`.
 - `home/opencode/`: `/bootstrap` command and skills, linked into every harness; `notify.js` is OpenCode's.
 - `repo_init` (fish) bootstraps a new repo: `.envrc`, `AGENTS.md`, `CLAUDE.md` (`@AGENTS.md`).

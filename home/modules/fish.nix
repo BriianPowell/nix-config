@@ -20,6 +20,15 @@ in
 {
   options.fish = {
     enable = lib.mkEnableOption "fish shell configuration";
+
+    functionFiles = lib.mkOption {
+      type = lib.types.listOf lib.types.path;
+      default = [ ];
+      description = ''
+        Extra fish function files, each linked to ~/.config/fish/functions/<file name>.
+        Use it for helpers that name your own hosts or accounts, so they stay with the user.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -101,12 +110,9 @@ in
       "fish/functions/git_feature_branch.fish".source = "${fishDir}/functions/git_feature_branch.fish";
       "fish/functions/git_main_branch.fish".source = "${fishDir}/functions/git_main_branch.fish";
       "fish/functions/gitclcd.fish".source = "${fishDir}/functions/gitclcd.fish";
-      "fish/functions/hass_deploy.fish".source = "${fishDir}/functions/hass_deploy.fish";
       "fish/functions/envrc_init.fish".source = "${fishDir}/functions/envrc_init.fish";
       "fish/functions/repo_init.fish".source = "${fishDir}/functions/repo_init.fish";
-      "fish/functions/k3s_kubeconfig.fish".source = "${fishDir}/functions/k3s_kubeconfig.fish";
       "fish/functions/mkdir.fish".source = "${fishDir}/functions/mkdir.fish";
-      "fish/functions/nixos_remote.fish".source = "${fishDir}/functions/nixos_remote.fish";
       # direnv loads every file in direnv/lib/; `use_nvmrc` puts the repo's pinned Node
       # (installed by nvm.fish above) on PATH, since nvm.fish does not switch on `cd`.
       "direnv/lib/use_nvmrc.sh".source = ../direnv/use_nvmrc.sh;
@@ -115,6 +121,12 @@ in
     }
     // lib.optionalAttrs isDarwin {
       "fish/conf.d/00-nix-path.fish".text = nixPathInit;
-    };
+    }
+    // lib.listToAttrs (
+      map (f: {
+        name = "fish/functions/${baseNameOf f}";
+        value.source = f;
+      }) cfg.functionFiles
+    );
   };
 }

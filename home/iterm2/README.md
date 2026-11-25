@@ -9,9 +9,9 @@ Managed by `home/modules/iterm2.nix`.
 { pkgs, ... }: {
   iterm2 = {
     enable = true;
-    plistFile = ../../home/iterm2/com.googlecode.iterm2.plist;
+    plistFile = ./iterm2/com.googlecode.iterm2.plist;
     dynamicProfiles = [
-      ../../home/iterm2/BooG.json
+      ./iterm2/BooG.json
     ];
     extraSettings.Command = "${pkgs.fish}/bin/fish";
   };
@@ -32,7 +32,7 @@ That export is a single profile object. The module wraps it as `{ "Profiles": [ 
 
 ```bash
 cp ~/Library/Application\ Support/iTerm2/DynamicProfiles/BooG.json \
-   home/iterm2/BooG.json
+   users/<name>/iterm2/BooG.json
 ```
 
 Add the path to `dynamicProfiles` in `users/darwin/iterm2.nix`, then re-export the main plist if you changed the default profile.
@@ -60,7 +60,7 @@ If `defaults read` says the domain does not exist, the plist is still symlinked 
 did not run. Quit iTerm, rebuild, or manually:
 
 ```bash
-PLIST="$(readlink -f ~/Code/personal/nix-config/home/iterm2/com.googlecode.iterm2.plist)"
+PLIST="$(readlink -f ~/Code/personal/nix-config/users/<name>/iterm2/com.googlecode.iterm2.plist)"
 cp "$PLIST" ~/Library/Preferences/com.googlecode.iterm2.plist
 defaults import com.googlecode.iterm2 ~/Library/Preferences/com.googlecode.iterm2.plist
 killall cfprefsd
@@ -82,11 +82,11 @@ Quit iTerm2, then:
 
 ```bash
 cp ~/Library/Preferences/com.googlecode.iterm2.plist \
-   home/iterm2/com.googlecode.iterm2.plist
+   users/<name>/iterm2/com.googlecode.iterm2.plist
 ```
 
 ## Apply
 
 ```bash
-darwin-rebuild switch --flake .#boog-MBP
+darwin-rebuild switch --flake .#<host>
 ```

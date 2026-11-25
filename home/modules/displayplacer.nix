@@ -1,9 +1,9 @@
-# displayplacer monitor layouts (macOS). Brew: hosts/boog-MBP/brew.nix
+# displayplacer monitor layouts (macOS). Brew: hosts/<host>/brew.nix
 #
 # Per user (darwin):
 #   displayplacer = {
 #     enable = true;
-#     layoutFile = ../../home/displayplacer/desk-layout.sh;
+#     layoutFile = ./displayplacer/desk-layout.sh;
 #   };
 #
 {

@@ -36,7 +36,16 @@
   # Default flake for `envrc_init` (home/fish/functions/envrc_init.fish).
   home.sessionVariables.ENVRC_FLAKE = config.agents.nixConfigPath;
   displayplacer.enable = true;
-  finicky.enable = true;
+  finicky = {
+    enable = true;
+    configFile = ./finicky/finicky.js;
+  };
+  # Helpers that name my own hosts (sheol, abaddon) and accounts.
+  fish.functionFiles = [
+    ./fish/functions/hass_deploy.fish
+    ./fish/functions/k3s_kubeconfig.fish
+    ./fish/functions/nixos_remote.fish
+  ];
   ssh.configFile = ./ssh.config;
   tooling.onePasswordAgentConfig = ./1password-agent.toml;
   home.file.".cursorignore".source = ./cursorignore;

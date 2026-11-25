@@ -25,7 +25,7 @@ display-desk
 {
   displayplacer = {
     enable = true;
-    layoutFile = ../../home/displayplacer/desk-layout.sh;
+    layoutFile = ./displayplacer/desk-layout.sh;
   };
 }
 ```

@@ -27,6 +27,8 @@ let
     "bettertouchtool"
     "chatgpt"
     "claude"
+    "claude-code" # terminal agent; the hooks and guardrails in home/modules/agents/ target it
+    "codex" # OpenAI Codex CLI (the codex-app cask is discontinued upstream)
     "cursor"
     "cursor-cli"
     "dash"

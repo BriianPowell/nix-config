@@ -26,13 +26,13 @@ Managed by `home/modules/rectangle.nix`.
 ## Apply
 
 ```bash
-darwin-rebuild switch --flake .#boog-MBP
+darwin-rebuild switch --flake .#<host>
 killall Rectangle; open -a Rectangle
 ```
 
 ## JSON export (full shortcuts)
 
 1. `defaults write com.knollsoft.Rectangle showExportImport -bool true`
-2. Quit Rectangle → Settings → Export → save as `home/rectangle/RectangleConfig.json`
-3. `rectangle.jsonConfig = ../../home/rectangle/RectangleConfig.json; rectangle.bootstrapJson = true;`
+2. Quit Rectangle → Settings → Export → save as `users/<name>/rectangle/RectangleConfig.json`
+3. `rectangle.jsonConfig = ./rectangle/RectangleConfig.json; rectangle.bootstrapJson = true;`
 4. Rebuild once, set `bootstrapJson = false`

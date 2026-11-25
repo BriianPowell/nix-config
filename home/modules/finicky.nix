@@ -19,12 +19,23 @@ in
     configFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
-      description = "JavaScript config linked to ~/.finicky.js.";
+      description = "JavaScript config linked to ~/.finicky.js. Null writes a minimal one that opens everything in Safari.";
     };
   };
 
   config = lib.mkIf (cfg.enable && isDarwin) {
-    home.file.".finicky.js".source =
-      if cfg.configFile != null then cfg.configFile else ../config/.finicky.js;
+    home.file.".finicky.js" =
+      if cfg.configFile != null then
+        { source = cfg.configFile; }
+      else
+        {
+          text = ''
+            // ~/.finicky.js
+            module.exports = {
+              defaultBrowser: 'Safari',
+              handlers: [],
+            };
+          '';
+        };
   };
 }

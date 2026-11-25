@@ -1,6 +1,6 @@
 ---
 name: nix-package
-description: Add or remove a CLI tool or app on the macOS host boog-MBP through nix-darwin. Use when asked to install, add or remove software on this Mac, to decide between nixpkgs, Homebrew and the devShell, or to make a tool available to agents.
+description: Add or remove a CLI tool or app on the macOS host (the `darwinConfigurations` entry in `flake.nix`) through nix-darwin. Use when asked to install, add or remove software on this Mac, to decide between nixpkgs, Homebrew and the devShell, or to make a tool available to agents.
 ---
 
 ## Decide where it goes
@@ -9,8 +9,8 @@ description: Add or remove a CLI tool or app on the macOS host boog-MBP through 
   `nix shell nixpkgs#<pkg> -c <cmd>`; the dev shells (`dev/default.nix`) are kept small.
 - Needed by the repo's own checks or hooks: add it to `dev/default.nix`.
 - A CLI tool for everyday use: `environment.systemPackages` in
-  `hosts/boog-MBP/system.nix`.
-- A GUI app, or something nixpkgs cannot provide or ships broken: `hosts/boog-MBP/brew.nix`
+  `hosts/<host>/system.nix`.
+- A GUI app, or something nixpkgs cannot provide or ships broken: `hosts/<host>/brew.nix`
   (`baseCasks` / `baseBrews`). Homebrew cleanup is `zap`, so anything not listed there is
   removed on rebuild.
 - Needs a newer version than the stable channel: take it from `pkgs-unstable` in the
@@ -26,7 +26,7 @@ description: Add or remove a CLI tool or app on the macOS host boog-MBP through 
 3. New files must be visible to the flake: `git add -N <file>`.
 4. Format: `nix fmt <file>` from the config repo.
 5. Verify the config still evaluates:
-   `nix eval --raw .#darwinConfigurations.boog-MBP.config.environment.systemPackages --apply 'ps: builtins.concatStringsSep "\n" (map (p: p.name or "?") ps)'`
+   `nix eval --raw .#darwinConfigurations.<host>.config.environment.systemPackages --apply 'ps: builtins.concatStringsSep "\n" (map (p: p.name or "?") ps)'`
    and look for the new package. For stronger checking use
-   `sudo darwin-rebuild check --flake .#boog-MBP` and ask the user to run it.
+   `sudo darwin-rebuild check --flake .#<host>` and ask the user to run it.
 6. Do not run `darwin-rebuild switch` or commit. Tell the user what to run.

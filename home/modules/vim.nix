@@ -1,6 +1,7 @@
-# Vim: vimrc, dracula_pro theme, vim-plug bootstrap.
+# Vim: vimrc, colour themes, vim-plug bootstrap.
 #
 # Per user: vim.enable = true;
+# Personal files: vim.vimrcFile = ./vimrc; vim.themes.<name> = ./<name>;
 #
 {
   config,
@@ -10,47 +11,68 @@
 }:
 let
   cfg = config.vim;
-  vimDir = ../vim;
 in
 {
   options.vim = {
     enable = lib.mkEnableOption "vim configuration";
+
+    vimrcFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "vimrc linked to ~/.vim/vimrc and sourced from ~/.vimrc. Null leaves vim at its defaults.";
+    };
+
+    themes = lib.mkOption {
+      type = lib.types.attrsOf lib.types.path;
+      default = { };
+      description = "Vim colour scheme directories, each linked to ~/.vim/pack/themes/start/<name>.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     programs.vim = {
       enable = true;
       defaultEditor = true;
-      extraConfig = ''
+      extraConfig = lib.optionalString (cfg.vimrcFile != null) ''
         source $HOME/.vim/vimrc
       '';
     };
 
-    # Old activations may have copied dracula_pro as root-owned files; use `run` (as the HM user).
-    home.activation.removeLegacyVimDracula = lib.hm.dag.entryBefore [ "writeBoundary" ] ''
-      DRACULA="$HOME/.vim/pack/themes/start/dracula_pro"
-      if [ -e "$DRACULA" ] && [ ! -L "$DRACULA" ]; then
-        run chmod -R u+w "$DRACULA" 2>/dev/null || true
-        run rm -rf "$DRACULA" 2>/dev/null || true
-        if [ -e "$DRACULA" ]; then
-          echo "vim: could not remove read-only legacy dracula_pro. Run once, then rebuild:"
-          echo "  chmod -R u+w '$DRACULA' && rm -rf '$DRACULA'"
-        fi
-      fi
-      run find "$HOME/.vim/pack/themes/start" -name '*.backup' -delete 2>/dev/null || true
-    '';
+    # Old activations may have copied a theme as root-owned files; use `run` (as the HM user).
+    home.activation.removeLegacyVimThemes = lib.mkIf (cfg.themes != { }) (
+      lib.hm.dag.entryBefore [ "writeBoundary" ] (
+        lib.concatMapStrings (name: ''
+          THEME="$HOME/.vim/pack/themes/start/${name}"
+          if [ -e "$THEME" ] && [ ! -L "$THEME" ]; then
+            run chmod -R u+w "$THEME" 2>/dev/null || true
+            run rm -rf "$THEME" 2>/dev/null || true
+            if [ -e "$THEME" ]; then
+              echo "vim: could not remove read-only legacy ${name}. Run once, then rebuild:"
+              echo "  chmod -R u+w '$THEME' && rm -rf '$THEME'"
+            fi
+          fi
+        '') (lib.attrNames cfg.themes)
+        + ''
+          run find "$HOME/.vim/pack/themes/start" -name '*.backup' -delete 2>/dev/null || true
+        ''
+      )
+    );
 
-    home.file = {
-      ".vim/vimrc" = {
-        source = "${vimDir}/vimrc";
-        force = true;
-      };
-      ".vim/pack/themes/start/dracula_pro" = {
-        source = "${vimDir}/dracula_pro";
-        recursive = true;
-        force = true;
-      };
-    };
+    home.file =
+      lib.optionalAttrs (cfg.vimrcFile != null) {
+        ".vim/vimrc" = {
+          source = cfg.vimrcFile;
+          force = true;
+        };
+      }
+      // lib.mapAttrs' (
+        name: dir:
+        lib.nameValuePair ".vim/pack/themes/start/${name}" {
+          source = dir;
+          recursive = true;
+          force = true;
+        }
+      ) cfg.themes;
 
     home.activation.setupVimPlug = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       if [ ! -f $HOME/.vim/autoload/plug.vim ]; then

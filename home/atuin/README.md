@@ -4,14 +4,16 @@ Managed by `home/modules/atuin.nix` via `programs.atuin`.
 
 ## Defaults (in module)
 
-- `sync_address = "https://atuin.powell.place"`
 - `enter_accept = true`
 - `sync.records = true` (sync v2)
+
+The sync server is not set here. Each fork sets `atuin.settings.sync_address` in its own
+`users/<name>/atuin.nix` (or leaves it unset to use Atuin's default).
 
 ## Per-user overrides
 
 ```nix
-# users/boog/atuin.nix (optional)
+# users/<name>/atuin.nix (optional)
 {
   atuin.settings = {
     search_mode = "fuzzy";

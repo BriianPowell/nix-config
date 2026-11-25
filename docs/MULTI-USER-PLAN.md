@@ -262,9 +262,9 @@ unreachable host); the remote script itself has not been run on a server yet.
   the path and the existing branch and dirty-tree warnings covers the same risk.
 - The servers' login shell is fish, so remote probes go in over stdin to `sh -s`
   (`__nixos_remote_probe`), not as a command line.
-- One file, `home/fish/functions/nixos_remote.fish`: `status` is an action, and the
-  probe and verify helpers live in the same file, so nothing new is registered in
-  `home/modules/fish.nix`.
+- One file, `users/darwin/fish/functions/nixos_remote.fish` (it names my hosts, so it is
+  a user file, linked through `fish.functionFiles`): `status` is an action, and the
+  probe and verify helpers live in the same file, so nothing new is registered.
 
 ### Phase S3: CI on pull requests
 
