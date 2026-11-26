@@ -113,6 +113,9 @@ in
       "fish/functions/envrc_init.fish".source = "${fishDir}/functions/envrc_init.fish";
       "fish/functions/repo_init.fish".source = "${fishDir}/functions/repo_init.fish";
       "fish/functions/mkdir.fish".source = "${fishDir}/functions/mkdir.fish";
+      "fish/functions/_tide_item_nix_shell.fish".source =
+        "${fishDir}/functions/_tide_item_nix_shell.fish";
+      "fish/functions/_tide_item_kubectl.fish".source = "${fishDir}/functions/_tide_item_kubectl.fish";
       # direnv loads every file in direnv/lib/; `use_nvmrc` puts the repo's pinned Node
       # (installed by nvm.fish above) on PATH, since nvm.fish does not switch on `cd`.
       "direnv/lib/use_nvmrc.sh".source = ../direnv/use_nvmrc.sh;

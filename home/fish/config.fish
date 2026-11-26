@@ -4,6 +4,10 @@ abbr -a lblk lsblk --output NAME,SIZE,RM,FSTYPE,FSUSE%,SERIAL,MOUNTPOINT
 
 set -U fish_greeting
 
+# fish 4.3+ leaves fish_key_bindings unset. Tide's vi_mode item shows whenever it
+# differs from fish_default_key_bindings, so it printed "DEFAULT" on every prompt.
+set -g fish_key_bindings fish_default_key_bindings
+
 # Autosuggestions (fish "predictive" ghost text); independent of iTerm ANSI 8.
 set -U fish_color_autosuggestion brblack --dim
 set -Ux EDITOR vim

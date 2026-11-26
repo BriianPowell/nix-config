@@ -52,6 +52,8 @@ set -U tide_jobs_number_threshold 1000
 set -U tide_kubectl_bg_color 444444
 set -U tide_kubectl_color 326CE5
 set -U tide_kubectl_icon \u2388
+# Only show the context in these directories (see functions/_tide_item_kubectl.fish).
+set -U tide_kubectl_dirs k3s-collective hass-config grafana-dashboards
 
 set -U tide_left_prompt_frame_enabled false
 set -U tide_left_prompt_items os pwd git
@@ -60,6 +62,14 @@ set -U tide_left_prompt_separator_diff_color \ue0b0
 set -U tide_left_prompt_separator_same_color \u2571
 set -U tide_left_prompt_suffix \ue0b0
 
+# nix_shell and terraform had no colors, so their separators/background fell back to the
+# terminal default and looked out of step with the other items.
+set -U tide_nix_shell_bg_color 444444
+set -U tide_nix_shell_color 7EBAE4
+
+set -U tide_terraform_bg_color 444444
+set -U tide_terraform_color 844FBA
+
 set -U tide_node_bg_color 444444
 set -U tide_node_color 44883E
 set -U tide_node_icon \u2b22
@@ -67,7 +77,7 @@ set -U tide_node_icon \u2b22
 set -U tide_os_bg_color 444444
 set -U tide_os_color EEEEEE
 
-set -U tide_php_bg_color 44444
+set -U tide_php_bg_color 444444
 set -U tide_php_color 617CBE
 set -U tide_php_icon \ue608
 
@@ -89,7 +99,7 @@ set -U tide_pwd_icon_unwritable \uf023
 set -U tide_pwd_markers .bzr .citc .git .hg .node-version .python-version .ruby-version .shorten_folder_marker .svn .terraform Cargo.toml composer.json CVS go.mod package.json
 
 set -U tide_right_prompt_frame_enabled false
-set -U tide_right_prompt_items status cmd_duration context jobs nix_shell kubectl node python terraform vi_mode time
+set -U tide_right_prompt_items status cmd_duration context jobs nix_shell kubectl node python terraform vi_mode
 set -U tide_right_prompt_prefix \ue0b2
 set -U tide_right_prompt_separator_diff_color \ue0b2
 set -U tide_right_prompt_separator_same_color \u2571

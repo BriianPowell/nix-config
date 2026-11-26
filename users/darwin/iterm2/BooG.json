@@ -152,7 +152,7 @@
   },
   "Silence Bell" : false,
   "Rows" : 25,
-  "Draw Powerline Glyphs" : true,
+  "Draw Powerline Glyphs" : false,
   "Guid" : "E31BC19A-E56A-4F41-84E2-AE803B7A8C79",
   "Ansi 14 Color (Dark)" : {
     "Red Component" : 0.60000002384185791,
